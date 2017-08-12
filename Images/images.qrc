@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/new/prefix1">
+        <file>Cvte.png</file>
+        <file>ddc.ico</file>
+    </qresource>
+</RCC>
