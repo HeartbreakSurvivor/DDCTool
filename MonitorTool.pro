@@ -34,7 +34,7 @@ SOURCES += main.cpp\
     cvt_protocol.cpp \
     cvt_debugtab.cpp \
     cvt_burntab.cpp \
-    formtest2.cpp
+    mainwindow.cpp \
 
 HEADERS  += \
     cvt_burndata.h \
@@ -51,7 +51,7 @@ HEADERS  += \
     cvt_debugtab.h \
     cvt_burntab.h \
     global.h \
-    formtest2.h
+    mainwindow.h \
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/lib/ -lFTCI2C
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/lib/ -lFTCI2C
@@ -68,6 +68,5 @@ RESOURCES += \
     Images/images.qrc
 
 FORMS += \
-    form.ui \
-    formtest2.ui
+    mainwindow.ui
 
