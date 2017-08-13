@@ -48,5 +48,4 @@ void MainWindow::qTimeSlot(void)
     QString str = DDC_CurTime.toString("yyyy-MM-dd hh:mm:ss"); //设置显示格式
 
     DDC_TimeLabel->setText(str);
-    std::cout<<"ddddd"<<std::endl;
 }
