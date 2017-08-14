@@ -1386,6 +1386,19 @@
         <string>Execute</string>
        </property>
       </widget>
+      <widget class="QPushButton" name="pushButton_15">
+       <property name="geometry">
+        <rect>
+         <x>140</x>
+         <y>80</y>
+         <width>75</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Save</string>
+       </property>
+      </widget>
      </widget>
     </widget>
    </widget>
@@ -1403,11 +1416,16 @@
     <property name="title">
      <string>Options</string>
     </property>
+    <addaction name="actionIIC_Settings"/>
+    <addaction name="actionCommunication"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>Help</string>
     </property>
+    <addaction name="actionHelp"/>
+    <addaction name="separator"/>
+    <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuDDC_Tool"/>
    <addaction name="menuHelp"/>
@@ -1460,6 +1478,26 @@
      <family>Arial</family>
      <pointsize>11</pointsize>
     </font>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="text">
+    <string>Help...</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionIIC_Settings">
+   <property name="text">
+    <string>IIC Settings</string>
+   </property>
+  </action>
+  <action name="actionCommunication">
+   <property name="text">
+    <string>Communication Option</string>
    </property>
   </action>
  </widget>
