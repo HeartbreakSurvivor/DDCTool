@@ -35,6 +35,9 @@ SOURCES += main.cpp\
     cvt_debugtab.cpp \
     cvt_burntab.cpp \
     mainwindow.cpp \
+    i2c_settingwindow.cpp \
+    communicationsetting.cpp \
+    helpwindow.cpp
 
 HEADERS  += \
     cvt_burndata.h \
@@ -52,6 +55,9 @@ HEADERS  += \
     cvt_burntab.h \
     global.h \
     mainwindow.h \
+    i2c_settingwindow.h \
+    communicationsetting.h \
+    helpwindow.h
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/lib/ -lFTCI2C
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/lib/ -lFTCI2C
@@ -68,5 +74,8 @@ RESOURCES += \
     Images/images.qrc
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    i2c_settingwindow.ui \
+    communicationsetting.ui \
+    helpwindow.ui
 
