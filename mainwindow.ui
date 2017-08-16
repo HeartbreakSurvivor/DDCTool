@@ -30,7 +30,7 @@
      <string/>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <property name="usesScrollButtons">
      <bool>false</bool>
@@ -1436,7 +1436,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>Up</string>
+        <string>Down</string>
        </property>
       </widget>
       <widget class="QPushButton" name="pushButton_17">
@@ -1449,7 +1449,20 @@
         </rect>
        </property>
        <property name="text">
-        <string>Down</string>
+        <string>Step</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButton_18">
+       <property name="geometry">
+        <rect>
+         <x>140</x>
+         <y>130</y>
+         <width>75</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Up</string>
        </property>
       </widget>
      </widget>
