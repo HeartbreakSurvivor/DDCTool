@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 
 	QCoreApplication::setOrganizationName("CVTE");
 	QCoreApplication::setOrganizationDomain("zhanghao3126@cvte.com");
-	QCoreApplication::setOrganizationName("Cvt DDC tool");
+    QCoreApplication::setOrganizationName("DDC Tool");
 
     MainWindow window;
     window.show();

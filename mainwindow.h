@@ -22,12 +22,24 @@ public:
 public slots:
     void qTimeSlot(void);
 
+private slots:
+    //EDID Tab
+    void loadEdid();
+    void nextEdid();
+    void syncEdid();
+    void saveEdid();
+    void writeEdid();
+    void stopEdid();
+
+
 private:
     QProgressBar *DDC_ProgressBar;//indicate the burn progress.
     QLabel *DDC_BurnStatus;//indicate the result of burning.
     QDateTime DDC_CurTime;//indicate the current system time.
     QLabel *DDC_TimeLabel;
     QTimer *timer;
+
+    //the automatically generated ui file
     Ui::MainWindow *ui;
 };
 
