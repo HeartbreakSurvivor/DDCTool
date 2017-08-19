@@ -1,5 +1,12 @@
 #pragma once
+//QT
+#include <QtCore>
+#include <qstring.h>
+#include <qfile.h>
+#include <qglobal.h>
+
 #include <Windows.h>
+#include <map>
 
 #define		Cvt_PerPackLen			16
 #define		EdidPorts_Num           6

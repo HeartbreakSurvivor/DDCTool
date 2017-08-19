@@ -376,7 +376,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Next Edid</string>
+       <string>Next</string>
       </property>
      </widget>
      <widget class="QGroupBox" name="groupBox_2">

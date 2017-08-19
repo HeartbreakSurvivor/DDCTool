@@ -6,6 +6,10 @@
 #include <QtWidgets/QDateTimeEdit>
 #include <QtWidgets/Qlabel>
 #include <QTimer>
+#include <QFileDialog>
+#include <QDebug>
+
+#include "cvt_global.h"
 
 namespace Ui {
 class MainWindow;
@@ -38,6 +42,9 @@ private:
     QDateTime DDC_CurTime;//indicate the current system time.
     QLabel *DDC_TimeLabel;
     QTimer *timer;
+
+    //ADT
+    std::map<QString,Cvt_EDID*> edid_map;
 
     //the automatically generated ui file
     Ui::MainWindow *ui;
