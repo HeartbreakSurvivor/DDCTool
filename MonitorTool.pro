@@ -24,13 +24,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += main.cpp\
-    cvt_burnsetting.cpp \
-    cvt_dataTransfer.cpp \
-    cvt_isp_iic.cpp \
-    cvt_mainwindow.cpp \
-    cvt_protocol.cpp \
-    cvt_debugtab.cpp \
-    cvt_burntab.cpp \
     mainwindow.cpp \
     i2c_settingwindow.cpp \
     communicationsetting.cpp \
@@ -41,17 +34,9 @@ SOURCES += main.cpp\
     hdcp_data.cpp
 
 HEADERS  += \
-    cvt_burnsetting.h \
-    cvt_dataTransfer.h \
     cvt_global.h \
-    cvt_isp_iic.h \
-    cvt_mainwindow.h \
-    cvt_protocol.h \
     lib/FTCI2C.h \
     lib/ftd2xx.h \
-    cvt_debugtab.h \
-    cvt_burntab.h \
-    global.h \
     mainwindow.h \
     i2c_settingwindow.h \
     communicationsetting.h \

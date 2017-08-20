@@ -3,6 +3,8 @@
 
 #include "burn_data.h"
 
+class BurnData_T;
+
 namespace ddc {
 
 class Edid_T:public BurnData_T
@@ -18,10 +20,10 @@ public:
 
     QString getManufacturerName(void);
     QString getVersion(void);
-    quint8 getProductYear(void);
+    quint16 getProductYear(void);
     quint8 getProductWeek(void);
     quint16 getProductCode(void);
-    void getProductSN(void);
+    QString getProductSN(void);
     quint32 getManufacturerSN(void);
 
     void setManufacturerName(QString name);
@@ -33,8 +35,7 @@ public:
 
     quint8 findProductSn(void);
 
-    virtual bool getdata(int offset, int bufsize, unsigned char *buf, int Rlen);
-    virtual bool setdata(int offset, int bufsize, unsigned char *buf, int Rlen);
+    virtual void getdata(int offset, int bufsize, unsigned char *buf, int Rlen);
 
 private:
     QString m_manufacturername;

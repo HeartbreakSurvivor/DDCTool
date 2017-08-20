@@ -10,10 +10,13 @@
 #include <QDebug>
 
 #include "cvt_global.h"
+#include "edid_data.h"
 
 namespace Ui {
 class MainWindow;
 }
+
+using namespace ddc;
 
 class MainWindow : public QMainWindow
 {
@@ -44,7 +47,7 @@ private:
     QTimer *timer;
 
     //ADT
-    std::map<QString,Cvt_EDID*> edid_map;
+    //std::map<QString* key,Edid_T* value> edid_map;
 
     //the automatically generated ui file
     Ui::MainWindow *ui;

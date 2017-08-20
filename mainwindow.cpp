@@ -108,7 +108,7 @@ void MainWindow::loadEdid(void)
                 key = file_name.left(file_name.indexOf(QString(".bin")));//get the file's pure name
 
                 //create the edid map
-                edid_map[key] = new Cvt_EDID(file_path);
+                //edid_map[key] = new Cvt_EDID(file_path);
 
                 qDebug() <<"key:"<< key;
                 qDebug() << qPrintable(QString("%1 %2").arg(fileInfo.size(), 10).arg(file_path));

@@ -6,7 +6,7 @@ Edid_T::~Edid_T()
 {
 }
 
-Edid_T::Edid_T(Cvt_EDID& edid_t)
+Edid_T::Edid_T(Edid_T& edid_t)
 {
     size = edid_t.getLength();
     data = new quint8[size];
@@ -20,7 +20,7 @@ Edid_T& Edid_T::operator=(Edid_T& edid_t)
     if (this == &edid_t)
         return *this;
 
-    size = _edid.getLength();
+    size = edid_t.getLength();
     data = new quint8[size];
     memcpy(data, edid_t.data, size * sizeof(quint8));
 
@@ -37,7 +37,7 @@ QString Edid_T::getManufacturerName(void)
         if (0x00001 <= pletter&&pletter <= 0x11010)
         {
             pletter += 0x40;
-            m_manufacturername->insert(0,(char)pletter);
+            m_manufacturername.insert(0,(char)pletter);
         }
         //qDebug("pletter:%c, %d", pletter,i);
     }
@@ -47,12 +47,13 @@ QString Edid_T::getManufacturerName(void)
 QString Edid_T::getVersion(void)
 {
     quint8 version=data[18],rversion=data[19];
-    m_version->insert(0,rversion);
-    m_version->insert(0,'.');
-    m_version->insert(0,version);
-    m_version->insert(0,'v');
+    m_version.insert(0,rversion);
+    m_version.insert(0,'.');
+    m_version.insert(0,version);
+    m_version.insert(0,'v');
 
-    qDebug<<m_version<<endl;
+    qDebug()<<m_version;
+
     return m_version;
 }
 
@@ -74,13 +75,14 @@ quint8 Edid_T::getProductWeek(void)
     return m_productweek;
 }
 
-quint16 Edid_T::getProductSN(void)
+QString Edid_T::getProductSN(void)
 {
-    quint8 snaddr = findProductSn;
+    quint8 snaddr = findProductSn();
+    int i=0;
     if(!snaddr) return 0;
     snaddr+=5;
 
-    for((*(data+snaddr+13)==0x0A)?i=12:i=13;i>0;--i)
+    for((*(data+snaddr+13)==0x0A)?(i=12):(i=13);i>0; --i)
     {
         const char tmp = *(data+snaddr+i);
         if(tmp>=0x30 && tmp<=0x39)
@@ -147,12 +149,11 @@ void Edid_T::setManufacturerSN(quint32 manufacturersn)
 
 }
 
-bool Edid_T::getdata(int offset, int bufsize, unsigned char *buf, int Rlen)
+void Edid_T::getdata(int offset, int bufsize, unsigned char *buf, int Rlen)
 {
-    if (data == NULL) return false;
-    if (offset*bufsize >= size) return false;
+    if (data == NULL) return;
+    if (offset*bufsize >= size) return;
     memcpy((void*)buf, (void *)(data + offset*bufsize), Rlen);
-    return true;
 }
 
 }

@@ -59,11 +59,7 @@ public:
 private:
     unsigned char edidports=0;
 
-    Cvt_HDCPKey *cvt_hdcpkey=NULL;
-    Cvt_EDID *cvt_edid=NULL;
-
     Cvt_flowControlPar cvt_flowcontrol;
-    Cvt_BurnData *cvt_transferdata = NULL;
     Cvt_BurnSetting cvt_burnsetting;
     Cvt_Isp_I2C cvt_I2cdevice;
 

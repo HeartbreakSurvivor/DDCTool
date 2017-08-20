@@ -8,6 +8,8 @@
 #include <Windows.h>
 #include <map>
 
+#include "burn_data.h"
+
 #define		Cvt_PerPackLen			16
 #define		EdidPorts_Num           6
 

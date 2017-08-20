@@ -854,7 +854,6 @@ void BurnTab::LoadHDCPKey()
             if (cvt_hdcpkey != NULL)
             {
                 qDebug("delete the last hdcpkey class");
-                delete cvt_hdcpkey;
             }
             cvt_hdcpkey = new Cvt_HDCPKey(fileName);
             qDebug("Length:%d", cvt_hdcpkey->getLength());

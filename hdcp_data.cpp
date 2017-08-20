@@ -73,7 +73,7 @@ void Hdcp_T::setChipType(quint8 type)
     m_type = (chiptype_e)type;
 }
 
-chiptype_e Hdcp_T::getChipType(void)
+Hdcp_T::chiptype_e Hdcp_T::getChipType(void)
 {
     return m_type;
 }
@@ -101,7 +101,7 @@ void Hdcp_T::getKeyid(void)
             qDebug() << "filename char:"<< tmpchar ;
             if(tmpchar<'0' || tmpchar>'9')
                 break;
-            m_Keyid[--j] = tmpchar;
+            m_Keyid[--j] = tmpchar.toLatin1();
             if(j<=0) break;
         }
     }
@@ -114,22 +114,20 @@ void Hdcp_T::getKeyid(void)
 void Hdcp_T::appendCrc16(void)
 {
     quint16 crc=ddc::CalCRC16(data,size);
-    std::cout<<"the crc is"<<crc<<std::endl;
 
-    data = realloc(data,size+2);
+    data = (quint8 *)realloc(data,size+2);
     if(data != nullptr)
     {
         data[size+1] = (quint8)crc;
-        data[size+2] = (quint8)crc>>8;
+        data[size+2] = (quint8)(crc>>8);
     }
 }
 
-virtual bool Hdcp_T::getdata(int offset, int bufsize, unsigned char *buf, int Rlen)
+void Hdcp_T::getdata(int offset, int bufsize, unsigned char *buf, int Rlen)
 {
-    if (data == NULL) return false;
-    if (offset*bufsize >= size) return false;
+    if (data == NULL) return;
+    if (offset*bufsize >= size) return;
     memcpy((void*)buf, (void *)(data+offset*bufsize), Rlen);
-    return true;
 }
 
 
