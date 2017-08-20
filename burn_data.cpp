@@ -19,6 +19,7 @@ BurnData_T::BurnData_T(const QString &filepath)
 
 BurnData_T::~BurnData_T()
 {
+    delete[] data;
     file->close();
 }
 

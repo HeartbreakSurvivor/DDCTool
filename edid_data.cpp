@@ -6,7 +6,6 @@ Edid_T::~Edid_T()
 {
 }
 
-//深拷贝和浅拷贝
 Edid_T::Edid_T(Cvt_EDID& edid_t)
 {
     size = edid_t.getLength();

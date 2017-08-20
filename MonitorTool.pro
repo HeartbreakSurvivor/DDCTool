@@ -28,7 +28,6 @@ SOURCES += main.cpp\
     cvt_dataTransfer.cpp \
     cvt_isp_iic.cpp \
     cvt_mainwindow.cpp \
-    cvt_PraseHdcp.cpp \
     cvt_protocol.cpp \
     cvt_debugtab.cpp \
     cvt_burntab.cpp \
@@ -47,7 +46,6 @@ HEADERS  += \
     cvt_global.h \
     cvt_isp_iic.h \
     cvt_mainwindow.h \
-    cvt_PraseHdcp.h \
     cvt_protocol.h \
     lib/FTCI2C.h \
     lib/ftd2xx.h \

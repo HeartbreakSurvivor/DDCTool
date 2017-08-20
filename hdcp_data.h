@@ -11,9 +11,6 @@ public:
     Hdcp_T() {}
     ~Hdcp_T() {}
 
-    Hdcp_T(Hdcp_T& hdcp_t);
-    Hdcp_T& operator=(Hdcp_T& hdcp_t);
-
     enum{
         Mstar,
         Reltek,
@@ -30,7 +27,6 @@ private:
     void getKeyid(void);
     void appendCrc16(void);
 
-    virtual bool getdata(int offset, int bufsize, unsigned char *buf, int Rlen);
     virtual bool setdata(int offset, int bufsize, unsigned char *buf, int Rlen);
 
 private:
