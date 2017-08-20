@@ -10,10 +10,13 @@ namespace ddc {
 class Edid_T:public BurnData_T
 {
 public:
-    Edid_T() {}
+    Edid_T();
+    Edid_T(const QString &filepath):BurnData_T(filepath){
+         qDebug()<<"Edid_T constructor";
+    }
 
     //copy constructor function
-    Edid_T(Edid_T&);
+    Edid_T(const Edid_T&);
     Edid_T& operator=(Edid_T&);
 
     ~Edid_T();

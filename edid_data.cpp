@@ -4,9 +4,10 @@ namespace ddc {
 
 Edid_T::~Edid_T()
 {
+    qDebug()<<"Edid_T destructor!";
 }
 
-Edid_T::Edid_T(Edid_T& edid_t)
+Edid_T::Edid_T(const Edid_T& edid_t)
 {
     size = edid_t.getLength();
     data = new quint8[size];
@@ -47,9 +48,9 @@ QString Edid_T::getManufacturerName(void)
 QString Edid_T::getVersion(void)
 {
     quint8 version=data[18],rversion=data[19];
-    m_version.insert(0,rversion);
+    m_version.insert(0,QString::number(rversion,10));
     m_version.insert(0,'.');
-    m_version.insert(0,version);
+    m_version.insert(0,QString::number(version,10));
     m_version.insert(0,'v');
 
     qDebug()<<m_version;
@@ -82,29 +83,38 @@ QString Edid_T::getProductSN(void)
     if(!snaddr) return 0;
     snaddr+=5;
 
-    for((*(data+snaddr+13)==0x0A)?(i=12):(i=13);i>0; --i)
+    qDebug()<<"SN addr "<<snaddr;
+    qDebug()<< *(data+snaddr+13);
+
+    for((*(data+snaddr+13)==0x0A)?(i=12):(i=13);i>=0; --i)
     {
-        const char tmp = *(data+snaddr+i);
+        char tmp = *(data+snaddr+i);
+        m_productsn.insert(0,QChar(tmp));
+        /*//so so so so stupid .
+        qDebug("tmp:%c,0x%x", tmp,tmp);
         if(tmp>=0x30 && tmp<=0x39)
         {
-            m_productsn.insert(0,tmp-0x30);
+            m_productsn.insert(0,QChar(tmp));
+            qDebug()<<"Numberical "<<QChar(tmp-0x30);
         }
-        else if(tmp>=0x41 && tmp<=0x46)
+        else if(tmp>=0x41 && tmp<=0x5A)//A~Z
         {
-            m_productsn.insert(0,tmp-0x41);//65
+            m_productsn.insert(0,QChar(tmp));//65
+            qDebug()<<"Case char "<<QChar(tmp);
         }
-        else if((tmp>=0x61) && (tmp<=0x66))
+        else if((tmp>=0x61) && (tmp<=0x7A))//a~z
         {
-            m_productsn.insert(0,tmp-0x61); //0x57
+            m_productsn.insert(0,QChar(tmp-0x61)); //0x57
+            qDebug()<<"case char "<<QChar(tmp);
         }
+        */
     }
-    qDebug("product sn:%s", m_productsn);
     return m_productsn;
 }
 
 quint32 Edid_T::getManufacturerSN(void)
 {
-    m_manufacturesn = data[12]<<24|data[13]<<16|data[14]<<8|data[15];
+    m_manufacturesn = data[15]<<24|data[14]<<16|data[13]<<8|data[12];
     return m_manufacturesn;
 }
 

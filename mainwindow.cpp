@@ -77,6 +77,10 @@ void MainWindow::loadEdid(void)
     fd->setViewMode(QFileDialog::List);
     if (fd->exec() == QDialog::Accepted)
     {
+        if(!edid_map.empty())
+        {
+            edid_map.clear();
+        }
         fileNameList = fd->selectedFiles();
         fileName = fileNameList[0];
         if (fileName != NULL)
@@ -108,13 +112,10 @@ void MainWindow::loadEdid(void)
                 key = file_name.left(file_name.indexOf(QString(".bin")));//get the file's pure name
 
                 //create the edid map
-                //edid_map[key] = new Cvt_EDID(file_path);
+                edid_map[key] = new Edid_T(file_path);
 
                 qDebug() <<"key:"<< key;
                 qDebug() << qPrintable(QString("%1 %2").arg(fileInfo.size(), 10).arg(file_path));
-                //filename2datatypeAndIdx(file_name, tmp_type_Idx,edidports);
-                //cvt_edid[tmp_type_Idx] = Cvt_EDID(file_path, tmp_type_Idx);//create the edid and append to cvt_edid dynamic class array
-                //qDebug("filename Idx:%d,DATAEXISTED_IDX:%d", i, tmp_type_Idx);
             }
 
             //qDebug("EdidPorts num:%x", edidports);
@@ -139,7 +140,16 @@ void MainWindow::loadEdid(void)
 
             //redraw operations
             ui->edidpathLineEdit->setText(fileName);
-            ui->edidnameLineEdit->setText(key);
+            ui->edidnameLineEdit->setText(key.toUpper());
+            ui->edidsizeLineEdit->setText(QString::number(edid_map[key]->getLength()));
+
+            ui->manufacturerNameLineEdit->setText(edid_map[key]->getManufacturerName());
+            ui->manufacturerCodeLineEdit->setText(QString("%1").arg(edid_map[key]->getProductCode(), 4, 16, QLatin1Char('0')));
+            ui->manufacturerSNLineEdit->setText(QString("%1").arg(edid_map[key]->getManufacturerSN(), 8, 16, QLatin1Char('0')));
+            ui->manufacturerWeekLineEdit->setText(QString::number(edid_map[key]->getProductWeek()));
+            ui->manufacturerYearLineEdit->setText(QString::number(edid_map[key]->getProductYear()));
+            ui->edidVersionLineEdit->setText(edid_map[key]->getVersion());
+            ui->customerSNlineEdit->setText(edid_map[key]->getProductSN());
         }
     }
     else
