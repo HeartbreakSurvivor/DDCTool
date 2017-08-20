@@ -9,13 +9,14 @@ Cvt_EDID::Cvt_EDID(const QString &filepath)
 	readdata = new unsigned char[datalen];
 
 	if (Edidfile->read((char *)data, datalen) == -1) return;
-	/*
+
 	for (int i = 0; i < datalen; i++)
 		qDebug("Edid%d: %x", i, data[i]);
-	*/
+
 	Edidfile->close();
 }
 
+/*
 Cvt_EDID::Cvt_EDID(const QString &filepath, Cvt_DataType _datatype)
 {
 	QFile *Edidfile = new QFile(filepath);
@@ -26,13 +27,9 @@ Cvt_EDID::Cvt_EDID(const QString &filepath, Cvt_DataType _datatype)
 	readdata = new unsigned char[datalen];
 
 	if (Edidfile->read((char *)data, datalen) == -1) return;
-	/*
-	for (int i = 0; i < datalen; i++)
-		qDebug("Edid%d: %x", i, data[i]);
-	*/
 	Edidfile->close();
 }
-
+*/
 Cvt_EDID::Cvt_EDID()
 {
 }
@@ -48,7 +45,7 @@ Cvt_EDID::Cvt_EDID(int len)
 Cvt_EDID::Cvt_EDID(Cvt_EDID& _edid)
 {
 	datalen = _edid.getLength();/*常规成员变量*/
-	datatype = _edid.datatype;
+
 
 	//The king point
 	data = new unsigned char[datalen];
@@ -65,7 +62,7 @@ Cvt_EDID& Cvt_EDID::operator=(Cvt_EDID& _edid)
 	if (this == &_edid)  /*自赋值*/
 		return *this;
 	datalen = _edid.getLength();
-	datatype = _edid.datatype;
+    datatype = _edid.datatype;
 	//The king point
 	data = new unsigned char[datalen];
 	memcpy(data, _edid.data, datalen * sizeof(unsigned char));

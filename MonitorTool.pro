@@ -24,7 +24,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += main.cpp\
-    cvt_burndata.cpp \
     cvt_burnsetting.cpp \
     cvt_dataTransfer.cpp \
     cvt_isp_iic.cpp \
@@ -39,10 +38,10 @@ SOURCES += main.cpp\
     communicationsetting.cpp \
     helpwindow.cpp \
     instructionwindow.cpp \
-    edid_parse.cpp
+    burn_data.cpp \
+    edid_data.cpp
 
 HEADERS  += \
-    cvt_burndata.h \
     cvt_burnsetting.h \
     cvt_dataTransfer.h \
     cvt_global.h \
@@ -61,7 +60,8 @@ HEADERS  += \
     communicationsetting.h \
     helpwindow.h \
     instructionwindow.h \
-    edid_parse.h
+    burn_data.h \
+    edid_data.h
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/lib/ -lFTCI2C
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/lib/ -lFTCI2C

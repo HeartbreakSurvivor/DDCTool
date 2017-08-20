@@ -9,7 +9,7 @@ class Cvt_EDID:public Cvt_BurnData
 {
 public:
 	Cvt_EDID(const QString &filepath);
-	Cvt_EDID(const QString &filepath, Cvt_DataType _datatype);
+//	Cvt_EDID(const QString &filepath, Cvt_DataType _datatype);
 	Cvt_EDID(int len);
 	Cvt_EDID();
 	Cvt_EDID(Cvt_EDID&);

@@ -21,9 +21,10 @@ public:
 private:
     QFile *file;
     QString filename;
+    quint8 *data;
     quint64 size = 0;//the size of data read from the file
-};
 
+};
 
 }
 #endif // BURN_DATA_H
