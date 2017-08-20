@@ -28,7 +28,6 @@ SOURCES += main.cpp\
     cvt_dataTransfer.cpp \
     cvt_isp_iic.cpp \
     cvt_mainwindow.cpp \
-    cvt_PraseEdid.cpp \
     cvt_PraseHdcp.cpp \
     cvt_protocol.cpp \
     cvt_debugtab.cpp \
@@ -39,7 +38,8 @@ SOURCES += main.cpp\
     helpwindow.cpp \
     instructionwindow.cpp \
     burn_data.cpp \
-    edid_data.cpp
+    edid_data.cpp \
+    hdcp_data.cpp
 
 HEADERS  += \
     cvt_burnsetting.h \
@@ -47,7 +47,6 @@ HEADERS  += \
     cvt_global.h \
     cvt_isp_iic.h \
     cvt_mainwindow.h \
-    cvt_PraseEdid.h \
     cvt_PraseHdcp.h \
     cvt_protocol.h \
     lib/FTCI2C.h \
@@ -61,7 +60,8 @@ HEADERS  += \
     helpwindow.h \
     instructionwindow.h \
     burn_data.h \
-    edid_data.h
+    edid_data.h \
+    hdcp_data.h
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/lib/ -lFTCI2C
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/lib/ -lFTCI2C

@@ -24,15 +24,14 @@ public:
     void getProductSN(void);
     quint32 getManufacturerSN(void);
 
-    void setManufacturerName();
+    void setManufacturerName(QString name);
     void setProductYear(quint8 year);
     void setProductWeek(quint8 week);
     void setProductCode(quint16 productcode);
-    void setProductSN(quint8 *buf,int len);
+    void setProductSN(QString sn);
     void setManufacturerSN(quint32 manufacturersn);
 
     quint8 findProductSn(void);
-    bool setProductSN(void);
 
     virtual bool getdata(int offset, int bufsize, unsigned char *buf, int Rlen);
     virtual bool setdata(int offset, int bufsize, unsigned char *buf, int Rlen);

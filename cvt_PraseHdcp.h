@@ -4,7 +4,6 @@
 #include "qdebug.h"
 #include "qstring.h"
 #include "cvt_global.h"
-#include "cvt_burndata.h"
 
 class Cvt_HDCPKey:public Cvt_BurnData
 {

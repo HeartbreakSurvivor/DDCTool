@@ -2,10 +2,6 @@
 
 namespace ddc {
 
-Edid_T::Edid_T()
-{
-}
-
 Edid_T::~Edid_T()
 {
 }
@@ -111,7 +107,6 @@ quint32 Edid_T::getManufacturerSN(void)
     return m_manufacturesn;
 }
 
-
 quint8 Edid_T::findProductSn()
 {
     quint8 addr = 0x48;
@@ -123,41 +118,41 @@ quint8 Edid_T::findProductSn()
     else return 0;
 }
 
-
-bool Edid_T::setProductSN(quint8 *buf,int len)
+void Edid_T::setManufacturerName(QString name)
 {
-    quint8 TmpSN[13] = {0};
-    quint8 SNaddr;
-    SNaddr = findProductSn();
-    if (!SNaddr) return false;
-    ParseCustomerBarCode();
-    memcpy(data +SNaddr,TmpSN,sizeof(TmpSN));
-    return true;
+
 }
 
-void Edid_T::getCustomerBarCode(unsigned char *buf, int len)
+void Edid_T::setProductYear(quint8 year)
 {
-    barCode = new unsigned char[len];
+
 }
 
-unsigned char Edid_T::ParseCustomerBarCode(void)
+void Edid_T::setProductWeek(quint8 week)
 {
-    return 0x00;
+
+}
+
+void Edid_T::setProductCode(quint16 productcode)
+{
+
+}
+
+void Edid_T::setProductSN(QString sn)
+{
+
+}
+
+void Edid_T::setManufacturerSN(quint32 manufacturersn)
+{
+
 }
 
 bool Edid_T::getdata(int offset, int bufsize, unsigned char *buf, int Rlen)
 {
     if (data == NULL) return false;
-    if (offset*bufsize >= datalen) return false;
+    if (offset*bufsize >= size) return false;
     memcpy((void*)buf, (void *)(data + offset*bufsize), Rlen);
-    return true;
-}
-
-bool Edid_T::setdata(int offset, int bufsize, unsigned char *buf, int Rlen)
-{
-    if (readdata == NULL) return false;
-    if (offset*bufsize >= datalen) return false;
-    memcpy((void *)(readdata + offset*bufsize), (void*)buf, Rlen);
     return true;
 }
 

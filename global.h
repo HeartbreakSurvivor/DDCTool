@@ -35,7 +35,6 @@
 /*the user head files*/
 #include "cvt_mainwindow.h"
 #include "cvt_PraseHdcp.h"
-#include "cvt_PraseEdid.h"
 #include "cvt_burnsetting.h"
 #include "cvt_global.h"
 #include "cvt_dataTransfer.h"

@@ -2,7 +2,6 @@
 #include "qthread.h"
 #include "cvt_burnsetting.h"
 #include "cvt_global.h"
-#include "cvt_burndata.h"
 #include "cvt_protocol.h"
 #include "cvt_isp_iic.h"
 #include "cvt_PraseEdid.h"
