@@ -59,6 +59,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::updateEdidTab(QString key)
 {
+    int row=0,column=0;
     ui->edidnameLineEdit->setText(key.toUpper());
     ui->edidsizeLineEdit->setText(QString::number(edid_map[key]->getLength()));
 
@@ -69,6 +70,18 @@ void MainWindow::updateEdidTab(QString key)
     ui->manufacturerYearLineEdit->setText(QString::number(edid_map[key]->getProductYear()));
     ui->edidVersionLineEdit->setText(edid_map[key]->getVersion());
     ui->customerSNlineEdit->setText(edid_map[key]->getProductSN());
+
+    for(int sz=0;sz<edid_map[key]->getLength();++sz)
+    {
+        QTableWidgetItem *newItem = new QTableWidgetItem(QString::number(edid_map[key]->data[sz],16).toUpper());
+        if(sz%16==0)
+        {
+            row++;
+            column=0;
+        }
+        ui->EdidtableWidget->setItem(row, column++, newItem);
+        qDebug()<<"row:"<<row<<"column:"<<column;
+    }
 }
 
 //slots
