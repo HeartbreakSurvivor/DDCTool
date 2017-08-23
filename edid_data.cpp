@@ -83,13 +83,14 @@ QString Edid_T::getProductSN(void)
     if(!snaddr) return 0;
     snaddr+=5;
 
-    qDebug()<<"SN addr "<<snaddr;
-    qDebug()<< *(data+snaddr+13);
+    //qDebug()<<"SN addr "<<snaddr;
+    //qDebug()<< *(data+snaddr+13);
 
     for((*(data+snaddr+13)==0x0A)?(i=12):(i=13);i>=0; --i)
     {
         char tmp = *(data+snaddr+i);
         m_productsn.insert(0,QChar(tmp));
+        //qDebug()<<"i: "<<i;
         /*//so so so so stupid .
         qDebug("tmp:%c,0x%x", tmp,tmp);
         if(tmp>=0x30 && tmp<=0x39)

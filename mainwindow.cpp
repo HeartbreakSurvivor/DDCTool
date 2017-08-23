@@ -57,6 +57,20 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::updateEdidTab(QString key)
+{
+    ui->edidnameLineEdit->setText(key.toUpper());
+    ui->edidsizeLineEdit->setText(QString::number(edid_map[key]->getLength()));
+
+    ui->manufacturerNameLineEdit->setText(edid_map[key]->getManufacturerName());
+    ui->manufacturerCodeLineEdit->setText(QString("%1").arg(edid_map[key]->getProductCode(), 4, 16, QLatin1Char('0')));
+    ui->manufacturerSNLineEdit->setText(QString("%1").arg(edid_map[key]->getManufacturerSN(), 8, 16, QLatin1Char('0')));
+    ui->manufacturerWeekLineEdit->setText(QString::number(edid_map[key]->getProductWeek()));
+    ui->manufacturerYearLineEdit->setText(QString::number(edid_map[key]->getProductYear()));
+    ui->edidVersionLineEdit->setText(edid_map[key]->getVersion());
+    ui->customerSNlineEdit->setText(edid_map[key]->getProductSN());
+}
+
 //slots
 void MainWindow::qTimeSlot(void)
 {
@@ -77,8 +91,15 @@ void MainWindow::loadEdid(void)
     fd->setViewMode(QFileDialog::List);
     if (fd->exec() == QDialog::Accepted)
     {
+        qDebug()<<"map's size :"<<edid_map.size();
         if(!edid_map.empty())
         {
+            qDebug()<<"clear the edid map";
+            for(map<QString,Edid_T*>::iterator it=edid_map.begin();it!=edid_map.end();++it)
+            {
+                qDebug()<<"destory the edid data:"<<it->first;
+                delete it->second;
+            }
             edid_map.clear();
         }
         fileNameList = fd->selectedFiles();
@@ -113,9 +134,8 @@ void MainWindow::loadEdid(void)
 
                 //create the edid map
                 edid_map[key] = new Edid_T(file_path);
-
-                qDebug() <<"key:"<< key;
-                qDebug() << qPrintable(QString("%1 %2").arg(fileInfo.size(), 10).arg(file_path));
+                //qDebug() <<"key:"<< key;
+                //qDebug() << qPrintable(QString("%1 %2").arg(fileInfo.size(), 10).arg(file_path));
             }
 
             //qDebug("EdidPorts num:%x", edidports);
@@ -140,9 +160,11 @@ void MainWindow::loadEdid(void)
 
             //redraw operations
             ui->edidpathLineEdit->setText(fileName);
+            updateEdidTab(key);
+
+            /*
             ui->edidnameLineEdit->setText(key.toUpper());
             ui->edidsizeLineEdit->setText(QString::number(edid_map[key]->getLength()));
-
             ui->manufacturerNameLineEdit->setText(edid_map[key]->getManufacturerName());
             ui->manufacturerCodeLineEdit->setText(QString("%1").arg(edid_map[key]->getProductCode(), 4, 16, QLatin1Char('0')));
             ui->manufacturerSNLineEdit->setText(QString("%1").arg(edid_map[key]->getManufacturerSN(), 8, 16, QLatin1Char('0')));
@@ -150,6 +172,7 @@ void MainWindow::loadEdid(void)
             ui->manufacturerYearLineEdit->setText(QString::number(edid_map[key]->getProductYear()));
             ui->edidVersionLineEdit->setText(edid_map[key]->getVersion());
             ui->customerSNlineEdit->setText(edid_map[key]->getProductSN());
+            */
         }
     }
     else

@@ -11,6 +11,7 @@ class Edid_T:public BurnData_T
 {
 public:
     Edid_T();
+    //call the parent's constructor function
     Edid_T(const QString &filepath):BurnData_T(filepath){
          qDebug()<<"Edid_T constructor";
     }
