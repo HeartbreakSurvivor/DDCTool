@@ -30,7 +30,7 @@
      <string/>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <property name="usesScrollButtons">
      <bool>false</bool>
@@ -765,12 +765,12 @@
        <enum>Qt::PlainText</enum>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit">
+     <widget class="QLineEdit" name="hdcppathLineEdit">
       <property name="geometry">
        <rect>
         <x>60</x>
         <y>10</y>
-        <width>221</width>
+        <width>241</width>
         <height>21</height>
        </rect>
       </property>
@@ -781,12 +781,12 @@
        <bool>true</bool>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QPushButton" name="loadhdcp_Btn">
       <property name="geometry">
        <rect>
-        <x>290</x>
+        <x>310</x>
         <y>10</y>
-        <width>41</width>
+        <width>61</width>
         <height>23</height>
        </rect>
       </property>
@@ -794,7 +794,7 @@
        <string>Load</string>
       </property>
      </widget>
-     <widget class="QTableWidget" name="tableWidget">
+     <widget class="QTableWidget" name="hdcptableWidget">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -803,12 +803,38 @@
         <height>451</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="rowCount">
-       <number>130</number>
+       <number>150</number>
       </property>
       <attribute name="horizontalHeaderDefaultSectionSize">
        <number>32</number>
       </attribute>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
       <row/>
       <row/>
       <row/>
@@ -1023,9 +1049,9 @@
      <widget class="QLabel" name="label_3">
       <property name="geometry">
        <rect>
-        <x>340</x>
+        <x>380</x>
         <y>10</y>
-        <width>71</width>
+        <width>61</width>
         <height>21</height>
        </rect>
       </property>
@@ -1039,12 +1065,12 @@
        <enum>Qt::PlainText</enum>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit_3">
+     <widget class="QLineEdit" name="hdcpsizelineEdit">
       <property name="geometry">
        <rect>
-        <x>410</x>
+        <x>440</x>
         <y>10</y>
-        <width>71</width>
+        <width>51</width>
         <height>21</height>
        </rect>
       </property>
@@ -1052,7 +1078,7 @@
        <bool>true</bool>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_5">
+     <widget class="QPushButton" name="writehdcp_Btn">
       <property name="geometry">
        <rect>
         <x>495</x>
@@ -1065,11 +1091,11 @@
        <string>Write</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBox">
+     <widget class="QCheckBox" name="writekeyidcheckBox">
       <property name="geometry">
        <rect>
         <x>590</x>
-        <y>50</y>
+        <y>120</y>
         <width>101</width>
         <height>16</height>
        </rect>
@@ -1086,11 +1112,11 @@
        <string>Wirte KeyID</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBox_2">
+     <widget class="QCheckBox" name="appendCrccheckBox">
       <property name="geometry">
        <rect>
         <x>590</x>
-        <y>80</y>
+        <y>150</y>
         <width>111</width>
         <height>16</height>
        </rect>
@@ -1108,7 +1134,7 @@
        <string>Append Crc</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_11">
+     <widget class="QPushButton" name="stopwritehdcp_Btn">
       <property name="geometry">
        <rect>
         <x>590</x>
@@ -1119,6 +1145,52 @@
       </property>
       <property name="text">
        <string>Stop</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="chiptypecomboBox">
+      <property name="geometry">
+       <rect>
+        <x>590</x>
+        <y>80</y>
+        <width>91</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arvo</family>
+       </font>
+      </property>
+      <item>
+       <property name="text">
+        <string>Mstar</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>RelTek</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QLabel" name="label_14">
+      <property name="geometry">
+       <rect>
+        <x>590</x>
+        <y>50</y>
+        <width>91</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Chip Type:</string>
       </property>
      </widget>
     </widget>

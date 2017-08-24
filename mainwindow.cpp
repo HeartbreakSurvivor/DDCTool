@@ -39,13 +39,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->edidSync_Btn, SIGNAL(clicked()), this, SLOT(syncEdid()));//when change the edid data and sync to ram
     connect(ui->edidSave_Btn, SIGNAL(clicked()), this, SLOT(saveEdid()));//save the edid as a new edid data
     connect(ui->edidWrite_Btn, SIGNAL(clicked()), this, SLOT(writeEdid()));//write the edid to board
-    connect(ui->edidStop_Btn, SIGNAL(clicked()), this, SLOT(stopEdid()));//stop the edid write operation
+    connect(ui->edidStop_Btn, SIGNAL(clicked()), this, SLOT(stopWriteEdid()));//stop the edid writing operation
 
     //HDCP Tab
-
-
-
-
+    connect(ui->loadhdcp_Btn, SIGNAL(clicked()), this, SLOT(loadHdcp()));//load the hdcp to ram.
+    connect(ui->writehdcp_Btn, SIGNAL(clicked()), this, SLOT(writeHdcp()));//write the hdcp to board
+    connect(ui->stopwritehdcp_Btn, SIGNAL(clicked()), this, SLOT(stopWriteHdcp()));//stop the hdcp writing operation
 
     ui->statusBar->addWidget(DDC_BurnStatusText);
     ui->statusBar->addWidget(DDC_ProgressBar);
@@ -100,6 +99,31 @@ void MainWindow::updateEdidTab(QString key)
         qDebug()<<"uncheck";
         //ui->EdidtableWidget->item(8,0)->setCheckState(Qt::Unchecked);
     }
+}
+
+void MainWindow::updateHdcpTab()
+{
+    int row=-1,column=0;
+
+    ui->writekeyidcheckBox->setChecked(false);
+    ui->appendCrccheckBox->setChecked(false);
+
+    ui->hdcpsizelineEdit->setText(QString::number(hdcpdata->getLength(),10));
+
+    ui->hdcptableWidget->clear();
+    for(int sz=0;sz<hdcpdata->getLength();++sz)
+    {
+        QString str = QString("%1").arg((hdcpdata->data[sz])&0xFF,2,16,QLatin1Char('0'));
+        QTableWidgetItem *newItem = new QTableWidgetItem(str.toUpper());
+        if(sz%16==0)
+        {
+            row++;
+            column=0;
+        }
+        ui->hdcptableWidget->setItem(row, column++, newItem);
+        //qDebug()<<"row:"<<row<<"column:"<<column;
+    }
+
 }
 
 //slots
@@ -207,9 +231,51 @@ void MainWindow::writeEdid(void)
     cout<<"write Edid"<<endl;
 }
 
-void MainWindow::stopEdid(void)
+void MainWindow::stopWriteEdid(void)
 {
     cout<<"stop the writing of edid"<<endl;
 }
 
+//Hdcp Tab Slots
+void MainWindow::loadHdcp()
+{
+    QStringList  fileNameList;
+    QString fileName;
+
+    QFileDialog* fd = new QFileDialog(this,tr("Select the HDCPKey"));
+    QString filters = "Binfile(*.bin)";
+    fd->setNameFilter(filters);
+    fd->setViewMode(QFileDialog::List);
+    fd->setDirectory(".");
+    if (fd->exec() == QDialog::Accepted)
+    {
+        fileNameList = fd->selectedFiles();
+        fileName = fileNameList[0];
+        if (fileName != NULL)
+        {
+            ui->hdcppathLineEdit->setText(fileName);
+
+            if (hdcpdata != NULL)
+            {
+                delete hdcpdata;
+                qDebug("delete the last hdcpkey");
+            }
+            hdcpdata = new Hdcp_T(fileName);
+            qDebug("Length:%d", hdcpdata->getLength());
+            updateHdcpTab();
+        }
+    }
+    else
+        fd->close();
+}
+
+void MainWindow::writeHdcp()
+{
+
+}
+
+void MainWindow::stopWriteHdcp()
+{
+
+}
 

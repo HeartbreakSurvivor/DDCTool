@@ -11,6 +11,7 @@
 
 #include "cvt_global.h"
 #include "edid_data.h"
+#include "hdcp_data.h"
 
 namespace Ui {
 class MainWindow;
@@ -26,6 +27,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void updateEdidTab(QString key);
+    void updateHdcpTab();
 
 public slots:
     void qTimeSlot(void);
@@ -37,7 +39,12 @@ private slots:
     void syncEdid();
     void saveEdid();
     void writeEdid();
-    void stopEdid();
+    void stopWriteEdid();
+
+    //HDCP Tab
+    void loadHdcp();
+    void writeHdcp();
+    void stopWriteHdcp();
 
 
 private:
@@ -47,9 +54,12 @@ private:
     QLabel *DDC_TimeLabel;
     QTimer *timer;
 
-    //ADT
+    //Edid
     QString Cur_Key;
     std::map<QString,Edid_T*> edid_map;
+
+    //Hdcp
+    Hdcp_T *hdcpdata=nullptr;
 
     //the automatically generated ui file
     Ui::MainWindow *ui;

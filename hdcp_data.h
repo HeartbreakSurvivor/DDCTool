@@ -11,6 +11,11 @@ class Hdcp_T:public BurnData_T
 {
 public:
     Hdcp_T() {}
+    //call the parent constr
+    Hdcp_T(const QString &filepath):BurnData_T(filepath){
+         qDebug()<<"Hdcp_T constructor";
+    }
+
     ~Hdcp_T() {}
 
     //const quint16 keyidoffset;//can't be initialized must use the constructor initializer list
