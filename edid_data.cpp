@@ -32,6 +32,7 @@ Edid_T& Edid_T::operator=(Edid_T& edid_t)
 QString Edid_T::getManufacturerName(void)
 {
     quint16 Tmpname = data[8] << 8 | data[9];//*(unsigned short *)&(data[8]);//little endian and this way is wrong.
+    m_manufacturername.clear();
     for (int i = 0; i < 3; ++i)
     {
         quint16 pletter = (Tmpname >> (i * 5) )& 0x1f;
@@ -48,6 +49,7 @@ QString Edid_T::getManufacturerName(void)
 QString Edid_T::getVersion(void)
 {
     quint8 version=data[18],rversion=data[19];
+    m_version.clear();
     m_version.insert(0,QString::number(rversion,10));
     m_version.insert(0,'.');
     m_version.insert(0,QString::number(version,10));
@@ -85,7 +87,7 @@ QString Edid_T::getProductSN(void)
 
     //qDebug()<<"SN addr "<<snaddr;
     //qDebug()<< *(data+snaddr+13);
-
+    m_productsn.clear();
     for((*(data+snaddr+13)==0x0A)?(i=12):(i=13);i>=0; --i)
     {
         char tmp = *(data+snaddr+i);

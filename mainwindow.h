@@ -48,6 +48,7 @@ private:
     QTimer *timer;
 
     //ADT
+    QString Cur_Key;
     std::map<QString,Edid_T*> edid_map;
 
     //the automatically generated ui file

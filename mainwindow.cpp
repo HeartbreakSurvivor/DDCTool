@@ -59,7 +59,18 @@ MainWindow::~MainWindow()
 
 void MainWindow::updateEdidTab(QString key)
 {
-    int row=0,column=0;
+    int row=-1,column=0;
+
+    ui->edidnameLineEdit->clear();
+    ui->edidsizeLineEdit->clear();
+    ui->manufacturerNameLineEdit->clear();
+    ui->manufacturerCodeLineEdit->clear();
+    ui->manufacturerSNLineEdit->clear();
+    ui->manufacturerWeekLineEdit->clear();
+    ui->manufacturerYearLineEdit->clear();
+    ui->edidVersionLineEdit->clear();
+    ui->customerSNlineEdit->clear();
+
     ui->edidnameLineEdit->setText(key.toUpper());
     ui->edidsizeLineEdit->setText(QString::number(edid_map[key]->getLength()));
 
@@ -71,16 +82,23 @@ void MainWindow::updateEdidTab(QString key)
     ui->edidVersionLineEdit->setText(edid_map[key]->getVersion());
     ui->customerSNlineEdit->setText(edid_map[key]->getProductSN());
 
+    ui->EdidtableWidget->clear();
     for(int sz=0;sz<edid_map[key]->getLength();++sz)
     {
-        QTableWidgetItem *newItem = new QTableWidgetItem(QString::number(edid_map[key]->data[sz],16).toUpper());
+        QString str = QString("%1").arg((edid_map[key]->data[sz])&0xFF,2,16,QLatin1Char('0'));
+        QTableWidgetItem *newItem = new QTableWidgetItem(str.toUpper());
         if(sz%16==0)
         {
             row++;
             column=0;
         }
         ui->EdidtableWidget->setItem(row, column++, newItem);
-        qDebug()<<"row:"<<row<<"column:"<<column;
+        //qDebug()<<"row:"<<row<<"column:"<<column;
+    }
+    if (edid_map[key]->getLength() == 128)
+    {
+        qDebug()<<"uncheck";
+        //ui->EdidtableWidget->item(8,0)->setCheckState(Qt::Unchecked);
     }
 }
 
@@ -150,42 +168,9 @@ void MainWindow::loadEdid(void)
                 //qDebug() <<"key:"<< key;
                 //qDebug() << qPrintable(QString("%1 %2").arg(fileInfo.size(), 10).arg(file_path));
             }
-
-            //qDebug("EdidPorts num:%x", edidports);
-            /*
-            qDebug("Edidlist size:%d",cvt_edid[tmp_type_Idx].getLength());
-            for (int j = 0; j < 2; ++j)
-            {
-                unsigned char buf[128];
-                cvt_edid[tmp_type_Idx].getdata(j, 128, buf, 128);
-                for (int k = 0; k < 128; ++k)
-                {
-                    qDebug("copy edid data:%x",buf[k]);
-                }
-            }
-
-            QString tr;
-            tr = QString("%1").arg(cvt_edid[tmp_type_Idx].getProductCode(), 4, 16, QLatin1Char('0'));
-            EdidManufacturerName->setText(cvt_edid[tmp_type_Idx].getManufacturerName());
-            EdidProductCode->setText(tr);
-            EdidYear->setText(QString::number(cvt_edid[tmp_type_Idx].getProductYear(), 10));
-            EdidWeek->setText(QString::number(cvt_edid[tmp_type_Idx].getProductWeek(), 10));*/
-
-            //redraw operations
             ui->edidpathLineEdit->setText(fileName);
-            updateEdidTab(key);
-
-            /*
-            ui->edidnameLineEdit->setText(key.toUpper());
-            ui->edidsizeLineEdit->setText(QString::number(edid_map[key]->getLength()));
-            ui->manufacturerNameLineEdit->setText(edid_map[key]->getManufacturerName());
-            ui->manufacturerCodeLineEdit->setText(QString("%1").arg(edid_map[key]->getProductCode(), 4, 16, QLatin1Char('0')));
-            ui->manufacturerSNLineEdit->setText(QString("%1").arg(edid_map[key]->getManufacturerSN(), 8, 16, QLatin1Char('0')));
-            ui->manufacturerWeekLineEdit->setText(QString::number(edid_map[key]->getProductWeek()));
-            ui->manufacturerYearLineEdit->setText(QString::number(edid_map[key]->getProductYear()));
-            ui->edidVersionLineEdit->setText(edid_map[key]->getVersion());
-            ui->customerSNlineEdit->setText(edid_map[key]->getProductSN());
-            */
+            Cur_Key = key;
+            updateEdidTab(Cur_Key);
         }
     }
     else
@@ -195,6 +180,17 @@ void MainWindow::loadEdid(void)
 void MainWindow::nextEdid(void)
 {
     cout<<"next edid bin file"<<endl;
+    if (edid_map.empty()) return;
+    map<QString,Edid_T*>::iterator it=edid_map.find(Cur_Key);
+    qDebug() <<"Cur_key:"<< it->first;
+    it++;
+    if (it == edid_map.end())
+    {
+        it = edid_map.begin();
+        qDebug()<<"turn to the begin";
+    }
+    Cur_Key = it->first;
+    updateEdidTab(Cur_Key);
 }
 
 void MainWindow::syncEdid(void)
