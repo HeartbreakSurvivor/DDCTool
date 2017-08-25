@@ -4,19 +4,19 @@
 #include <QWidget>
 
 namespace Ui {
-class CommunicationSetting;
+class CommunicationOption;
 }
 
-class CommunicationSetting : public QWidget
+class CommunicationOption : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit CommunicationSetting(QWidget *parent = 0);
-    ~CommunicationSetting();
+    explicit CommunicationOption(QWidget *parent = 0);
+    ~CommunicationOption();
 
 private:
-    Ui::CommunicationSetting *ui;
+    Ui::CommunicationOption *ui;
 };
 
 #endif // COMMUNICATIONSETTING_H

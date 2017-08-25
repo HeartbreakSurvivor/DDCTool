@@ -25,28 +25,28 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
     mainwindow.cpp \
-    i2c_settingwindow.cpp \
     communicationsetting.cpp \
     helpwindow.cpp \
     instructionwindow.cpp \
     burn_data.cpp \
     edid_data.cpp \
     hdcp_data.cpp \
-    isp_iic.cpp
+    isp_iic.cpp \
+    burnsetting.cpp
 
 HEADERS  += \
     cvt_global.h \
     lib/FTCI2C.h \
     lib/ftd2xx.h \
     mainwindow.h \
-    i2c_settingwindow.h \
     communicationsetting.h \
     helpwindow.h \
     instructionwindow.h \
     burn_data.h \
     edid_data.h \
     hdcp_data.h \
-    isp_iic.h
+    isp_iic.h \
+    burnsetting.h
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/lib/ -lFTCI2C
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/lib/ -lFTCI2C
@@ -64,7 +64,6 @@ RESOURCES += \
 
 FORMS += \
     mainwindow.ui \
-    i2c_settingwindow.ui \
     communicationsetting.ui \
     helpwindow.ui \
     instructionwindow.ui

@@ -34,9 +34,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //initialize signals and slots
     //I2C
+    connect(ui->actionCommunication, SIGNAL(triggered()), this, SLOT(displayi2coptions()));
+    connect(ui->actionHelp, SIGNAL(triggered()), this, SLOT(displayhelpmenu()));
+    connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(displayaboutmenu()));
+
     connect(ui->actionConnect, SIGNAL(triggered()), this, SLOT(connectI2c()));//connect the isp i2c device
     connect(ui->actionDisconnect, SIGNAL(triggered()), this, SLOT(disconnetI2c()));//disconnect the isp i2c device
     connect(ui->actionLog, SIGNAL(triggered()), this, SLOT(opendebugmsg()));//open the debug msg dialog
+
+
 
     //EDID Tab
     connect(ui->loadedid_Btn, SIGNAL(clicked()), this, SLOT(loadEdid()));//load the edid to ram.
@@ -109,12 +115,9 @@ void MainWindow::updateEdidTab(QString key)
 void MainWindow::updateHdcpTab()
 {
     int row=-1,column=0;
-
     ui->writekeyidcheckBox->setChecked(false);
     ui->appendCrccheckBox->setChecked(false);
-
     ui->hdcpsizelineEdit->setText(QString::number(hdcpdata->getLength(),10));
-
     ui->hdcptableWidget->clear();
     for(int sz=0;sz<hdcpdata->getLength();++sz)
     {
@@ -128,10 +131,14 @@ void MainWindow::updateHdcpTab()
         ui->hdcptableWidget->setItem(row, column++, newItem);
         //qDebug()<<"row:"<<row<<"column:"<<column;
     }
-
 }
 
 //slots
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    qDebug("close the window!");
+}
+
 void MainWindow::qTimeSlot(void)
 {
     QDateTime DDC_CurTime = QDateTime::currentDateTime();
@@ -140,16 +147,28 @@ void MainWindow::qTimeSlot(void)
     DDC_TimeLabel->setText(str);
 }
 
+//I2C Options
+void MainWindow::displayaboutmenu(void)
+{
+
+}
+
+void MainWindow::displayhelpmenu(void)
+{
+
+}
+
+void MainWindow::displayi2coptions(void)
+{
+
+}
+
 //Isp Slots
 void MainWindow::connectI2c(void)
 {
-    if (i2cdevice.gethandle()!=NULL)
-    {
-        QMessageBox::warning(this, tr("Tips"), tr("The device has been opened!"), QMessageBox::Ok, QMessageBox::Ok);
-        return;
-    }
     if (i2cdevice.openDevice(i2cdevice.gethandle(),5000) == FTC_SUCCESS)
     {
+        ui->actionConnect->setDisabled(true);
         qDebug("Open device successfully!!!");
     }
     else
@@ -166,6 +185,7 @@ void MainWindow::disconnetI2c(void)
         QMessageBox::warning(this, tr("Tips"), tr("pleas open device first!!"), QMessageBox::Ok, QMessageBox::Ok);
         return;
     }
+    ui->actionConnect->setDisabled(false);
     i2cdevice.closeDevice(i2cdevice.gethandle());
     qDebug("Close device successfully!!!");
 }

@@ -16,6 +16,7 @@
 #include "edid_data.h"
 #include "hdcp_data.h"
 #include "isp_iic.h"
+#include "burnsetting.h"
 
 namespace Ui {
 class MainWindow;
@@ -34,9 +35,15 @@ public:
     void updateHdcpTab();
 
 public slots:
+    void closeEvent(QCloseEvent *event);
     void qTimeSlot(void);
 
 private slots:
+    //Common Options
+    void displayi2coptions(void);
+    void displayhelpmenu(void);
+    void displayaboutmenu(void);
+
     //ISP
     void connectI2c();
     void disconnetI2c();
@@ -55,7 +62,6 @@ private slots:
     void writeHdcp();
     void stopWriteHdcp();
 
-
 private:
     QProgressBar *DDC_ProgressBar;//indicate the burn progress.
     QLabel *DDC_BurnStatus;//indicate the result of burning.
@@ -64,6 +70,7 @@ private:
     QTimer *timer;
     //I2C
     Isp_I2C i2cdevice;
+    BurnSetting_T burnsetting;
 
     //Edid
     QString Cur_Key;

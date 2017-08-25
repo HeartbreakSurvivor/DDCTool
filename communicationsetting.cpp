@@ -1,14 +1,14 @@
 #include "communicationsetting.h"
 #include "ui_communicationsetting.h"
 
-CommunicationSetting::CommunicationSetting(QWidget *parent) :
+CommunicationOption::CommunicationOption(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::CommunicationSetting)
+    ui(new Ui::CommunicationOption)
 {
     ui->setupUi(this);
 }
 
-CommunicationSetting::~CommunicationSetting()
+CommunicationOption::~CommunicationOption()
 {
     delete ui;
 }

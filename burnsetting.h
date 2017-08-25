@@ -1,13 +1,13 @@
 #pragma once
 
-class Cvt_BurnSetting
+struct BurnSetting_T
 {
 public:
-	Cvt_BurnSetting();
-	Cvt_BurnSetting(int speed, int writedelay, int readdelay, int retrycnt, int spretrycnt,
+    BurnSetting_T();
+    BurnSetting_T(int speed, int writedelay, int readdelay, int retrycnt, int spretrycnt,
 		int edidlastdelay, int hdcplastdelay, int erasehdcpdelay,bool iscreatlog);
 
-	~Cvt_BurnSetting();
+    ~BurnSetting_T();
 	void setI2cSpeed(int speed);
 	void setwriteDelay(int delay);
 	void setreadDelay (int delay);
@@ -31,15 +31,15 @@ public:
 	unsigned char getSlaveaddr(void);
 
 private:
-	unsigned char Burn_SlaveAddr=0x6E;
-	bool Burn_isCreatlogs;
-	int Burn_I2cSpeed;
-	int Burn_writeDelay;//ms
-	int Burn_readDelay;//ms
-	int Burn_RetryCnt;
-	int Burn_PerPackRetryCnt;
-	int Burn_EdidlastDelay;//ms
-	int Burn_HdcplastDelay;//ms
-	int Burn_eraseHdcpkeyDelay;
+    unsigned char m_slaveaddr=0x6E;
+    bool m_iscreatelogs;
+    int m_i2cspeed;
+    int m_writedelay;//ms
+    int m_readdelay;//ms
+    int m_retrycnt;
+    int m_perpackretrycnt;
+    int m_edidlastdelay;//ms
+    int m_hdcplastdelay;//ms
+    int m_erasehdcpkeydelay;
 };
 

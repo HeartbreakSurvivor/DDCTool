@@ -1568,13 +1568,6 @@
      <height>23</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuDDC_Tool">
-    <property name="title">
-     <string>Options</string>
-    </property>
-    <addaction name="actionIIC_Settings"/>
-    <addaction name="actionCommunication"/>
-   </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>Help</string>
@@ -1582,6 +1575,12 @@
     <addaction name="actionHelp"/>
     <addaction name="separator"/>
     <addaction name="actionAbout"/>
+   </widget>
+   <widget class="QMenu" name="menuDDC_Tool">
+    <property name="title">
+     <string>Options</string>
+    </property>
+    <addaction name="actionCommunication"/>
    </widget>
    <addaction name="menuDDC_Tool"/>
    <addaction name="menuHelp"/>
@@ -1644,11 +1643,6 @@
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
-   </property>
-  </action>
-  <action name="actionIIC_Settings">
-   <property name="text">
-    <string>IIC Settings</string>
    </property>
   </action>
   <action name="actionCommunication">
