@@ -33,6 +33,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     //initialize signals and slots
+    //I2C
+    connect(ui->actionConnect, SIGNAL(triggered()), this, SLOT(connectI2c()));//connect the isp i2c device
+    connect(ui->actionDisconnect, SIGNAL(triggered()), this, SLOT(disconnetI2c()));//disconnect the isp i2c device
+    connect(ui->actionLog, SIGNAL(triggered()), this, SLOT(opendebugmsg()));//open the debug msg dialog
+
     //EDID Tab
     connect(ui->loadedid_Btn, SIGNAL(clicked()), this, SLOT(loadEdid()));//load the edid to ram.
     connect(ui->nextedid_Btn, SIGNAL(clicked()), this, SLOT(nextEdid()));//dispaly the next edid which load to ram before.
@@ -133,6 +138,42 @@ void MainWindow::qTimeSlot(void)
     QString str = DDC_CurTime.toString("yyyy-MM-dd hh:mm:ss");
 
     DDC_TimeLabel->setText(str);
+}
+
+//Isp Slots
+void MainWindow::connectI2c(void)
+{
+    if (i2cdevice.gethandle()!=NULL)
+    {
+        QMessageBox::warning(this, tr("Tips"), tr("The device has been opened!"), QMessageBox::Ok, QMessageBox::Ok);
+        return;
+    }
+    if (i2cdevice.openDevice(i2cdevice.gethandle(),5000) == FTC_SUCCESS)
+    {
+        qDebug("Open device successfully!!!");
+    }
+    else
+    {
+        QMessageBox::warning(this, tr("Tips"), tr("Open Device Failed."), QMessageBox::Ok, QMessageBox::Ok);
+        return;
+    }
+}
+
+void MainWindow::disconnetI2c(void)
+{
+    if (NULL==i2cdevice.gethandle())
+    {
+        QMessageBox::warning(this, tr("Tips"), tr("pleas open device first!!"), QMessageBox::Ok, QMessageBox::Ok);
+        return;
+    }
+    i2cdevice.closeDevice(i2cdevice.gethandle());
+    qDebug("Close device successfully!!!");
+}
+
+void MainWindow::opendebugmsg(void)
+{
+    QString logpath = QDir::currentPath();
+    QDesktopServices::openUrl(QUrl(logpath,QUrl::TolerantMode));
 }
 
 //EDID Tab Slots

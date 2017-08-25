@@ -61,7 +61,7 @@ private:
 
     Cvt_flowControlPar cvt_flowcontrol;
     Cvt_BurnSetting cvt_burnsetting;
-    Cvt_Isp_I2C cvt_I2cdevice;
+    Isp_I2C cvt_I2cdevice;
 
     Cvt_DataThread *HdcpkeydataThread=NULL;//data transfer thread.
     Cvt_DataManage *EdiddataThread=NULL;

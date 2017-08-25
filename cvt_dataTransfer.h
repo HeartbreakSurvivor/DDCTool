@@ -13,7 +13,7 @@ public:
 	Cvt_DataThread();
 	bool TransferWholePackage(Cvt_protocol* protocol, quint32 nTimes, quint8 remainder, quint8 Rlength, quint8 length);
 	bool ReadWholePackage(Cvt_protocol* protocol,quint32 nTimes, quint8 remainder, quint8 Rlength, quint8 length);
-    Cvt_DataThread(Cvt_flowControlPar *flow_control, Cvt_BurnSetting* burnsettings, ddc::BurnData_T* burndata, Cvt_Isp_I2C* I2c)
+    Cvt_DataThread(Cvt_flowControlPar *flow_control, Cvt_BurnSetting* burnsettings, ddc::BurnData_T* burndata, Isp_I2C* I2c)
 	{
 		_flowcontrol = flow_control;
 		_burn_Setting = burnsettings;
@@ -21,7 +21,7 @@ public:
 		_I2cDevice = I2c;
 	}
 
-	Cvt_DataThread(Cvt_flowControlPar *flow_control, Cvt_BurnSetting* burnsettings, Cvt_Isp_I2C* I2c)
+    Cvt_DataThread(Cvt_flowControlPar *flow_control, Cvt_BurnSetting* burnsettings, Isp_I2C* I2c)
 	{
 		_flowcontrol = flow_control;
 		_burn_Setting = burnsettings;
@@ -38,7 +38,7 @@ public:
 	Cvt_flowControlPar *_flowcontrol;
 	Cvt_BurnSetting *_burn_Setting;
     ddc::BurnData_T *_burn_data;
-	Cvt_Isp_I2C *_I2cDevice;
+    Isp_I2C *_I2cDevice;
 };
 
 
@@ -47,7 +47,7 @@ class Cvt_DataManage:public Cvt_DataThread
 	Q_OBJECT
 public:
 	Cvt_DataManage();
-    Cvt_DataManage(unsigned char _edidports,Cvt_BurnSetting* ediddata,  Cvt_flowControlPar *flow_control, Cvt_BurnSetting* burnsettings, Cvt_Isp_I2C* I2c);
+    Cvt_DataManage(unsigned char _edidports,Cvt_BurnSetting* ediddata,  Cvt_flowControlPar *flow_control, Cvt_BurnSetting* burnsettings, Isp_I2C* I2c);
 	~Cvt_DataManage();
 	int num_;
 	void run();

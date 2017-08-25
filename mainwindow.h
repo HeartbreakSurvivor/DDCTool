@@ -7,11 +7,15 @@
 #include <QtWidgets/Qlabel>
 #include <QTimer>
 #include <QFileDialog>
+#include <QMessageBox>
 #include <QDebug>
+#include <QDesktopServices>
+#include <QUrl>
 
 #include "cvt_global.h"
 #include "edid_data.h"
 #include "hdcp_data.h"
+#include "isp_iic.h"
 
 namespace Ui {
 class MainWindow;
@@ -33,6 +37,11 @@ public slots:
     void qTimeSlot(void);
 
 private slots:
+    //ISP
+    void connectI2c();
+    void disconnetI2c();
+    void opendebugmsg();
+
     //EDID Tab
     void loadEdid();
     void nextEdid();
@@ -53,6 +62,8 @@ private:
     QDateTime DDC_CurTime;//indicate the current system time.
     QLabel *DDC_TimeLabel;
     QTimer *timer;
+    //I2C
+    Isp_I2C i2cdevice;
 
     //Edid
     QString Cur_Key;

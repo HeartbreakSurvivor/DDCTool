@@ -1,13 +1,12 @@
 #pragma once
-#include <Windows.h>
+#include "cvt_global.h"
 #include "lib/FTCI2C.h"
-#include "qdebug.h"
 
-class Cvt_Isp_I2C
+class Isp_I2C
 {
 public:
-	Cvt_Isp_I2C();
-	~Cvt_Isp_I2C();
+    Isp_I2C();
+    ~Isp_I2C();
 
 	FTC_HANDLE& gethandle(void);
 	FTC_STATUS openDevice(FTC_HANDLE &ftHandle, DWORD dwSpeedHz);
@@ -17,6 +16,6 @@ public:
 	FTC_STATUS write(FTC_HANDLE ftHandle, quint8 SlaveAddr, quint8* pWriteBuffer, quint32 ByteCount);
 private:
 	FTC_STATUS findDevice(void);
-	FTC_HANDLE fthandle;//the device handle
+    FTC_HANDLE fthandle=NULL;//the device handle
 	DWORD dwDeviceNameIndex;//indicate the current deviceNameIdx
 };

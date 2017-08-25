@@ -208,7 +208,7 @@ Cvt_DataManage::~Cvt_DataManage()
 {
 }
 
-Cvt_DataManage::Cvt_DataManage(unsigned char _edidports, Cvt_EDID* ediddata, Cvt_flowControlPar *flow_control, Cvt_BurnSetting* burnsettings, Cvt_Isp_I2C* I2c) :Cvt_DataThread(flow_control, burnsettings,I2c)
+Cvt_DataManage::Cvt_DataManage(unsigned char _edidports, Cvt_EDID* ediddata, Cvt_flowControlPar *flow_control, Cvt_BurnSetting* burnsettings, Isp_I2C* I2c) :Cvt_DataThread(flow_control, burnsettings,I2c)
 {
 	ediddatas = ediddata;
 	EdidPorts = _edidports;

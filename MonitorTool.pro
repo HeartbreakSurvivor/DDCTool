@@ -31,7 +31,8 @@ SOURCES += main.cpp\
     instructionwindow.cpp \
     burn_data.cpp \
     edid_data.cpp \
-    hdcp_data.cpp
+    hdcp_data.cpp \
+    isp_iic.cpp
 
 HEADERS  += \
     cvt_global.h \
@@ -44,7 +45,8 @@ HEADERS  += \
     instructionwindow.h \
     burn_data.h \
     edid_data.h \
-    hdcp_data.h
+    hdcp_data.h \
+    isp_iic.h
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/lib/ -lFTCI2C
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/lib/ -lFTCI2C

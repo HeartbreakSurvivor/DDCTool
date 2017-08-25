@@ -1,6 +1,6 @@
-#include "cvt_isp_iic.h"
+#include "isp_iic.h"
 
-FTC_STATUS Cvt_Isp_I2C::findDevice(void)
+FTC_STATUS Isp_I2C::findDevice(void)
 {
 	FTC_STATUS status;
 	FTC_DEVICE_INFO stFtcDevInfo;
@@ -21,13 +21,13 @@ FTC_STATUS Cvt_Isp_I2C::findDevice(void)
 	for (unsigned int i = 0; i < dwNumDevices; i++)
 	{
 		status = I2C_GetDeviceInfo(i, &stFtcDevInfo);
-		qDebug("设备ID: %d, 设备名: %s, 设备类型: 0x%X, LocID: 0x%X, Vendor ID: 0x%04X, Product ID: 0x%04X, 序列号: %s\n",
+        qDebug("Device ID: %d, Device Name: %s, Device Type: 0x%X, LocID: 0x%X, Vendor ID: 0x%04X, Product ID: 0x%04X, SN: %s\n",
 			i, stFtcDevInfo.szDeviceName, stFtcDevInfo.dwDeviceType, stFtcDevInfo.dwLocationID, stFtcDevInfo.dwProductVendorID >> 16, stFtcDevInfo.dwProductVendorID & 0xFFFF, stFtcDevInfo.szSerialNumber);
 		if (status == FTC_SUCCESS)
 		{
 			dwDeviceNameIndex = i;
-            qDebug("查找设备成功，设备ID: %d, 设备名: %s, 设备类型: 0x%X, LocID: 0x%X, Vendor ID: 0x%04X, Product ID: 0x%04X, 序列号: %s\n",
-				i, stFtcDevInfo.szDeviceName, stFtcDevInfo.dwDeviceType, stFtcDevInfo.dwLocationID, stFtcDevInfo.dwProductVendorID >> 16, stFtcDevInfo.dwProductVendorID & 0xFFFF, stFtcDevInfo.szSerialNumber);
+            qDebug("Find device successfully，Device ID: %d, Device Name: %s, Device Type: 0x%X, LocID: 0x%X, Vendor ID: 0x%04X, Product ID: 0x%04X, SN: %s\n",
+                i, stFtcDevInfo.szDeviceName, stFtcDevInfo.dwDeviceType, stFtcDevInfo.dwLocationID, stFtcDevInfo.dwProductVendorID >> 16, stFtcDevInfo.dwProductVendorID & 0xFFFF, stFtcDevInfo.szSerialNumber);
 			break;
 		}
 		else
@@ -39,7 +39,7 @@ FTC_STATUS Cvt_Isp_I2C::findDevice(void)
 	return status;
 }
 
-FTC_STATUS Cvt_Isp_I2C::openDevice(FTC_HANDLE &ftHandle, DWORD dwSpeedHz)
+FTC_STATUS Isp_I2C::openDevice(FTC_HANDLE &ftHandle, DWORD dwSpeedHz)
 {
 	FTC_STATUS status;
 	if (findDevice() == FTC_SUCCESS)
@@ -65,13 +65,13 @@ FTC_STATUS Cvt_Isp_I2C::openDevice(FTC_HANDLE &ftHandle, DWORD dwSpeedHz)
 	return status;
 }
 
-void Cvt_Isp_I2C::closeDevice(FTC_HANDLE &ftHandle)
+void Isp_I2C::closeDevice(FTC_HANDLE &ftHandle)
 {
 	I2C_Close(ftHandle);
 	ftHandle = NULL;
 }
 
-FTC_STATUS Cvt_Isp_I2C::setI2Speed(FTC_HANDLE ftHandle, DWORD dwSpeedHz)//unit: Hz
+FTC_STATUS Isp_I2C::setI2Speed(FTC_HANDLE ftHandle, DWORD dwSpeedHz)//unit: Hz
 {
 	FTC_STATUS status;
 	DWORD dwClockFrequencyHz;
@@ -93,7 +93,7 @@ FTC_STATUS Cvt_Isp_I2C::setI2Speed(FTC_HANDLE ftHandle, DWORD dwSpeedHz)//unit: 
 	return status;
 }
 
-FTC_STATUS Cvt_Isp_I2C::read(FTC_HANDLE ftHandle, quint8 SlaveAddr, quint8 *pReadBuffer, quint32 ByteCount)
+FTC_STATUS Isp_I2C::read(FTC_HANDLE ftHandle, quint8 SlaveAddr, quint8 *pReadBuffer, quint32 ByteCount)
 {
 	FTC_STATUS status;
 	SlaveAddr |= 0x01;
@@ -101,7 +101,7 @@ FTC_STATUS Cvt_Isp_I2C::read(FTC_HANDLE ftHandle, quint8 SlaveAddr, quint8 *pRea
 	return status;
 }
 
-FTC_STATUS Cvt_Isp_I2C::write(FTC_HANDLE ftHandle, quint8 SlaveAddr, quint8* pWriteBuffer, quint32 ByteCount)
+FTC_STATUS Isp_I2C::write(FTC_HANDLE ftHandle, quint8 SlaveAddr, quint8* pWriteBuffer, quint32 ByteCount)
 {
 	FTC_STATUS status;
 	//for (unsigned int i = 0; i < 5; i++)
@@ -117,17 +117,17 @@ FTC_STATUS Cvt_Isp_I2C::write(FTC_HANDLE ftHandle, quint8 SlaveAddr, quint8* pWr
 	return status;
 }
 
-FTC_HANDLE& Cvt_Isp_I2C::gethandle(void)
+FTC_HANDLE& Isp_I2C::gethandle(void)
 {
 	return fthandle;
 }
 
-Cvt_Isp_I2C::Cvt_Isp_I2C()
+Isp_I2C::Isp_I2C()
 {
 	fthandle = NULL; 
 	dwDeviceNameIndex = 0;
 }
 
-Cvt_Isp_I2C::~Cvt_Isp_I2C()
+Isp_I2C::~Isp_I2C()
 {
 }
