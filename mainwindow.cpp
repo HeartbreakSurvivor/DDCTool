@@ -31,6 +31,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(timer, SIGNAL(timeout()), this, SLOT(qTimeSlot()));
     timer->start(1000);
 
+    qDebug()<<"init the options";
+    i2coptions = new CommunicationOption(burnsetting);
+
     //initialize signals and slots
     //I2C
     connect(ui->actionCommunication, SIGNAL(triggered()), this, SLOT(displayi2coptions()));
@@ -157,8 +160,7 @@ void MainWindow::displayhelpmenu(void)
 
 void MainWindow::displayi2coptions(void)
 {
-    qDebug("show the i2c options window!");
-    i2coptions.show();
+    i2coptions->show();
 }
 
 //Isp Slots

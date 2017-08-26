@@ -72,10 +72,10 @@ private:
     QTimer *timer;
 
     //I2C
-    CommunicationOption i2coptions;
     Helpwindow helpwindow;
     Isp_I2C i2cdevice;
     BurnSetting_T burnsetting;
+    CommunicationOption *i2coptions;
 
     //Edid
     QString Cur_Key;

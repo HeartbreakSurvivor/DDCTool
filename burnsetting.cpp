@@ -3,11 +3,11 @@
 BurnSetting_T::BurnSetting_T()
 {
     m_slaveaddr = 0x6E;
-    m_i2cspeed = 5;
+    m_i2cspeed = 100;
     m_writedelay = 200;
     m_readdelay = 200;
-    m_retrycnt = 0;
-    m_perpackretrycnt = 0;
+    m_retrycnt = 3;
+    m_perpackretrycnt = 3;
     m_edidlastdelay = 200;
     m_hdcplastdelay = 200;
     m_erasehdcpkeydelay = 200;

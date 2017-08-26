@@ -2,6 +2,7 @@
 #define COMMUNICATIONSETTING_H
 
 #include <QWidget>
+#include "burnsetting.h"
 
 namespace Ui {
 class CommunicationOption;
@@ -13,9 +14,15 @@ class CommunicationOption : public QWidget
 
 public:
     explicit CommunicationOption(QWidget *parent = 0);
+    CommunicationOption(BurnSetting_T &burnsetting);
     ~CommunicationOption();
 
+public slots:
+    void pressok();
+    void presscancel();
+
 private:
+    BurnSetting_T m_burnsetting;
     Ui::CommunicationOption *ui;
 };
 
