@@ -19,6 +19,7 @@
 #include "burnsetting.h"
 #include "communicationsetting.h"
 #include "helpwindow.h"
+#include "ddc_protocol.h"
 
 namespace Ui {
 class MainWindow;
@@ -75,6 +76,7 @@ private:
     Helpwindow helpwindow;
     Isp_I2C i2cdevice;
     CommunicationOption *i2coptions;
+    DDCProtocol_T *ddcprotocol;
 
     //Edid
     QString Cur_Key;

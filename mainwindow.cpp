@@ -34,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
     qDebug()<<"init the options";
     i2coptions = new CommunicationOption(BurnSetting_T());
 
+    ddcprotocol = new DDCProtocol_T(i2cdevice);
     //initialize signals and slots
     //I2C
     connect(ui->actionCommunication, SIGNAL(triggered()), this, SLOT(displayi2coptions()));

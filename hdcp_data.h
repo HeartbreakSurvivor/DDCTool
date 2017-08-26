@@ -5,8 +5,6 @@
 
 namespace ddc {
 
-
-
 class Hdcp_T:public BurnData_T
 {
 public:

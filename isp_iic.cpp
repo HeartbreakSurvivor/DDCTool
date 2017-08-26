@@ -1,4 +1,6 @@
 #include "isp_iic.h"
+namespace ddc {
+
 
 FTC_STATUS Isp_I2C::findDevice(void)
 {
@@ -130,4 +132,6 @@ Isp_I2C::Isp_I2C()
 
 Isp_I2C::~Isp_I2C()
 {
+}
+
 }

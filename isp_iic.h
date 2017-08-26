@@ -2,6 +2,9 @@
 #include "cvt_global.h"
 #include "lib/FTCI2C.h"
 
+namespace ddc {
+
+
 class Isp_I2C
 {
 public:
@@ -19,3 +22,4 @@ private:
     FTC_HANDLE fthandle=NULL;//the device handle
 	DWORD dwDeviceNameIndex;//indicate the current deviceNameIdx
 };
+}
