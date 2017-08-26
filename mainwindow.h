@@ -74,7 +74,6 @@ private:
     //I2C
     Helpwindow helpwindow;
     Isp_I2C i2cdevice;
-    BurnSetting_T burnsetting;
     CommunicationOption *i2coptions;
 
     //Edid

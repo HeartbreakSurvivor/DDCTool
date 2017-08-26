@@ -102,5 +102,10 @@ void CommunicationOption::presscancel(void)
     this->close();
 }
 
+const BurnSetting_T& CommunicationOption::getsetting(void)
+{
+    return m_burnsetting;
+}
+
 
 

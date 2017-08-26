@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
     timer->start(1000);
 
     qDebug()<<"init the options";
-    i2coptions = new CommunicationOption(burnsetting);
+    i2coptions = new CommunicationOption(BurnSetting_T());
 
     //initialize signals and slots
     //I2C
@@ -64,6 +64,7 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete i2coptions;
 }
 
 void MainWindow::updateEdidTab(QString key)
@@ -166,7 +167,11 @@ void MainWindow::displayi2coptions(void)
 //Isp Slots
 void MainWindow::connectI2c(void)
 {
-    if (i2cdevice.openDevice(i2cdevice.gethandle(),5000) == FTC_SUCCESS)
+    //const修饰返回值的函数，必须定义const类型的变量去赋值，或者强制转化成非const类型
+    //const BurnSetting_T &burnsetting = i2coptions->getsetting();
+    BurnSetting_T &burnsetting = (BurnSetting_T&)i2coptions->getsetting();
+    qDebug("the i2c speed:%d",burnsetting.getI2cSpeed());
+    if (i2cdevice.openDevice(i2cdevice.gethandle(),burnsetting.getI2cSpeed()) == FTC_SUCCESS)
     {
         ui->actionConnect->setDisabled(true);
         qDebug("Open device successfully!!!");

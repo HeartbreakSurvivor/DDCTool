@@ -16,6 +16,7 @@ public:
     explicit CommunicationOption(QWidget *parent = 0);
     CommunicationOption(BurnSetting_T &burnsetting);
     ~CommunicationOption();
+    const BurnSetting_T& getsetting();
 
 public slots:
     void pressok();
