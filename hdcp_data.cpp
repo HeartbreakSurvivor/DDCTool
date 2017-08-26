@@ -123,12 +123,6 @@ void Hdcp_T::appendCrc16(void)
     }
 }
 
-void Hdcp_T::getdata(int offset, int bufsize, unsigned char *buf, int Rlen)
-{
-    if (data == NULL) return;
-    if (offset*bufsize >= size) return;
-    memcpy((void*)buf, (void *)(data+offset*bufsize), Rlen);
-}
 
 
 }

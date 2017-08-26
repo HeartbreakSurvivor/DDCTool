@@ -17,6 +17,8 @@
 #include "hdcp_data.h"
 #include "isp_iic.h"
 #include "burnsetting.h"
+#include "communicationsetting.h"
+#include "helpwindow.h"
 
 namespace Ui {
 class MainWindow;
@@ -68,7 +70,10 @@ private:
     QDateTime DDC_CurTime;//indicate the current system time.
     QLabel *DDC_TimeLabel;
     QTimer *timer;
+
     //I2C
+    CommunicationOption i2coptions;
+    Helpwindow helpwindow;
     Isp_I2C i2cdevice;
     BurnSetting_T burnsetting;
 

@@ -33,8 +33,6 @@ private:
     void getKeyid(void);
     void appendCrc16(void);
 
-    virtual void getdata(int offset, int bufsize, unsigned char *buf, int Rlen);
-
 private:
     chiptype_e m_type;
     quint8 m_Keyid[8];

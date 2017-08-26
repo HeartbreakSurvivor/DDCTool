@@ -39,8 +39,6 @@ public:
 
     quint8 findProductSn(void);
 
-    virtual void getdata(int offset, int bufsize, unsigned char *buf, int Rlen);
-
 private:
     QString m_manufacturername;
     QString m_version;

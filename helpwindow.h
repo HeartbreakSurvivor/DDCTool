@@ -2,6 +2,7 @@
 #define HELPWINDOW_H
 
 #include <QDialog>
+#include <QString>
 
 namespace Ui {
 class Helpwindow;
@@ -14,6 +15,9 @@ class Helpwindow : public QDialog
 public:
     explicit Helpwindow(QWidget *parent = 0);
     ~Helpwindow();
+
+public slots:
+    void openUrl(QString url);
 
 private:
     Ui::Helpwindow *ui;

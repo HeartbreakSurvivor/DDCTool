@@ -31,18 +31,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(timer, SIGNAL(timeout()), this, SLOT(qTimeSlot()));
     timer->start(1000);
 
-
     //initialize signals and slots
     //I2C
     connect(ui->actionCommunication, SIGNAL(triggered()), this, SLOT(displayi2coptions()));
     connect(ui->actionHelp, SIGNAL(triggered()), this, SLOT(displayhelpmenu()));
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(displayaboutmenu()));
-
     connect(ui->actionConnect, SIGNAL(triggered()), this, SLOT(connectI2c()));//connect the isp i2c device
     connect(ui->actionDisconnect, SIGNAL(triggered()), this, SLOT(disconnetI2c()));//disconnect the isp i2c device
     connect(ui->actionLog, SIGNAL(triggered()), this, SLOT(opendebugmsg()));//open the debug msg dialog
-
-
 
     //EDID Tab
     connect(ui->loadedid_Btn, SIGNAL(clicked()), this, SLOT(loadEdid()));//load the edid to ram.
@@ -150,7 +146,8 @@ void MainWindow::qTimeSlot(void)
 //I2C Options
 void MainWindow::displayaboutmenu(void)
 {
-
+    qDebug("show the help window!");
+    helpwindow.show();
 }
 
 void MainWindow::displayhelpmenu(void)
@@ -160,7 +157,8 @@ void MainWindow::displayhelpmenu(void)
 
 void MainWindow::displayi2coptions(void)
 {
-
+    qDebug("show the i2c options window!");
+    i2coptions.show();
 }
 
 //Isp Slots

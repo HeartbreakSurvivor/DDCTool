@@ -162,11 +162,5 @@ void Edid_T::setManufacturerSN(quint32 manufacturersn)
 
 }
 
-void Edid_T::getdata(int offset, int bufsize, unsigned char *buf, int Rlen)
-{
-    if (data == NULL) return;
-    if (offset*bufsize >= size) return;
-    memcpy((void*)buf, (void *)(data + offset*bufsize), Rlen);
-}
 
 }

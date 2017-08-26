@@ -15,7 +15,11 @@ public:
     int getLength(void) const;
     QString getfilename(void) const;
 
-    virtual void getdata(int offset, int bufsize, quint8 *buf, int Rlen){}
+    void getdata(int offset, int bufsize, quint8 *buf, int Rlen){
+        if (data == NULL) return;
+        if (offset*bufsize >= size) return;
+        memcpy((void*)buf, (void *)(data + offset*bufsize), Rlen);
+    }
     virtual void setdata(int offset, int bufsize, quint8 *buf, int Rlen){}
 
 public:
