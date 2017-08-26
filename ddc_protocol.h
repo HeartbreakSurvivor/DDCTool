@@ -21,9 +21,6 @@ public:
     void setfeedbacklen(quint8 fdlen);
     bool burn();
 
-    bool Getdata(Isp_I2C *I2cDevice, quint8 SlaveAddr, quint8 *pReadBuffer, quint32 ByteCount,quint8 offset, quint32 readdelay, quint32 retrycnt);
-    bool Burn(Isp_I2C *I2cDevice, quint8 SlaveAddr, quint8* pWriteBuffer, quint32 ByteCount,quint8 offset, quint32 writedelay, quint32 retrycnt);
-
     static const quint8 kddcSourceAddr = 0x51;
 
 private:
