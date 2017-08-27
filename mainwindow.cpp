@@ -1,8 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <iostream>
 
 using namespace std;
+using namespace ddc;
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -35,6 +36,11 @@ MainWindow::MainWindow(QWidget *parent) :
     i2coptions = new CommunicationOption(BurnSetting_T());
 
     ddcprotocol = new DDCProtocol_T(i2cdevice);
+    ddcprotocol->setSlaveAddr(((BurnSetting_T&)i2coptions->getsetting()).getSlaveaddr());
+
+    //hdcptransfer = new Transfer_T(*ddcprotocol,&HDCPMsg,3,3,200);
+    //hdcptransfer = new Transfer_T(*ddcprotocol);
+
     //initialize signals and slots
     //I2C
     connect(ui->actionCommunication, SIGNAL(triggered()), this, SLOT(displayi2coptions()));

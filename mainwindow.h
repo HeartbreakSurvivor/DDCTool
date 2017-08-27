@@ -20,6 +20,7 @@
 #include "communicationsetting.h"
 #include "helpwindow.h"
 #include "ddc_protocol.h"
+#include "transfer.h"
 
 namespace Ui {
 class MainWindow;
@@ -84,6 +85,8 @@ private:
 
     //Hdcp
     Hdcp_T *hdcpdata=nullptr;
+    Transfer_T *hdcptransfer=nullptr;
+
 
     //the automatically generated ui file
     Ui::MainWindow *ui;

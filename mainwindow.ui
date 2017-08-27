@@ -1487,7 +1487,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>New</string>
+        <string>Save</string>
        </property>
       </widget>
       <widget class="QPushButton" name="pushButton_13">

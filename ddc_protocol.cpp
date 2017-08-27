@@ -78,10 +78,10 @@ bool DDCProtocol_T::burn(void)
         }
 
         /* the condition of burn success must be treated differently
-           use the callback function register mechanism,the burn success comdition is specified by user
-        */
+        use the callback function register mechanism,the burn success comdition is specified by user*/
+
         /*remember the delete the feedback data*/
-        if (feedback[7] == 0xE0 /*&& memcmp(Cmd_Burnhead + 2, feedback + 2, 5)*/)
+        if(this->verifyfunc(m_packdata,feedback))//if (feedback[7] == 0xE0 /*&& memcmp(Cmd_Burnhead + 2, feedback + 2, 5)*/)
         {
             qDebug("Burn success!");
             break;
@@ -91,11 +91,13 @@ bool DDCProtocol_T::burn(void)
             if (j = m_spretrycnt - 1)
             {
                 qDebug("Burn failed!");
+                delete feedback;
                 return false;
             }
             qDebug("Single pack retry!");
         }
     }
+    delete feedback;
     return true;
 }
 

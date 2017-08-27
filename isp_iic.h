@@ -4,7 +4,6 @@
 
 namespace ddc {
 
-
 class Isp_I2C
 {
 public:

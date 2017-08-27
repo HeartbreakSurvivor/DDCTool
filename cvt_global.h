@@ -4,23 +4,16 @@
 #include <qstring.h>
 #include <qfile.h>
 #include <qglobal.h>
+#include <qthread.h>
 
 #include <Windows.h>
 #include <map>
+#include <iostream>
 
 #include "burn_data.h"
 
-#define		Cvt_PerPackLen			16
-#define		EdidPorts_Num           6
 
-enum Edid_Customer
-{
-	EDID_CVT = 0,
-	EDID_AOC,
-	EDID_ACER,
-	EDID_SPT,
-	//add the more customers
-};
+#define		EdidPorts_Num           6
 
 #define		BIT(_bit_)              (1<<(_bit_))
 #define		EDID_VGA				BIT(0)
@@ -50,8 +43,3 @@ typedef struct
 	bool isVerify;
 }Cvt_flowControlPar;
 
-typedef struct
-{
-	unsigned char burnhead[7];
-	unsigned char readhead[8];
-}Cvt_Burningcmd;
