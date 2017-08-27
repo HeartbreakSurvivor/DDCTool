@@ -36,6 +36,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void updateEdidTab(QString key);
+    void clearEdidTab();
     void updateHdcpTab();
 
     void readSettings();

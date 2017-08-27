@@ -129,10 +129,8 @@ void MainWindow::writeSettings()
     Burn_Settings.endGroup();
 }
 
-void MainWindow::updateEdidTab(QString key)
+void MainWindow::clearEdidTab()
 {
-    int row=-1,column=0;
-
     ui->edidnameLineEdit->clear();
     ui->edidsizeLineEdit->clear();
     ui->manufacturerNameLineEdit->clear();
@@ -142,6 +140,14 @@ void MainWindow::updateEdidTab(QString key)
     ui->manufacturerYearLineEdit->clear();
     ui->edidVersionLineEdit->clear();
     ui->customerSNlineEdit->clear();
+    ui->EdidtableWidget->clear();
+}
+
+void MainWindow::updateEdidTab(QString key)
+{
+    int row=-1,column=0;
+
+    clearEdidTab();
 
     ui->edidnameLineEdit->setText(key.toUpper());
     ui->edidsizeLineEdit->setText(QString::number(edid_map[key]->getLength()));
@@ -154,7 +160,6 @@ void MainWindow::updateEdidTab(QString key)
     ui->edidVersionLineEdit->setText(edid_map[key]->getVersion());
     ui->customerSNlineEdit->setText(edid_map[key]->getProductSN());
 
-    ui->EdidtableWidget->clear();
     for(int sz=0;sz<edid_map[key]->getLength();++sz)
     {
         QString str = QString("%1").arg((edid_map[key]->data[sz])&0xFF,2,16,QLatin1Char('0'));
@@ -165,7 +170,7 @@ void MainWindow::updateEdidTab(QString key)
             column=0;
         }
         ui->EdidtableWidget->setItem(row, column++, newItem);
-        //qDebug()<<"row:"<<row<<"column:"<<column;
+        qDebug()<<"row:"<<row<<"column:"<<column;
     }
     if (edid_map[key]->getLength() == 128)
     {
@@ -296,6 +301,14 @@ void MainWindow::loadEdid(void)
             dir.setNameFilters(filters);
             dir.setFilter(QDir::Files | QDir::NoSymLinks);
             QFileInfoList list = dir.entryInfoList();
+
+            if(list.size()==0)
+            {
+                qDebug()<<"there is no edid data";
+                ui->edidpathLineEdit->setText(fileName);
+                clearEdidTab();
+                return;
+            }
 
             QChar separator = QChar('/');//get the separtor '/'
             if (!fileName.contains(separator))
