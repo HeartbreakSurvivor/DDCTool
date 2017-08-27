@@ -38,6 +38,9 @@ public:
     void updateEdidTab(QString key);
     void updateHdcpTab();
 
+    void readSettings();
+    void writeSettings();
+
 public slots:
     void closeEvent(QCloseEvent *event);
     void qTimeSlot(void);
@@ -76,6 +79,7 @@ private:
     //I2C
     Helpwindow helpwindow;
     Isp_I2C i2cdevice;
+    BurnSetting_T* burnsettings;
     CommunicationOption *i2coptions;
     DDCProtocol_T *ddcprotocol;
 

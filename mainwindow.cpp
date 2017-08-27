@@ -32,13 +32,15 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(timer, SIGNAL(timeout()), this, SLOT(qTimeSlot()));
     timer->start(1000);
 
+    readSettings();
+
     qDebug()<<"init the options";
-    i2coptions = new CommunicationOption(BurnSetting_T());
+    i2coptions = new CommunicationOption(*burnsettings);
 
     ddcprotocol = new DDCProtocol_T(i2cdevice);
     ddcprotocol->setSlaveAddr(((BurnSetting_T&)i2coptions->getsetting()).getSlaveaddr());
 
-    //hdcptransfer = new Transfer_T(*ddcprotocol,&HDCPMsg,3,3,200);
+    hdcptransfer = new Transfer_T(*ddcprotocol,&hdcpmsg,3,3,200);
     //hdcptransfer = new Transfer_T(*ddcprotocol);
 
     //initialize signals and slots
@@ -72,6 +74,59 @@ MainWindow::~MainWindow()
 {
     delete ui;
     delete i2coptions;
+}
+
+void writeSettings();
+
+void MainWindow::readSettings()
+{
+    QSettings Burn_Settings("Cvte","DDC Tool");
+
+    Burn_Settings.beginGroup("Burn_setting");
+    quint8 tmp_slaveaddr = Burn_Settings.value("Burn_SlaveAddr",0x6E).toInt();
+    int tmp_I2cSpeed = Burn_Settings.value("Burn_I2cSpeed", 5).toInt();
+    int tmp_WriteDelay = Burn_Settings.value("Burn_writeDelay", 300).toInt();
+    int tmp_ReadDelay = Burn_Settings.value("Burn_readDelay", 200).toInt();
+    int tmp_RetryCnt = Burn_Settings.value("Burn_RetryCnt", 3).toInt();
+    int tmp_PerPackRetryCnt = Burn_Settings.value("Burn_PerPackRetryCnt",3).toInt();
+    int tmp_EdidlastDelay = Burn_Settings.value("Burn_EdidlastDelay", 600).toInt();
+    int tmp_HdcplastDelay = Burn_Settings.value("Burn_HdcplastDelay", 600).toInt();
+    int tmp_EraseHdcp = Burn_Settings.value("Burn_eraseHdcpkeyDelay", 444).toInt();
+    int tmp_IsCreatLogs =Burn_Settings.value("Burn_isCreatlogs", 0).toInt();
+
+    qDebug()<<"read settings";
+
+    burnsettings = new BurnSetting_T(tmp_slaveaddr,tmp_I2cSpeed,tmp_WriteDelay,tmp_ReadDelay,tmp_RetryCnt,tmp_PerPackRetryCnt,
+    tmp_EdidlastDelay,tmp_HdcplastDelay,tmp_EraseHdcp,(bool)tmp_IsCreatLogs);
+
+    Burn_Settings.endGroup();
+}
+
+
+void MainWindow::writeSettings()
+{
+    QSettings Burn_Settings("Cvte", "DDC Tool");
+
+    //const修饰返回值的函数，必须定义const类型的变量去赋值，或者强制转化成非const类型
+    //const BurnSetting_T &burnsetting = i2coptions->getsetting();
+
+    BurnSetting_T &i2csettings = (BurnSetting_T&)i2coptions->getsetting();
+    qDebug("the i2c speed:%d",i2csettings.getI2cSpeed());
+
+    Burn_Settings.beginGroup("Burn_setting");
+
+    Burn_Settings.setValue("Burn_SlaveAddr",i2csettings.getSlaveaddr());
+    Burn_Settings.setValue("Burn_I2cSpeed", i2csettings.getI2cSpeed());
+    Burn_Settings.setValue("Burn_eraseHdcpkeyDelay", i2csettings.getEraseHdcpDelay());
+    Burn_Settings.setValue("Burn_writeDelay", i2csettings.getwriteDelay());
+    Burn_Settings.setValue("Burn_readDelay", i2csettings.getreadDelay());
+    Burn_Settings.setValue("Burn_RetryCnt", i2csettings.getRetryCnt());
+    Burn_Settings.setValue("Burn_PerPackRetryCnt", i2csettings.getPerpackRetryCnt());
+    Burn_Settings.setValue("Burn_EdidlastDelay", i2csettings.getEdidlastDelay());
+    Burn_Settings.setValue("Burn_HdcplastDelay", i2csettings.getHdcplastDelay());
+    Burn_Settings.setValue("Burn_isCreatlogs",i2csettings.getCreatlogs());
+
+    Burn_Settings.endGroup();
 }
 
 void MainWindow::updateEdidTab(QString key)
@@ -144,6 +199,7 @@ void MainWindow::updateHdcpTab()
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     qDebug("close the window!");
+    writeSettings();
 }
 
 void MainWindow::qTimeSlot(void)

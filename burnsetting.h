@@ -4,7 +4,7 @@ struct BurnSetting_T
 {
 public:
     BurnSetting_T();
-    BurnSetting_T(int speed, int writedelay, int readdelay, int retrycnt, int spretrycnt,
+    BurnSetting_T(unsigned char slaveaddr,int speed, int writedelay, int readdelay, int retrycnt, int spretrycnt,
 		int edidlastdelay, int hdcplastdelay, int erasehdcpdelay,bool iscreatlog);
 
     ~BurnSetting_T();
@@ -19,7 +19,7 @@ public:
 	void setSlaveaddr(unsigned char slaveaddr);
 	void setCreatlogs(bool iscreatlog);
 
-	int getI2cSpeed(void) const;
+    int getI2cSpeed(void) const;//const type function
 	int getwriteDelay(void) const;
 	int getreadDelay(void) const;
 	int getRetryCnt(void) const;

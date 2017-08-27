@@ -25,6 +25,10 @@ void DDCProtocol_T::setfeedbacklen(quint8 fdlen)
 {
     m_feedbacklen = fdlen;
 }
+void DDCProtocol_T::setcbfunc(cbverify verifyfunc)
+{
+    m_verifyfunc = verifyfunc;
+}
 
 void DDCProtocol_T::setPackdata(quint8 *data,quint8 datalen)
 {
@@ -81,7 +85,7 @@ bool DDCProtocol_T::burn(void)
         use the callback function register mechanism,the burn success comdition is specified by user*/
 
         /*remember the delete the feedback data*/
-        if(this->verifyfunc(m_packdata,feedback))//if (feedback[7] == 0xE0 /*&& memcmp(Cmd_Burnhead + 2, feedback + 2, 5)*/)
+        if(this->m_verifyfunc(m_packdata,feedback))//if (feedback[7] == 0xE0 /*&& memcmp(Cmd_Burnhead + 2, feedback + 2, 5)*/)
         {
             qDebug("Burn success!");
             break;

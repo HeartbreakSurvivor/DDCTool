@@ -4,6 +4,7 @@
 
 
 namespace ddc {
+
 using cbverify = bool(*)(quint8 *senddata,quint8 *feedback);
 using cbassemble = void(*)(quint8 offset,quint8 packlen);
 
@@ -26,7 +27,7 @@ public:
     //transfer related
     void setPackdata(quint8 *data,quint8 datalen);
     void setfeedbacklen(quint8 fdlen);
-    void setcbfunc(cbverify verifyfunc);
+    void setcbfunc(cbverify m_verifyfunc);
 
     bool burn();
 
@@ -43,7 +44,7 @@ private:
     quint8 m_feedbacklen;
     quint8 m_spretrycnt;
 
-    cbverify verifyfunc;
+    cbverify m_verifyfunc;
 
     Isp_I2C &m_i2c;
 };

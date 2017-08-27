@@ -4,9 +4,9 @@ namespace ddc {
 
 #define		PERPACK_LEN			16
 
-Transfer_T::Transfer_T(DDCProtocol_T& protocol,burnMsg_t* burnmsg,quint8 retrycnt)
+Transfer_T::Transfer_T(DDCProtocol_T& protocol,burnMsg_t* burnmsg,quint8 retrycnt):m_protocol(protocol)
 {
-    m_protocol = protocol;
+    //m_protocol = protocol;
     m_data2send = burnmsg->burndata;
     m_datasize = burnmsg->datalen;
     m_assemblefunc = burnmsg->assemblefunc;
@@ -15,9 +15,9 @@ Transfer_T::Transfer_T(DDCProtocol_T& protocol,burnMsg_t* burnmsg,quint8 retrycn
     m_retrycnt = retrycnt;
 }
 
-Transfer_T::Transfer_T(DDCProtocol_T& protocol,burnMsg_t* burnmsg,quint8 retrycnt,int edidlpdelay)
+Transfer_T::Transfer_T(DDCProtocol_T& protocol,burnMsg_t* burnmsg,quint8 retrycnt,int edidlpdelay):m_protocol(protocol)
 {
-    m_protocol = protocol;
+   // m_protocol = protocol;
     m_data2send = burnmsg->burndata;
     m_datasize = burnmsg->datalen;
     m_assemblefunc = burnmsg->assemblefunc;
@@ -27,9 +27,9 @@ Transfer_T::Transfer_T(DDCProtocol_T& protocol,burnMsg_t* burnmsg,quint8 retrycn
     m_retrycnt = retrycnt;
 }
 
-Transfer_T::Transfer_T(DDCProtocol_T& protocol,burnMsg_t* burnmsg,quint8 retrycnt,int erasehdcpdelay,int hdcplpdelay)
+Transfer_T::Transfer_T(DDCProtocol_T& protocol,burnMsg_t* burnmsg,quint8 retrycnt,int erasehdcpdelay,int hdcplpdelay):m_protocol(protocol)
 {
-    m_protocol = protocol;
+    //m_protocol = protocol;
     m_data2send = burnmsg->burndata;
     m_datasize = burnmsg->datalen;
     m_assemblefunc = burnmsg->assemblefunc;
@@ -38,11 +38,6 @@ Transfer_T::Transfer_T(DDCProtocol_T& protocol,burnMsg_t* burnmsg,quint8 retrycn
     m_erasedelay = erasehdcpdelay;
     m_hdcplpdelay = hdcplpdelay;
     m_retrycnt = retrycnt;
-}
-
-void Transfer_T::setcbfunc(ddc::cbverify verifyfunc)
-{
-    m_protocol.setcbfunc(verifyfunc);
 }
 
 bool Transfer_T::transferpackage()
@@ -116,12 +111,12 @@ void Transfer_T::run()
             if (k == m_retrycnt-1)//the last chance
             {
                 qDebug("The last retry choice and failed!");
-                emit BurnMsg(1);//burn failed
+                //emit BurnMsg(1);//burn failed
                 return;
             }
         }
     }
-	emit BurnMsg(4);//burn success and return 
+    //emit BurnMsg(4);//burn success and return
 
     qDebug()<<"data transfer thread exit!";
 }
