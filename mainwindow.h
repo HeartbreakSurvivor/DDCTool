@@ -42,6 +42,8 @@ public:
     void readSettings();
     void writeSettings();
 
+    void getedidtypes();
+
 public slots:
     void closeEvent(QCloseEvent *event);
     void qTimeSlot(void);
@@ -86,6 +88,7 @@ private:
 
     //Edid
     QString Cur_Key;
+    std::vector<QString> edid_type;
     std::map<QString,Edid_T*> edid_map;
 
     //Hdcp

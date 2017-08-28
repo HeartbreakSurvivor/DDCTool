@@ -94,8 +94,6 @@ void MainWindow::readSettings()
     int tmp_EraseHdcp = Burn_Settings.value("Burn_eraseHdcpkeyDelay", 444).toInt();
     int tmp_IsCreatLogs =Burn_Settings.value("Burn_isCreatlogs", 0).toInt();
 
-    qDebug()<<"read settings";
-
     burnsettings = new BurnSetting_T(tmp_slaveaddr,tmp_I2cSpeed,tmp_WriteDelay,tmp_ReadDelay,tmp_RetryCnt,tmp_PerPackRetryCnt,
     tmp_EdidlastDelay,tmp_HdcplastDelay,tmp_EraseHdcp,(bool)tmp_IsCreatLogs);
 
@@ -170,7 +168,7 @@ void MainWindow::updateEdidTab(QString key)
             column=0;
         }
         ui->EdidtableWidget->setItem(row, column++, newItem);
-        qDebug()<<"row:"<<row<<"column:"<<column;
+        //qDebug()<<"row:"<<row<<"column:"<<column;
     }
     if (edid_map[key]->getLength() == 128)
     {
@@ -359,6 +357,54 @@ void MainWindow::nextEdid(void)
     updateEdidTab(Cur_Key);
 }
 
+//judge the v1 is the subset of v2 or not.
+//there must be a more effective way to calculate the subset
+bool IsSubset(std::vector<QString> &v1,std::vector<QString> &v2)
+{
+    if(v2.size()>v1.size())
+        return false;
+    quint32 i=0,j=0;
+    std::sort(v1.begin(),v1.end());
+    std::sort(v2.begin(),v2.end());
+    while(i<v1.size()&&j<v2.size())
+    {
+        if(v1[i]<v2[j])
+        {
+            i++;
+        }
+        else if(v1[i]==v2[j])
+        {
+            i++;
+            j++;//if the same and the j++.
+        }
+        else if(v1[i]>v2[j])
+        {
+            return false;
+        }
+    }
+    if(j<v2.size())//j hasn't been the end of v2
+        return false;
+    else
+        return true;
+}
+
+void MainWindow::getedidtypes()
+{
+    edid_type.clear();
+    if(ui->checkBox_vga->isChecked())
+       edid_type.push_back("vga");
+    if(ui->checkBox_dvi->isChecked())
+        edid_type.push_back("dvi");
+    if(ui->checkBox_hdmi1->isChecked())
+        edid_type.push_back("hdmi");
+    if(ui->checkBox_hdmi2->isChecked())
+        edid_type.push_back("hdmi2");
+    if(ui->checkBox_hdmi3->isChecked())
+        edid_type.push_back("hdmi3");
+    if(ui->checkBox_dp->isChecked())
+        edid_type.push_back("dp");
+}
+
 void MainWindow::syncEdid(void)
 {
     cout<<"sync edid"<<endl;
@@ -368,9 +414,28 @@ void MainWindow::saveEdid(void)
 {
     cout<<"save edid bin file"<<endl;
 }
+
 void MainWindow::writeEdid(void)
 {
-    cout<<"write Edid"<<endl;
+    qDebug()<<"write Edid start!"<<endl;
+    if (NULL==i2cdevice.gethandle() || edid_map.size()==0)return;
+    std::vector<QString> tmp;
+    for(map<QString,Edid_T*>::iterator it=edid_map.begin();it!=edid_map.end();++it)
+    {
+        tmp.push_back(it->first);
+    }
+    getedidtypes();
+    if(edid_type.size()==0)
+    {
+        QMessageBox::warning(this, tr("Tips"), tr("Please select at least one edid to burn!"),QMessageBox::Ok);
+        return;
+    }
+    if(!IsSubset(tmp,edid_type))
+    {
+        QMessageBox::warning(this, tr("Tips"), tr("The selected edid doesn't match the real edid!"),QMessageBox::Ok);
+        return;
+    }
+    qDebug()<<"write Edid end"<<endl;
 }
 
 void MainWindow::stopWriteEdid(void)

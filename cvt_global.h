@@ -8,6 +8,9 @@
 
 #include <Windows.h>
 #include <map>
+#include <vector>
+#include <algorithm>
+
 #include <iostream>
 
 #include "burn_data.h"
