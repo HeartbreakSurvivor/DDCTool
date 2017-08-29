@@ -71,6 +71,7 @@ private slots:
     void loadHdcp();
     void writeHdcp();
     void stopWriteHdcp();
+    void changechiptype();
 
 private:
     QProgressBar *DDC_ProgressBar;//indicate the burn progress.

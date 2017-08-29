@@ -17,7 +17,7 @@ public:
     ~Hdcp_T() {}
 
     //const quint16 keyidoffset;//can't be initialized must use the constructor initializer list
-    static const quint16 keyidoffset = 376;//keyid offset of the reltek hdcpkey
+    static const quint16 keyidoffset = 367;//keyid offset of the reltek hdcpkey
     typedef enum{
         Mstar,
         Reltek,

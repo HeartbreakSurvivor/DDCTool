@@ -67,6 +67,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->loadhdcp_Btn, SIGNAL(clicked()), this, SLOT(loadHdcp()));//load the hdcp to ram.
     connect(ui->writehdcp_Btn, SIGNAL(clicked()), this, SLOT(writeHdcp()));//write the hdcp to board
     connect(ui->stopwritehdcp_Btn, SIGNAL(clicked()), this, SLOT(stopWriteHdcp()));//stop the hdcp writing operation
+    connect(ui->chiptypecomboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(changechiptype()));
 
     ui->statusBar->addWidget(DDC_BurnStatusText);
     ui->statusBar->addWidget(DDC_ProgressBar);
@@ -187,17 +188,15 @@ void MainWindow::updateHdcpTab()
 
     qDebug()<<"current idx:"<<ui->chiptypecomboBox->currentIndex();
     hdcpdata->setChipType(ui->chiptypecomboBox->currentIndex());
-
-    ui->hdcpsizelineEdit->setText(QString::number(hdcpdata->getLength(),10));
-
     quint8 *pkeyid = hdcpdata->getKeyid();
     for(int i=0;i<8;i++)
     {
         qDebug()<<"char:"<<pkeyid[i];
         keyid.append(QChar(*(pkeyid+i)));
     }
-    ui->hdcpkeyidlineEdit->setText(keyid);
 
+    ui->hdcpsizelineEdit->setText(QString::number(hdcpdata->getLength(),10));
+    ui->hdcpkeyidlineEdit->setText(keyid);
     ui->hdcptableWidget->clear();
     for(int sz=0;sz<hdcpdata->getLength();++sz)
     {
@@ -338,7 +337,6 @@ void MainWindow::loadEdid(void)
             QString key;
             for (int i = 0; i < list.size(); ++i)
             {
-                QFileInfo fileInfo = list.at(i);
                 QString file_name = dir[i];
                 QString file_path = fileName + separator + file_name;//the file full path
                 key = file_name.left(file_name.indexOf(QString(".bin")));//get the file's pure name
@@ -502,3 +500,16 @@ void MainWindow::stopWriteHdcp()
 
 }
 
+void MainWindow::changechiptype()
+{
+    qDebug()<<"current idx:"<<ui->chiptypecomboBox->currentIndex();
+    hdcpdata->setChipType(ui->chiptypecomboBox->currentIndex());
+    quint8 *pkeyid = hdcpdata->getKeyid();
+    QString keyid;
+    for(int i=0;i<8;i++)
+    {
+        qDebug()<<"char:"<<pkeyid[i];
+        keyid.append(QChar(*(pkeyid+i)));
+    }
+    ui->hdcpkeyidlineEdit->setText(keyid);
+}
