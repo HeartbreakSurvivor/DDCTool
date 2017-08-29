@@ -88,11 +88,11 @@ void Hdcp_T::setIsAppedCrc(bool bon)
     m_isAppendCrc = bon;
 }
 
-void Hdcp_T::getKeyid(void)
+quint8* Hdcp_T::getKeyid(void)
 {
     if(m_type == Mstar)//parse the keyid from the file name
     {
-        memset(m_Keyid,0,sizeof(m_Keyid));
+        memset(m_Keyid,0x30,sizeof(m_Keyid));
         int sz = filename.size();
             qDebug() << "filename size:"<< sz ;
         for(int i=sz-1,j=8;i>=0;--i)
@@ -109,6 +109,7 @@ void Hdcp_T::getKeyid(void)
     {
         memcpy(m_Keyid,data+keyidoffset,8);
     }
+    return m_Keyid;
 }
 
 void Hdcp_T::appendCrc16(void)

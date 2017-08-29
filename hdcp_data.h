@@ -23,12 +23,12 @@ public:
         Reltek,
     }chiptype_e;
 
-private:
+public:
     void setChipType(quint8 type);
     chiptype_e getChipType(void);
     void setIsWritekeyid(bool bon);
     void setIsAppedCrc(bool bon);
-    void getKeyid(void);
+    quint8* getKeyid(void);
     void appendCrc16(void);
 
 private:

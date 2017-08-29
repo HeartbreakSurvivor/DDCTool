@@ -20,7 +20,12 @@ public:
         if (offset*bufsize >= size) return;
         memcpy((void*)buf, (void *)(data + offset*bufsize), Rlen);
     }
-    virtual void setdata(int offset, int bufsize, quint8 *buf, int Rlen){}
+    virtual void setdata(int offset, int bufsize, quint8 *buf, int Rlen){
+        Q_UNUSED(offset);
+        Q_UNUSED(bufsize);
+        Q_UNUSED(buf);
+        Q_UNUSED(Rlen);
+    }
 
 public:
     QFile *file;

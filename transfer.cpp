@@ -49,7 +49,7 @@ bool Transfer_T::transferpackage()
 
     quint8 buf[30] = {0};//temp buffer to store the send data
 
-	for (int i = 0; i <= nTimes; i++)
+    for (quint32 i = 0; i <= nTimes; i++)
 	{
 		qDebug("The %d times\n", i);
 		if (i == nTimes)

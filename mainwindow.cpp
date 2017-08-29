@@ -11,6 +11,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ui->manufacturerNameLineEdit->setMaxLength(3);
+    ui->hdcpkeyidlineEdit->setMaxLength(8);
+
     QLabel *DDC_BurnStatusText = new QLabel(tr("Status:"));
 
     DDC_ProgressBar = new QProgressBar(this);
@@ -179,10 +182,22 @@ void MainWindow::updateEdidTab(QString key)
 
 void MainWindow::updateHdcpTab()
 {
+    QString keyid;
     int row=-1,column=0;
-    ui->writekeyidcheckBox->setChecked(false);
-    ui->appendCrccheckBox->setChecked(false);
+
+    qDebug()<<"current idx:"<<ui->chiptypecomboBox->currentIndex();
+    hdcpdata->setChipType(ui->chiptypecomboBox->currentIndex());
+
     ui->hdcpsizelineEdit->setText(QString::number(hdcpdata->getLength(),10));
+
+    quint8 *pkeyid = hdcpdata->getKeyid();
+    for(int i=0;i<8;i++)
+    {
+        qDebug()<<"char:"<<pkeyid[i];
+        keyid.append(QChar(*(pkeyid+i)));
+    }
+    ui->hdcpkeyidlineEdit->setText(keyid);
+
     ui->hdcptableWidget->clear();
     for(int sz=0;sz<hdcpdata->getLength();++sz)
     {
@@ -201,6 +216,7 @@ void MainWindow::updateHdcpTab()
 //slots
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    Q_UNUSED(event);
     qDebug("close the window!");
     writeSettings();
 }
@@ -478,7 +494,7 @@ void MainWindow::loadHdcp()
 
 void MainWindow::writeHdcp()
 {
-
+    if (NULL==i2cdevice.gethandle() || hdcpdata==nullptr)return;
 }
 
 void MainWindow::stopWriteHdcp()

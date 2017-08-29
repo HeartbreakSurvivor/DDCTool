@@ -30,7 +30,7 @@
      <string/>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <property name="usesScrollButtons">
      <bool>false</bool>
@@ -1091,53 +1091,10 @@
        <string>Write</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="writekeyidcheckBox">
-      <property name="geometry">
-       <rect>
-        <x>590</x>
-        <y>120</y>
-        <width>101</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>10</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Wirte KeyID</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="appendCrccheckBox">
-      <property name="geometry">
-       <rect>
-        <x>590</x>
-        <y>150</y>
-        <width>111</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>10</pointsize>
-        <weight>75</weight>
-        <italic>false</italic>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Append Crc</string>
-      </property>
-     </widget>
      <widget class="QPushButton" name="stopwritehdcp_Btn">
       <property name="geometry">
        <rect>
-        <x>590</x>
+        <x>580</x>
         <y>10</y>
         <width>75</width>
         <height>23</height>
@@ -1150,8 +1107,8 @@
      <widget class="QComboBox" name="chiptypecomboBox">
       <property name="geometry">
        <rect>
-        <x>590</x>
-        <y>80</y>
+        <x>580</x>
+        <y>70</y>
         <width>91</width>
         <height>22</height>
        </rect>
@@ -1160,6 +1117,9 @@
        <font>
         <family>Arvo</family>
        </font>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::WheelFocus</enum>
       </property>
       <item>
        <property name="text">
@@ -1175,8 +1135,8 @@
      <widget class="QLabel" name="label_14">
       <property name="geometry">
        <rect>
-        <x>590</x>
-        <y>50</y>
+        <x>580</x>
+        <y>40</y>
         <width>91</width>
         <height>21</height>
        </rect>
@@ -1191,6 +1151,40 @@
       </property>
       <property name="text">
        <string>Chip Type:</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="hdcpkeyidlineEdit">
+      <property name="geometry">
+       <rect>
+        <x>580</x>
+        <y>130</y>
+        <width>170</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_15">
+      <property name="geometry">
+       <rect>
+        <x>580</x>
+        <y>100</y>
+        <width>91</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Key Id:</string>
       </property>
      </widget>
     </widget>
