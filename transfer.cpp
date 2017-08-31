@@ -4,7 +4,7 @@ namespace ddc {
 
 #define		PERPACK_LEN			16
 
-Transfer_T::Transfer_T(DDCProtocol_T& protocol,burnMsg_t* burnmsg,quint8 retrycnt):m_protocol(protocol)
+Transfer_T::Transfer_T(DDCProtocol_T& protocol,burnCmd_t* burnmsg,quint8 retrycnt):m_protocol(protocol)
 {
     //m_protocol = protocol;
     m_data2send = burnmsg->burndata;
@@ -15,7 +15,7 @@ Transfer_T::Transfer_T(DDCProtocol_T& protocol,burnMsg_t* burnmsg,quint8 retrycn
     m_retrycnt = retrycnt;
 }
 
-Transfer_T::Transfer_T(DDCProtocol_T& protocol,burnMsg_t* burnmsg,quint8 retrycnt,int edidlpdelay):m_protocol(protocol)
+Transfer_T::Transfer_T(DDCProtocol_T& protocol,burnCmd_t* burnmsg,quint8 retrycnt,int edidlpdelay):m_protocol(protocol)
 {
    // m_protocol = protocol;
     m_data2send = burnmsg->burndata;
@@ -27,7 +27,7 @@ Transfer_T::Transfer_T(DDCProtocol_T& protocol,burnMsg_t* burnmsg,quint8 retrycn
     m_retrycnt = retrycnt;
 }
 
-Transfer_T::Transfer_T(DDCProtocol_T& protocol,burnMsg_t* burnmsg,quint8 retrycnt,int erasehdcpdelay,int hdcplpdelay):m_protocol(protocol)
+Transfer_T::Transfer_T(DDCProtocol_T& protocol,burnCmd_t* burnmsg,quint8 retrycnt,int erasehdcpdelay,int hdcplpdelay):m_protocol(protocol)
 {
     //m_protocol = protocol;
     m_data2send = burnmsg->burndata;

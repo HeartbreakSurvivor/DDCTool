@@ -12,9 +12,9 @@ class Transfer_T : public QThread
     //Q_OBJECT
 public:
     Transfer_T(DDCProtocol_T& protocol):m_protocol(protocol){}
-    Transfer_T(DDCProtocol_T& protocol,burnMsg_t* burnmsg,quint8 retrycnt);
-    Transfer_T(DDCProtocol_T& protocol,burnMsg_t* burnmsg,quint8 retrycnt,int edidlpdelay);
-    Transfer_T(DDCProtocol_T& protocol,burnMsg_t* burnmsg,quint8 retrycnt,int erasehdcpdelay,int hdcplpdelay);
+    Transfer_T(DDCProtocol_T& protocol,burnCmd_t* burnmsg,quint8 retrycnt);
+    Transfer_T(DDCProtocol_T& protocol,burnCmd_t* burnmsg,quint8 retrycnt,int edidlpdelay);
+    Transfer_T(DDCProtocol_T& protocol,burnCmd_t* burnmsg,quint8 retrycnt,int erasehdcpdelay,int hdcplpdelay);
     ~Transfer_T(){}
 
     bool transferpackage();

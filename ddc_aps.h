@@ -6,22 +6,16 @@
 
 namespace ddc {
 
-typedef struct
-{
-    unsigned char burnhead[7];
-    unsigned char readhead[8];
-}Cvt_Burningcmd;
-
-typedef struct burnmsg{
+typedef struct burncmd{
     quint8 *burndata;
     quint8 datalen;
     quint8 feedbacklen;
 
     cbverify verifyfunc;
     cbassemble assemblefunc;
-}burnMsg_t;
+}burnCmd_t;
 
-extern burnMsg_t hdcpmsg;
+extern burnCmd_t hdcpcmd;
 }
 
 #endif // DDC_APS_H
