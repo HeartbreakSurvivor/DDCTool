@@ -10,6 +10,7 @@ typedef struct burncmd{
     quint8 *burndata;
     quint8 datalen;
     quint8 feedbacklen;
+    quint8 retrycnt;
 
     cbverify verifyfunc;
     cbassemble assemblefunc;

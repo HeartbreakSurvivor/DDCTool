@@ -4,39 +4,57 @@ namespace ddc {
 
 #define		PERPACK_LEN			16
 
-Transfer_T::Transfer_T(DDCProtocol_T& protocol,burnCmd_t* burnmsg,quint8 retrycnt):m_protocol(protocol)
+Transfer_T::Transfer_T(DDCProtocol_T& protocol,burnCmd_t* burnmsg,quint8 retrycnt,quint8 writedelay):m_protocol(protocol)
 {
     //m_protocol = protocol;
     m_data2send = burnmsg->burndata;
     m_datasize = burnmsg->datalen;
     m_assemblefunc = burnmsg->assemblefunc;
+    m_protocol.setwritedelay(writedelay);
     m_protocol.setfeedbacklen(burnmsg->feedbacklen);
     m_protocol.setcbfunc(burnmsg->verifyfunc);
     m_retrycnt = retrycnt;
 }
 
-Transfer_T::Transfer_T(DDCProtocol_T& protocol,burnCmd_t* burnmsg,quint8 retrycnt,int edidlpdelay):m_protocol(protocol)
+Transfer_T::Transfer_T(DDCProtocol_T& protocol,burnCmd_t* burnmsg,quint8 retrycnt,quint8 writedelay,int edidlpdelay):m_protocol(protocol)
 {
    // m_protocol = protocol;
     m_data2send = burnmsg->burndata;
     m_datasize = burnmsg->datalen;
     m_assemblefunc = burnmsg->assemblefunc;
+    m_protocol.setwritedelay(writedelay);
     m_protocol.setfeedbacklen(burnmsg->feedbacklen);
     m_protocol.setcbfunc(burnmsg->verifyfunc);
-    m_edidlpdelay = edidlpdelay;
     m_retrycnt = retrycnt;
+    m_edidlpdelay = edidlpdelay;
 }
 
-Transfer_T::Transfer_T(DDCProtocol_T& protocol,burnCmd_t* burnmsg,quint8 retrycnt,int erasehdcpdelay,int hdcplpdelay):m_protocol(protocol)
+Transfer_T::Transfer_T(DDCProtocol_T& protocol,burnCmd_t* burnmsg,quint8 retrycnt,quint8 writedelay,int erasehdcpdelay,int hdcplpdelay):m_protocol(protocol)
 {
     //m_protocol = protocol;
     m_data2send = burnmsg->burndata;
     m_datasize = burnmsg->datalen;
     m_assemblefunc = burnmsg->assemblefunc;
+    m_protocol.setwritedelay(writedelay);
     m_protocol.setfeedbacklen(burnmsg->feedbacklen);
     m_protocol.setcbfunc(burnmsg->verifyfunc);
     m_erasedelay = erasehdcpdelay;
     m_hdcplpdelay = hdcplpdelay;
+    m_retrycnt = retrycnt;
+}
+
+void Transfer_T::setburnCmd(burnCmd_t *burnmsg)
+{
+    m_data2send = burnmsg->burndata;
+    m_datasize = burnmsg->datalen;
+    m_assemblefunc = burnmsg->assemblefunc;
+    m_protocol.setfeedbacklen(burnmsg->feedbacklen);
+    m_protocol.setcbfunc(burnmsg->verifyfunc);
+}
+
+void Transfer_T::setdelayandretry(quint8 retrycnt,quint8 writedelay)
+{
+    m_protocol.setwritedelay(writedelay);
     m_retrycnt = retrycnt;
 }
 
@@ -52,6 +70,7 @@ bool Transfer_T::transferpackage()
     for (quint32 i = 0; i <= nTimes; i++)
 	{
 		qDebug("The %d times\n", i);
+        //这里可以被简化掉，上层的逻辑应该由上层来决策，修改成回调来实现,实际上，edid hdcp最后一包延时和普通的包延时，以及擦除hdcp的延时没有区别，transfer只负责传输数据，具体逻辑上层来实现
 		if (i == nTimes)
 		{
 			qDebug("The last times\n");

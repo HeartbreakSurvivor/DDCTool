@@ -30,7 +30,7 @@
      <string/>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>2</number>
     </property>
     <property name="usesScrollButtons">
      <bool>false</bool>
@@ -1362,7 +1362,7 @@
          <x>10</x>
          <y>20</y>
          <width>281</width>
-         <height>227</height>
+         <height>226</height>
         </rect>
        </property>
        <property name="toolTipDuration">
@@ -1445,6 +1445,9 @@
         <width>231</width>
         <height>261</height>
        </rect>
+      </property>
+      <property name="whatsThis">
+       <string/>
       </property>
       <property name="title">
        <string>AT Instruction Set:</string>

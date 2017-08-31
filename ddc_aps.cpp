@@ -2,15 +2,6 @@
 
 namespace ddc {
 
-bool commoncmdverify(quint8 *senddata,quint8 *feedback)
-{
-    Q_UNUSED(senddata);
-    if(*(feedback+7)==0xE0)
-        return true;
-    else
-        return false;
-}
-
 //HDCP related Instructions
 quint8 erasehdcpCmdtab[]={0x86,0xD0,0x65,0x0A,0xFF,0x00,0x00};
 quint8 hdcpkeyidCmdtab[]={0x8D,0xD0,0x73,0x05,0x00};
@@ -45,12 +36,23 @@ quint8 writesncmdtab[]={0x95,0xc0,0x63,0x0a,0x00,0x10};
 quint8 getsncmdtab[]={0x86,0xc0,0x65,0x0a,0x00,0x10,0x00};
 quint8 panelcmdtab[]={0x86,0xc0,0x63,0x07,0x18,0x00,0x02};
 
+//verify function declarations
+bool commoncmdverify(quint8 *senddata,quint8 *feedback)
+{
+    Q_UNUSED(senddata);
+    if(*(feedback+7)==0xE0)
+        return true;
+    else
+        return false;
+}
+
 
 burnCmd_t erasehdcpcmd =
 {
     erasehdcpCmdtab,//erase hdcp
     8,
     9,
+    3,
     &commoncmdverify,
     nullptr
 };
@@ -60,6 +62,7 @@ burnCmd_t hdcpkeyidcmd =
     erasehdcpCmdtab,//erase hdcp
     8,
     9,
+    3,
     &commoncmdverify,
     nullptr
 };
@@ -69,6 +72,7 @@ burnCmd_t hdcpcmd =
     hdcpCmdtab,//burn hdcp
     7,
     9,
+    3,
     &commoncmdverify,
     nullptr
 };
@@ -78,6 +82,7 @@ burnCmd_t edid_vgacmd =
     edidvgacmdtab,//burn vga edid
     7,
     9,
+    3,
     &commoncmdverify,
     nullptr
 };
@@ -87,6 +92,7 @@ burnCmd_t edid_dvicmd =
     ediddvicmdtab,//burn dvi edid
     7,
     9,
+    3,
     &commoncmdverify,
     nullptr
 };
@@ -96,6 +102,7 @@ burnCmd_t edid_hdmi1cmd =
     edidhdmi1cmdtab,//burn hdmi1 edid
     7,
     9,
+    3,
     &commoncmdverify,
     nullptr
 };
@@ -105,6 +112,7 @@ burnCmd_t edid_hdmi2cmd =
     edidhdmi2cmdtab,//burn hdmi2 edid
     7,
     9,
+    3,
     &commoncmdverify,
     nullptr
 };
@@ -114,6 +122,7 @@ burnCmd_t edid_hdmi3cmd =
     edidhdmi3cmdtab,//burn hdmi3 edid
     7,
     9,
+    3,
     &commoncmdverify,
     nullptr
 };
@@ -123,6 +132,7 @@ burnCmd_t edid_dpcmd =
     ediddpcmdtab,//burn dp edid
     7,
     9,
+    3,
     &commoncmdverify,
     nullptr
 };
