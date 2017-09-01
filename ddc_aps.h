@@ -7,13 +7,17 @@
 namespace ddc {
 
 typedef struct burncmd{
+    //data to send and assemble function
     quint8 *burndata;
     quint8 datalen;
-    quint8 feedbacklen;
-    quint8 retrycnt;
-
-    cbverify verifyfunc;
     cbassemble assemblefunc;
+    //get feedback and verify
+    quint8 feedbacklen;
+    cbverify verifyfunc;
+    //flow control parameter
+    quint8 retrycnt;
+    quint32 delay;
+    quint32 lastdelay;
 }burnCmd_t;
 
 extern burnCmd_t hdcpcmd;

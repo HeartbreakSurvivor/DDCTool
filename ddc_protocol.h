@@ -21,7 +21,7 @@ public:
 
     //flow control
     void setSlaveAddr(quint8 slaveaddr);
-    void setRetrycnt(quint8 retrycnt);
+    void setSpretrycnt(quint8 retrycnt);
     void setwritedelay(quint8 writedelay);
 
     //transfer related

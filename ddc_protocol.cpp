@@ -11,7 +11,7 @@ void DDCProtocol_T::setSlaveAddr(quint8 slaveaddr)
     m_slaveaddr = slaveaddr;
 }
 
-void DDCProtocol_T::setRetrycnt(quint8 retrycnt)
+void DDCProtocol_T::setSpretrycnt(quint8 retrycnt)
 {
     m_spretrycnt = retrycnt;
 }

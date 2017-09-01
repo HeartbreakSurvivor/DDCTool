@@ -4,66 +4,31 @@ namespace ddc {
 
 #define		PERPACK_LEN			16
 
-Transfer_T::Transfer_T(DDCProtocol_T& protocol,burnCmd_t* burnmsg,quint8 retrycnt,quint8 writedelay):m_protocol(protocol)
-{
-    //m_protocol = protocol;
-    m_data2send = burnmsg->burndata;
-    m_datasize = burnmsg->datalen;
-    m_assemblefunc = burnmsg->assemblefunc;
-    m_protocol.setwritedelay(writedelay);
-    m_protocol.setfeedbacklen(burnmsg->feedbacklen);
-    m_protocol.setcbfunc(burnmsg->verifyfunc);
-    m_retrycnt = retrycnt;
-}
-
-Transfer_T::Transfer_T(DDCProtocol_T& protocol,burnCmd_t* burnmsg,quint8 retrycnt,quint8 writedelay,int edidlpdelay):m_protocol(protocol)
-{
-   // m_protocol = protocol;
-    m_data2send = burnmsg->burndata;
-    m_datasize = burnmsg->datalen;
-    m_assemblefunc = burnmsg->assemblefunc;
-    m_protocol.setwritedelay(writedelay);
-    m_protocol.setfeedbacklen(burnmsg->feedbacklen);
-    m_protocol.setcbfunc(burnmsg->verifyfunc);
-    m_retrycnt = retrycnt;
-    m_edidlpdelay = edidlpdelay;
-}
-
-Transfer_T::Transfer_T(DDCProtocol_T& protocol,burnCmd_t* burnmsg,quint8 retrycnt,quint8 writedelay,int erasehdcpdelay,int hdcplpdelay):m_protocol(protocol)
-{
-    //m_protocol = protocol;
-    m_data2send = burnmsg->burndata;
-    m_datasize = burnmsg->datalen;
-    m_assemblefunc = burnmsg->assemblefunc;
-    m_protocol.setwritedelay(writedelay);
-    m_protocol.setfeedbacklen(burnmsg->feedbacklen);
-    m_protocol.setcbfunc(burnmsg->verifyfunc);
-    m_erasedelay = erasehdcpdelay;
-    m_hdcplpdelay = hdcplpdelay;
-    m_retrycnt = retrycnt;
-}
-
 void Transfer_T::setburnCmd(burnCmd_t *burnmsg)
 {
-    m_data2send = burnmsg->burndata;
-    m_datasize = burnmsg->datalen;
+    m_databody = burnmsg->burndata;
+    m_bodysize = burnmsg->datalen;
     m_assemblefunc = burnmsg->assemblefunc;
+
     m_protocol.setfeedbacklen(burnmsg->feedbacklen);
     m_protocol.setcbfunc(burnmsg->verifyfunc);
+
+    m_protocol.setwritedelay(burnmsg->delay);
+    m_retrycnt = burnmsg->retrycnt;
 }
 
-void Transfer_T::setdelayandretry(quint8 retrycnt,quint8 writedelay)
+void Transfer_T::setburndata(quint8* data,quint32 size)
 {
-    m_protocol.setwritedelay(writedelay);
-    m_retrycnt = retrycnt;
+    m_databody = data;
+    m_bodysize = size;
 }
 
 bool Transfer_T::transferpackage()
 {
     quint32 length = PERPACK_LEN;
     quint32 Rlength = length;
-    quint32 remainder = m_datasize % 16;
-    quint32 nTimes = (remainder == 0) ? m_datasize/(length-1) : m_datasize/length;//how many packs we should send to board.
+    quint32 remainder = m_bodysize % 16;
+    quint32 nTimes = (remainder == 0) ? m_bodysize/(length-1) : m_bodysize/length;//how many packs we should send to board.
 
     quint8 buf[30] = {0};//temp buffer to store the send data
 
@@ -91,7 +56,7 @@ bool Transfer_T::transferpackage()
 		}
 
         //assemble the data
-        memcpy((void*)buf, (void *)(m_data2send + i*length), Rlength);//get data from the transfer
+        memcpy((void*)buf, (void *)(m_databody+i*length), Rlength);//get data from the transfer
 
         if(m_assemblefunc)
         {

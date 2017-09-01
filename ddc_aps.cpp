@@ -46,7 +46,7 @@ bool commoncmdverify(quint8 *senddata,quint8 *feedback)
         return false;
 }
 
-
+#if 0
 burnCmd_t erasehdcpcmd =
 {
     erasehdcpCmdtab,//erase hdcp
@@ -136,7 +136,7 @@ burnCmd_t edid_dpcmd =
     &commoncmdverify,
     nullptr
 };
-
+#endif
 
 
 
