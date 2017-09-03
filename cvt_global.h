@@ -46,3 +46,8 @@ typedef struct
 	bool isVerify;
 }Cvt_flowControlPar;
 
+typedef struct
+{
+    quint8* data;
+    quint8 size;
+}burndata_t;

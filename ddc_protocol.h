@@ -5,8 +5,6 @@
 
 namespace ddc {
 
-using cbverify = bool(*)(quint8 *senddata,quint8 *feedback);
-using cbassemble = void(*)(quint8 offset,quint8 packlen);
 
 class DDCProtocol_T
 {
@@ -19,33 +17,16 @@ public:
     }
     ~DDCProtocol_T();
 
-    //flow control
     void setSlaveAddr(quint8 slaveaddr);
-    void setSpretrycnt(quint8 retrycnt);
-    void setwritedelay(quint8 writedelay);
 
-    //transfer related
-    void setPackdata(quint8 *data,quint8 datalen);
-    void setfeedbacklen(quint8 fdlen);
-    void setcbfunc(cbverify m_verifyfunc);
-
-    bool burn();
+    bool write(quint8* data,quint8 len);
+    bool read(quint8* buf,quint8 len);
 
 private:
     quint8 getchecksum(quint8 *data,quint8 datalen);
 
 private:
     quint8 m_slaveaddr;
-    quint8 m_packdatalen;
-    quint8 *m_packdata=NULL;//data ready to transfer.
-    quint8 m_packagelen;
-
-    quint8 m_writedelay;
-    quint8 m_feedbacklen;
-    quint8 m_spretrycnt;
-
-    cbverify m_verifyfunc;
-
     Isp_I2C &m_i2c;
 };
 

@@ -1350,11 +1350,11 @@
         <x>240</x>
         <y>19</y>
         <width>301</width>
-        <height>261</height>
+        <height>141</height>
        </rect>
       </property>
       <property name="title">
-       <string>AT Instruction Property:</string>
+       <string>Instruction Property:</string>
       </property>
       <widget class="QTableWidget" name="tableWidget_3">
        <property name="geometry">
@@ -1362,7 +1362,7 @@
          <x>10</x>
          <y>20</y>
          <width>281</width>
-         <height>226</height>
+         <height>111</height>
         </rect>
        </property>
        <property name="toolTipDuration">
@@ -1477,32 +1477,6 @@
         </property>
        </item>
       </widget>
-      <widget class="QPushButton" name="pushButton_12">
-       <property name="geometry">
-        <rect>
-         <x>140</x>
-         <y>20</y>
-         <width>75</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Save</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="pushButton_13">
-       <property name="geometry">
-        <rect>
-         <x>140</x>
-         <y>50</y>
-         <width>75</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Delete</string>
-       </property>
-      </widget>
       <widget class="QPushButton" name="pushButton_14">
        <property name="geometry">
         <rect>
@@ -1553,6 +1527,29 @@
        </property>
        <property name="text">
         <string>Up</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="groupBox_6">
+      <property name="geometry">
+       <rect>
+        <x>240</x>
+        <y>160</y>
+        <width>301</width>
+        <height>111</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Instuctions Description</string>
+      </property>
+      <widget class="QPlainTextEdit" name="plainTextEdit">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>281</width>
+         <height>81</height>
+        </rect>
        </property>
       </widget>
      </widget>

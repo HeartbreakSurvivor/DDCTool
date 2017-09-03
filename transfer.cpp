@@ -4,85 +4,128 @@ namespace ddc {
 
 #define		PERPACK_LEN			16
 
-void Transfer_T::setburnCmd(burnCmd_t *burnmsg)
+void Transfer_T::setburnCmd(burnCmd_t *burnmsg,quint8 *data, quint32 size)
 {
-    m_databody = burnmsg->burndata;
-    m_bodysize = burnmsg->datalen;
-    m_assemblefunc = burnmsg->assemblefunc;
-
-    m_protocol.setfeedbacklen(burnmsg->feedbacklen);
-    m_protocol.setcbfunc(burnmsg->verifyfunc);
-
-    m_protocol.setwritedelay(burnmsg->delay);
-    m_retrycnt = burnmsg->retrycnt;
+    m_burnmsg = burnmsg;
+    m_databody = data;
+    m_bodysize = size;
 }
 
-void Transfer_T::setburndata(quint8* data,quint32 size)
+void Transfer_T::setburndata(quint8 *data, quint32 size)
 {
     m_databody = data;
     m_bodysize = size;
 }
 
-bool Transfer_T::transferpackage()
+bool Transfer_T::transfermultipackage(void)
 {
-    quint32 length = PERPACK_LEN;
-    quint32 Rlength = length;
+    quint32 Rlength , length = PERPACK_LEN;
     quint32 remainder = m_bodysize % 16;
     quint32 nTimes = (remainder == 0) ? m_bodysize/(length-1) : m_bodysize/length;//how many packs we should send to board.
-
-    quint8 buf[30] = {0};//temp buffer to store the send data
+    quint32 writedelay = m_burnmsg->delay;
+    burndata_t tmpdata;
+    quint8* feedback = new quint8[m_burnmsg->feedbacklen];
 
     for (quint32 i = 0; i <= nTimes; i++)
-	{
-		qDebug("The %d times\n", i);
-        //这里可以被简化掉，上层的逻辑应该由上层来决策，修改成回调来实现,实际上，edid hdcp最后一包延时和普通的包延时，以及擦除hdcp的延时没有区别，transfer只负责传输数据，具体逻辑上层来实现
-		if (i == nTimes)
-		{
-			qDebug("The last times\n");
-			if (remainder != 0)
-			{
-				Rlength = remainder;
-			}
-            if(m_edidlpdelay!=-1&&(m_hdcplpdelay==-1||m_erasedelay==-1))
-            {
-                qDebug()<<"this is edid burn process";
-                m_protocol.setwritedelay(m_edidlpdelay);
-            }
-            else if((m_hdcplpdelay!=-1&&m_erasedelay!=-1)&&m_edidlpdelay==-1)
-            {
-                qDebug()<<"this is hdcp burn process";
-                m_protocol.setwritedelay(m_hdcplpdelay);
-            }
-		}
-
-        //assemble the data
-        memcpy((void*)buf, (void *)(m_databody+i*length), Rlength);//get data from the transfer
-
-        if(m_assemblefunc)
+    {
+        qDebug("The %d times\n", i);
+        if (i == nTimes)
         {
-            this->m_assemblefunc(i,Rlength);//assemble the data,(append the head and set the offset and package data len)
+            qDebug("The last times delay longer\n");
+            writedelay = m_burnmsg->lastpackdelay;
+            if (remainder != 0)
+            {
+                Rlength = remainder;
+            }
+        }
+        m_burnmsg->burndata[3] = i;
+        m_burnmsg->burndata[4] = Rlength;
+
+        for (int j = 0; j < m_spretrycnt; j++)//The single pack retry mechanism.
+        {
+            if(m_burnmsg->assemblefunc)
+            {
+                tmpdata = m_burnmsg->assemblefunc(m_burnmsg->burndata,m_burnmsg->datalen,m_databody+i*length,Rlength);
+                m_protocol.write(tmpdata.data,tmpdata.size);
+                if(tmpdata.data!=m_burnmsg->burndata)
+                    delete tmpdata.data;
+            }
+
+            Sleep(writedelay);
+
+            m_protocol.read(feedback,m_burnmsg->feedbacklen);
+
+            if(m_burnmsg->verifyfunc(feedback,m_burnmsg->feedbacklen,m_databody,m_bodysize))
+            {
+                if (i == nTimes)
+                {
+                   qDebug("The last times and write successfully!\n");
+                   delete feedback;
+                   return true;
+                }
+                break;
+            }
+            else
+            {
+                if (j = m_spretrycnt - 1)
+                {
+                    qDebug("the last signel package retry chance!");
+                    delete feedback;
+                    return false;
+                }
+                continue;
+            }
+        }
+    }
+    delete feedback;
+    return true;
+}
+
+bool Transfer_T::transferpackage()
+{
+    if(m_bodysize>PERPACK_LEN)//multi package
+    {
+        return transfermultipackage();
+    }
+    else //only send one package
+    {
+        burndata_t tmpdata;
+        quint8* feedback = new quint8[m_burnmsg->feedbacklen];
+
+        if(m_burnmsg->assemblefunc)
+        {
+            tmpdata = m_burnmsg->assemblefunc(m_burnmsg->burndata,m_burnmsg->datalen,m_databody,m_bodysize);
+            m_protocol.write(tmpdata.data,tmpdata.size);
+            if(tmpdata.data!=m_burnmsg->burndata)
+                delete tmpdata.data;
+        }
+        else
+        {
+            m_protocol.write(m_burnmsg->burndata,m_burnmsg->datalen);//such as reset instruction.
         }
 
-        m_protocol.setPackdata(buf,Rlength);
+        Sleep(m_burnmsg->delay);
 
-        if(m_protocol.burn())
-		{
-            qDebug("The singale pack burn success and start next pack\n");
-			if (i == nTimes) return true;
-		}
-		else
-		{
-			qDebug("The single pack rerty failed and return\n");
-			return false;
-		}
-	}
-	return true;
+        m_protocol.read(feedback,m_burnmsg->feedbacklen);
+
+        if(m_burnmsg->verifyfunc(feedback,m_burnmsg->feedbacklen,m_databody,m_bodysize))
+        {
+            delete feedback;
+            return true;
+        }
+        else
+        {
+            delete feedback;
+            return false;
+        }
+    }
+    return true;
 }
 
 void Transfer_T::run()
 {
     qDebug()<<"data transfer thread start!";
-    for (int k = 0; k < m_retrycnt; k++)
+    for (int k = 0; k < m_burnmsg->retrycnt; k++)
     {
         if (transferpackage())
         {
@@ -92,7 +135,7 @@ void Transfer_T::run()
         else
         {
             qDebug("Burning Failed,Retry Times:%d!", k);
-            if (k == m_retrycnt-1)//the last chance
+            if (k == m_burnmsg->retrycnt-1)//the last chance
             {
                 qDebug("The last retry choice and failed!");
                 //emit BurnMsg(1);//burn failed
@@ -101,7 +144,6 @@ void Transfer_T::run()
         }
     }
     //emit BurnMsg(4);//burn success and return
-
     qDebug()<<"data transfer thread exit!";
 }
 
@@ -131,4 +173,6 @@ void Cvt_DataManage::run()
 	}
 }
 */
+
+
 }

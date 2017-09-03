@@ -44,7 +44,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ddcprotocol->setSlaveAddr(((BurnSetting_T&)i2coptions->getsetting()).getSlaveaddr());
 
     //hdcptransfer = new Transfer_T(*ddcprotocol,&hdcpcmd,3,3,200);
-    hdcptransfer = new Transfer_T(*ddcprotocol);
+    hdcptransfer = new Transfer_T(*ddcprotocol,((BurnSetting_T&)i2coptions->getsetting()).getPerpackRetryCnt());
 
     //initialize signals and slots
     //I2C

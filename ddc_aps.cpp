@@ -67,6 +67,51 @@ burnCmd_t hdcpkeyidcmd =
     nullptr
 };
 
+void assemblehdcp(quint8 offset,quint8 len)
+{
+    quint32 length = PERPACK_LEN;
+    quint32 Rlength = length;
+    quint32 remainder = m_bodysize % 16;
+    quint32 nTimes = (remainder == 0) ? m_bodysize/(length-1) : m_bodysize/length;//how many packs we should send to board.
+
+    quint8 buf[30] = {0};//temp buffer to store the send data
+
+    for (quint32 i = 0; i <= nTimes; i++)
+    {
+        qDebug("The %d times\n", i);
+
+        if (i == nTimes)
+        {
+            qDebug("The last times\n");
+            if (remainder != 0)
+            {
+                Rlength = remainder;
+            }
+        }
+
+        //assemble the data
+        memcpy((void*)buf, (void *)(m_databody+i*length), Rlength);//get data from the transfer
+
+        if(m_assemblefunc)
+        {
+            this->m_assemblefunc(i,Rlength);//assemble the data,(append the head and set the offset and package data len)
+        }
+
+        m_protocol.setPackdata(buf,Rlength);
+
+        if(m_protocol.burn())
+        {
+            qDebug("The singale pack burn success and start next pack\n");
+            if (i == nTimes) return true;
+        }
+        else
+        {
+            qDebug("The single pack rerty failed and return\n");
+            return false;
+        }
+    }
+    return true;
+}
 burnCmd_t hdcpcmd =
 {
     hdcpCmdtab,//burn hdcp
