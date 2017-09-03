@@ -2,9 +2,7 @@
 #include "cvt_global.h"
 #include "isp_iic.h"
 
-
 namespace ddc {
-
 
 class DDCProtocol_T
 {
