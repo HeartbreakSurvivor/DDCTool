@@ -46,6 +46,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //hdcptransfer = new Transfer_T(*ddcprotocol,&hdcpcmd,3,3,200);
     hdcptransfer = new Transfer_T(*ddcprotocol,((BurnSetting_T&)i2coptions->getsetting()).getPerpackRetryCnt());
 
+    updateATcmds();
     //initialize signals and slots
     //I2C
     connect(ui->actionCommunication, SIGNAL(triggered()), this, SLOT(displayi2coptions()));
@@ -210,6 +211,17 @@ void MainWindow::updateHdcpTab()
         ui->hdcptableWidget->setItem(row, column++, newItem);
         //qDebug()<<"row:"<<row<<"column:"<<column;
     }
+}
+
+void MainWindow::updateATcmds()
+{
+    ui->instructionsetlistWidget->insertItem(1,new QListWidgetItem(enterATcmd.name,ui->instructionsetlistWidget));
+
+    ui->propertytableWidget->setItem(0,0,new QTableWidgetItem("Param"));
+    ui->propertytableWidget->setItem(1,0,new QTableWidgetItem("Retry"));
+    ui->propertytableWidget->setItem(2,0,new QTableWidgetItem("Delay"));
+
+    ui->descriptionplainTextEdit->setPlainText(enterATcmd.description);
 }
 
 //slots

@@ -1207,7 +1207,7 @@
       <property name="title">
        <string>Debug Msg</string>
       </property>
-      <widget class="QTextBrowser" name="textBrowser">
+      <widget class="QTextBrowser" name="logtextBrowser">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -1217,7 +1217,7 @@
         </rect>
        </property>
       </widget>
-      <widget class="QLineEdit" name="lineEdit_4">
+      <widget class="QLineEdit" name="cmdlineEdit">
        <property name="geometry">
         <rect>
          <x>12</x>
@@ -1230,7 +1230,7 @@
         <string/>
        </property>
       </widget>
-      <widget class="QPushButton" name="pushButton_3">
+      <widget class="QPushButton" name="cmdsend_Btn">
        <property name="geometry">
         <rect>
          <x>650</x>
@@ -1243,7 +1243,7 @@
         <string>Send</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="pushButton_4">
+      <widget class="QPushButton" name="cmdclear_Btn">
        <property name="geometry">
         <rect>
          <x>720</x>
@@ -1269,7 +1269,7 @@
       <property name="title">
        <string>AT Instruction Data:</string>
       </property>
-      <widget class="QTableWidget" name="tableWidget_2">
+      <widget class="QTableWidget" name="instructiondatatableWidget">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -1356,7 +1356,7 @@
       <property name="title">
        <string>Instruction Property:</string>
       </property>
-      <widget class="QTableWidget" name="tableWidget_3">
+      <widget class="QTableWidget" name="propertytableWidget">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -1393,7 +1393,7 @@
         <bool>true</bool>
        </property>
        <property name="rowCount">
-        <number>0</number>
+        <number>3</number>
        </property>
        <property name="columnCount">
         <number>2</number>
@@ -1410,6 +1410,9 @@
        <attribute name="horizontalHeaderStretchLastSection">
         <bool>true</bool>
        </attribute>
+       <attribute name="verticalHeaderVisible">
+        <bool>false</bool>
+       </attribute>
        <attribute name="verticalHeaderCascadingSectionResizes">
         <bool>false</bool>
        </attribute>
@@ -1425,6 +1428,9 @@
        <attribute name="verticalHeaderStretchLastSection">
         <bool>false</bool>
        </attribute>
+       <row/>
+       <row/>
+       <row/>
        <column>
         <property name="text">
          <string>Propetry</string>
@@ -1452,7 +1458,7 @@
       <property name="title">
        <string>AT Instruction Set:</string>
       </property>
-      <widget class="QListWidget" name="listWidget_2">
+      <widget class="QListWidget" name="instructionsetlistWidget">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -1461,23 +1467,8 @@
          <height>227</height>
         </rect>
        </property>
-       <item>
-        <property name="text">
-         <string>EnterATStatus</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Reset</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>SetBrightness</string>
-        </property>
-       </item>
       </widget>
-      <widget class="QPushButton" name="pushButton_14">
+      <widget class="QPushButton" name="instructionrun_Btn">
        <property name="geometry">
         <rect>
          <x>140</x>
@@ -1490,7 +1481,7 @@
         <string>Run</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="pushButton_16">
+      <widget class="QPushButton" name="instructiondowm_Btn">
        <property name="geometry">
         <rect>
          <x>140</x>
@@ -1503,7 +1494,7 @@
         <string>Down</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="pushButton_17">
+      <widget class="QPushButton" name="instructionstep_Btn">
        <property name="geometry">
         <rect>
          <x>140</x>
@@ -1516,7 +1507,7 @@
         <string>Step</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="pushButton_18">
+      <widget class="QPushButton" name="instructionup_Btn">
        <property name="geometry">
         <rect>
          <x>140</x>
@@ -1529,7 +1520,7 @@
         <string>Up</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="pushButton_19">
+      <widget class="QPushButton" name="instructionsave_Btn">
        <property name="geometry">
         <rect>
          <x>140</x>
@@ -1555,7 +1546,7 @@
       <property name="title">
        <string>Instuctions Description</string>
       </property>
-      <widget class="QPlainTextEdit" name="plainTextEdit">
+      <widget class="QPlainTextEdit" name="descriptionplainTextEdit">
        <property name="geometry">
         <rect>
          <x>10</x>

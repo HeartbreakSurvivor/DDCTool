@@ -39,6 +39,7 @@ public:
     void clearEdidTab();
     void updateHdcpTab();
 
+    void updateATcmds();
     void readSettings();
     void writeSettings();
 

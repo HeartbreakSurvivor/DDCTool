@@ -29,6 +29,9 @@ typedef struct burncmd{
 }burnCmd_t;
 
 
+//external declarations
+extern burnCmd_t enterATcmd;
+
 }
 
 #endif // DDC_APS_H
