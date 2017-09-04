@@ -5,39 +5,16 @@ using namespace std;
 using namespace ddc;
 
 
-MainWindow::MainWindow(QWidget *parent) :
+DDCMainWindow::DDCMainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
-    ui->manufacturerNameLineEdit->setMaxLength(3);
-    ui->hdcpkeyidlineEdit->setMaxLength(8);
-
-    QLabel *DDC_BurnStatusText = new QLabel(tr("Status:"));
-
-    DDC_ProgressBar = new QProgressBar(this);
-    DDC_ProgressBar->setMinimum(0);
-    DDC_ProgressBar->setMaximum(100);
-    DDC_ProgressBar->setValue(23);
-
-    DDC_BurnStatus = new QLabel(tr("PASS"));
-
-    DDC_BurnStatus->setMinimumWidth(80);
-    DDC_BurnStatus->setAlignment(Qt::AlignCenter);
-    QFont font("Helvetica [Cronyx]", 22, QFont::Black, false);
-    DDC_BurnStatus->setFont(font);
-    DDC_BurnStatus->setStyleSheet("color:green");
-
-    DDC_TimeLabel = new QLabel(tr(""));
-    ui->statusBar->addPermanentWidget(DDC_TimeLabel);
-    timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(qTimeSlot()));
-    timer->start(1000);
+    ui_preinit();
 
     readSettings();
 
-    qDebug()<<"init the options";
     i2coptions = new CommunicationOption(*burnsettings);
 
     ddcprotocol = new DDCProtocol_T(i2cdevice);
@@ -46,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //hdcptransfer = new Transfer_T(*ddcprotocol,&hdcpcmd,3,3,200);
     hdcptransfer = new Transfer_T(*ddcprotocol,((BurnSetting_T&)i2coptions->getsetting()).getPerpackRetryCnt());
 
-    updateATcmds();
+    updateATcmds(enterATcmd);
     //initialize signals and slots
     //I2C
     connect(ui->actionCommunication, SIGNAL(triggered()), this, SLOT(displayi2coptions()));
@@ -69,21 +46,57 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->writehdcp_Btn, SIGNAL(clicked()), this, SLOT(writeHdcp()));//write the hdcp to board
     connect(ui->stopwritehdcp_Btn, SIGNAL(clicked()), this, SLOT(stopWriteHdcp()));//stop the hdcp writing operation
     connect(ui->chiptypecomboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(changechiptype()));
-
-    ui->statusBar->addWidget(DDC_BurnStatusText);
-    ui->statusBar->addWidget(DDC_ProgressBar);
-    ui->statusBar->addWidget(DDC_BurnStatus);
 }
 
-MainWindow::~MainWindow()
+DDCMainWindow::~DDCMainWindow()
 {
     delete ui;
     delete i2coptions;
 }
 
-void writeSettings();
+void DDCMainWindow::ui_preinit()
+{
+    QLabel *DDC_BurnStatusText = new QLabel(tr("Status:"));
 
-void MainWindow::readSettings()
+    DDC_ProgressBar = new QProgressBar(this);
+    DDC_ProgressBar->setMinimum(0);
+    DDC_ProgressBar->setMaximum(100);
+    DDC_ProgressBar->setValue(23);
+
+    DDC_BurnStatus = new QLabel(tr("PASS"));
+
+    DDC_BurnStatus->setMinimumWidth(80);
+    DDC_BurnStatus->setAlignment(Qt::AlignCenter);
+    QFont font("Helvetica [Cronyx]", 22, QFont::Black, false);
+    DDC_BurnStatus->setFont(font);
+    DDC_BurnStatus->setStyleSheet("color:green");
+
+    DDC_TimeLabel = new QLabel(tr(""));
+    ui->statusBar->addPermanentWidget(DDC_TimeLabel);
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(qTimeSlot()));
+    timer->start(1000);
+
+    ui->statusBar->addWidget(DDC_BurnStatusText);
+    ui->statusBar->addWidget(DDC_ProgressBar);
+    ui->statusBar->addWidget(DDC_BurnStatus);
+
+    //edid tab
+    ui->manufacturerNameLineEdit->setMaxLength(3);
+    ui->EdidtableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    //hdcp tab
+    ui->hdcpkeyidlineEdit->setMaxLength(8);
+    ui->hdcptableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    //debug tab
+    ui->descriptionplainTextEdit->setReadOnly(true);
+    ui->instructiondatatableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    //ui->cmdlineEdit->setStatusTip("asdassad");
+    ui->cmdlineEdit->setPlaceholderText("Send datagram,i.e.,\"C0 63 07 04 00 01\" to reset monitor.");
+}
+
+void DDCMainWindow::readSettings()
 {
     QSettings Burn_Settings("Cvte","DDC Tool");
 
@@ -106,7 +119,7 @@ void MainWindow::readSettings()
 }
 
 
-void MainWindow::writeSettings()
+void DDCMainWindow::writeSettings()
 {
     QSettings Burn_Settings("Cvte", "DDC Tool");
 
@@ -132,7 +145,7 @@ void MainWindow::writeSettings()
     Burn_Settings.endGroup();
 }
 
-void MainWindow::clearEdidTab()
+void DDCMainWindow::clearEdidTab()
 {
     ui->edidnameLineEdit->clear();
     ui->edidsizeLineEdit->clear();
@@ -146,7 +159,7 @@ void MainWindow::clearEdidTab()
     ui->EdidtableWidget->clear();
 }
 
-void MainWindow::updateEdidTab(QString key)
+void DDCMainWindow::updateEdidTab(QString key)
 {
     int row=-1,column=0;
 
@@ -182,7 +195,7 @@ void MainWindow::updateEdidTab(QString key)
     }
 }
 
-void MainWindow::updateHdcpTab()
+void DDCMainWindow::updateHdcpTab()
 {
     QString keyid;
     int row=-1,column=0;
@@ -213,26 +226,47 @@ void MainWindow::updateHdcpTab()
     }
 }
 
-void MainWindow::updateATcmds()
+#if 0
+void ui_init(void)
 {
-    ui->instructionsetlistWidget->insertItem(1,new QListWidgetItem(enterATcmd.name,ui->instructionsetlistWidget));
+    ui->descriptionplainTextEdit->setReadOnly(true);
+}
+
+#endif
+
+void DDCMainWindow::updateATcmds(const burnCmd_t& cmd)
+{
+    ui->instructionsetlistWidget->insertItem(1,new QListWidgetItem(cmd.name,ui->instructionsetlistWidget));
+
 
     ui->propertytableWidget->setItem(0,0,new QTableWidgetItem("Param"));
     ui->propertytableWidget->setItem(1,0,new QTableWidgetItem("Retry"));
     ui->propertytableWidget->setItem(2,0,new QTableWidgetItem("Delay"));
-
+    //ui->propertytableWidget->setEditTriggers();
     ui->descriptionplainTextEdit->setPlainText(enterATcmd.description);
+
+    //changeful and inconstant
+    ui->propertytableWidget->setItem(0,1,new QTableWidgetItem("Param"));
+
+    QSpinBox *retryspbox = new QSpinBox(this);
+    retryspbox->setValue(cmd.retrycnt);
+    ui->propertytableWidget->setCellWidget(1,1,retryspbox);
+
+    QSpinBox *delayspbox = new QSpinBox(this);
+    delayspbox->setValue(cmd.delay);
+    ui->propertytableWidget->setCellWidget(2,1,delayspbox);
+
 }
 
 //slots
-void MainWindow::closeEvent(QCloseEvent *event)
+void DDCMainWindow::closeEvent(QCloseEvent *event)
 {
     Q_UNUSED(event);
     qDebug("close the window!");
     writeSettings();
 }
 
-void MainWindow::qTimeSlot(void)
+void DDCMainWindow::qTimeSlot(void)
 {
     QDateTime DDC_CurTime = QDateTime::currentDateTime();
     QString str = DDC_CurTime.toString("yyyy-MM-dd hh:mm:ss");
@@ -241,24 +275,24 @@ void MainWindow::qTimeSlot(void)
 }
 
 //I2C Options
-void MainWindow::displayaboutmenu(void)
+void DDCMainWindow::displayaboutmenu(void)
 {
     qDebug("show the help window!");
     helpwindow.show();
 }
 
-void MainWindow::displayhelpmenu(void)
+void DDCMainWindow::displayhelpmenu(void)
 {
 
 }
 
-void MainWindow::displayi2coptions(void)
+void DDCMainWindow::displayi2coptions(void)
 {
     i2coptions->show();
 }
 
 //Isp Slots
-void MainWindow::connectI2c(void)
+void DDCMainWindow::connectI2c(void)
 {
     //const修饰返回值的函数，必须定义const类型的变量去赋值，或者强制转化成非const类型
     //const BurnSetting_T &burnsetting = i2coptions->getsetting();
@@ -276,7 +310,7 @@ void MainWindow::connectI2c(void)
     }
 }
 
-void MainWindow::disconnetI2c(void)
+void DDCMainWindow::disconnetI2c(void)
 {
     if (NULL==i2cdevice.gethandle())
     {
@@ -288,14 +322,14 @@ void MainWindow::disconnetI2c(void)
     qDebug("Close device successfully!!!");
 }
 
-void MainWindow::opendebugmsg(void)
+void DDCMainWindow::opendebugmsg(void)
 {
     QString logpath = QDir::currentPath();
     QDesktopServices::openUrl(QUrl(logpath,QUrl::TolerantMode));
 }
 
 //EDID Tab Slots
-void MainWindow::loadEdid(void)
+void DDCMainWindow::loadEdid(void)
 {
     QStringList  fileNameList;
     QString fileName;
@@ -367,7 +401,7 @@ void MainWindow::loadEdid(void)
         fd->close();
 }
 
-void MainWindow::nextEdid(void)
+void DDCMainWindow::nextEdid(void)
 {
     cout<<"next edid bin file"<<endl;
     if (edid_map.empty()) return;
@@ -414,7 +448,7 @@ bool IsSubset(std::vector<QString> &v1,std::vector<QString> &v2)
         return true;
 }
 
-void MainWindow::getedidtypes()
+void DDCMainWindow::getedidtypes()
 {
     edid_type.clear();
     if(ui->checkBox_vga->isChecked())
@@ -431,17 +465,17 @@ void MainWindow::getedidtypes()
         edid_type.push_back("dp");
 }
 
-void MainWindow::syncEdid(void)
+void DDCMainWindow::syncEdid(void)
 {
     cout<<"sync edid"<<endl;
 }
 
-void MainWindow::saveEdid(void)
+void DDCMainWindow::saveEdid(void)
 {
     cout<<"save edid bin file"<<endl;
 }
 
-void MainWindow::writeEdid(void)
+void DDCMainWindow::writeEdid(void)
 {
     qDebug()<<"write Edid start!"<<endl;
     if (NULL==i2cdevice.gethandle() || edid_map.size()==0)return;
@@ -464,13 +498,13 @@ void MainWindow::writeEdid(void)
     qDebug()<<"write Edid end"<<endl;
 }
 
-void MainWindow::stopWriteEdid(void)
+void DDCMainWindow::stopWriteEdid(void)
 {
     cout<<"stop the writing of edid"<<endl;
 }
 
 //Hdcp Tab Slots
-void MainWindow::loadHdcp()
+void DDCMainWindow::loadHdcp()
 {
     QStringList  fileNameList;
     QString fileName;
@@ -502,17 +536,17 @@ void MainWindow::loadHdcp()
         fd->close();
 }
 
-void MainWindow::writeHdcp()
+void DDCMainWindow::writeHdcp()
 {
     if (NULL==i2cdevice.gethandle() || hdcpdata==nullptr)return;
 }
 
-void MainWindow::stopWriteHdcp()
+void DDCMainWindow::stopWriteHdcp()
 {
 
 }
 
-void MainWindow::changechiptype()
+void DDCMainWindow::changechiptype()
 {
     qDebug()<<"current idx:"<<ui->chiptypecomboBox->currentIndex();
     hdcpdata->setChipType(ui->chiptypecomboBox->currentIndex());

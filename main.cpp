@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 	QCoreApplication::setOrganizationDomain("zhanghao3126@cvte.com");
     QCoreApplication::setOrganizationName("DDC Tool");
 
-    MainWindow window;//initialize the mainwindow but not show.
+    DDCMainWindow window;//initialize the mainwindow but not show.
     window.show();//show the mainwindow and start the event handler.
 	return a.exec();
 }

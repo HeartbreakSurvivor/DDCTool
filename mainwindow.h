@@ -10,6 +10,7 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <QDesktopServices>
+#include <QSpinBox>
 #include <QUrl>
 
 #include "cvt_global.h"
@@ -28,18 +29,21 @@ class MainWindow;
 
 using namespace ddc;
 
-class MainWindow : public QMainWindow
+class DDCMainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    explicit DDCMainWindow(QWidget *parent = 0);
+    ~DDCMainWindow();
+
+    void ui_preinit(void);
+
     void updateEdidTab(QString key);
     void clearEdidTab();
     void updateHdcpTab();
 
-    void updateATcmds();
+    void updateATcmds(const burnCmd_t& cmd);//the value that reference points to can't be modified.
     void readSettings();
     void writeSettings();
 
@@ -96,7 +100,6 @@ private:
     //Hdcp
     Hdcp_T *hdcpdata=nullptr;
     Transfer_T *hdcptransfer=nullptr;
-
 
     //the automatically generated ui file
     Ui::MainWindow *ui;
