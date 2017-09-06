@@ -23,7 +23,7 @@ quint8 ediddpcmdtab[]={0xD0,0x35,0x0D,0x00,0x10};
 
 //Common releated Instructions
 quint8 enterAtcmdtab[]={0xc0,0x43,0x56,0x54,0x45,0x41,0x54,0x4f,0x4e};
-quint8 setsourcecmdtab[]={0xc0,0x63,0x0a,0x00,0x01};
+quint8 setsourcecmdtab[]={0xc0,0x63,0x07,0x0A,0x00,0x01};
 quint8 getsourcecmdtab[]={0xC0,0x65,0x07,0x0A,0x00,0x00};
 quint8 resetcmdtab[]={0xc0,0x63,0x07,0x04,0x00,0x01};
 quint8 getchecksumcmdtab[]={0xc0,0x73,0x07,0x1d,0x00,0x00};
@@ -73,11 +73,41 @@ burndata_t CommonAssemble_Alloc(quint8 *head,quint8 headsize,quint8 *body,quint8
 burnCmd_t enterATcmd =
 {
     QString("EnterATStatus"),
-    QString("enter the AT status, so can the other instructions"
-    " can be executed!"),
+    QString("enter the AT status, so can the other instructions can be executed!"),
+    kNull,
     enterAtcmdtab,
     sizeof(enterAtcmdtab),
     nullptr,
+    FEEDBACK_LEN,
+    &CommonFeedbackverify,
+    3,
+    COMMON_DELAY,
+    COMMON_DELAY,
+};
+
+//Set Source
+
+burndata_t SetSourceAssemble(quint8 *head,quint8 headsize,quint8 *body,quint8 bodysize)
+{
+    burndata_t tmpburndata;
+    //if(bodysize>1) return;
+
+    *(head+5) = *body;
+
+    tmpburndata.data = head;
+    tmpburndata.size = headsize;
+    return tmpburndata;
+}
+
+burnCmd_t setSourcecmd =
+{
+    QString("Set Source"),
+    QString("Set the input source, source can be the follows:\
+    0x01:VGA 0x04:DVI 0x08:HDMI1 0x09:HDMI2 0x0A:HDMI3 0x0C:DP"),
+    kLineEdit,
+    setsourcecmdtab,
+    sizeof(setsourcecmdtab),
+    &SetSourceAssemble,
     FEEDBACK_LEN,
     &CommonFeedbackverify,
     3,
@@ -90,6 +120,7 @@ burnCmd_t erasehdcpcmd =
 {
     nullptr,
     nullptr,
+    kNull,
     erasehdcpCmdtab,
     sizeof(erasehdcpCmdtab),
     nullptr,
@@ -104,6 +135,7 @@ burnCmd_t hdcpkeyidcmd =
 {
     nullptr,
     nullptr,
+    kNull,
     hdcpkeyidCmdtab,
     sizeof(hdcpkeyidCmdtab),
     &CommonAssemble_Alloc,
@@ -118,6 +150,7 @@ burnCmd_t hdcpburncmd =
 {
     nullptr,
     nullptr,
+    kNull,
     hdcpCmdtab,
     sizeof(hdcpCmdtab),
     &CommonAssemble_Alloc,
@@ -133,6 +166,7 @@ burnCmd_t edid_vgacmd =
 {
     nullptr,
     nullptr,
+    kNull,
     edidvgacmdtab,
     sizeof(edidvgacmdtab),
     &CommonAssemble_Alloc,
@@ -147,6 +181,7 @@ burnCmd_t edid_dvicmd =
 {
     nullptr,
     nullptr,
+    kNull,
     ediddvicmdtab,
     sizeof(ediddvicmdtab),
     &CommonAssemble_Alloc,
@@ -161,6 +196,7 @@ burnCmd_t edid_hdmi1cmd =
 {
     nullptr,
     nullptr,
+    kNull,
     edidhdmi1cmdtab,
     sizeof(edidhdmi1cmdtab),
     &CommonAssemble_Alloc,
@@ -175,6 +211,7 @@ burnCmd_t edid_hdmi2cmd =
 {
     nullptr,
     nullptr,
+    kNull,
     edidhdmi2cmdtab,
     sizeof(edidhdmi2cmdtab),
     &CommonAssemble_Alloc,
@@ -189,6 +226,7 @@ burnCmd_t edid_hdmi3cmd =
 {
     nullptr,
     nullptr,
+    kNull,
     edidhdmi3cmdtab,
     sizeof(edidhdmi3cmdtab),
     &CommonAssemble_Alloc,
@@ -203,6 +241,7 @@ burnCmd_t edid_dpcmd =
 {
     nullptr,
     nullptr,
+    kNull,
     ediddpcmdtab,
     sizeof(ediddpcmdtab),
     &CommonAssemble_Alloc,

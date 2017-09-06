@@ -12,6 +12,7 @@
 #include <QDesktopServices>
 #include <QSpinBox>
 #include <QUrl>
+#include <QLineEdit>
 
 #include "cvt_global.h"
 #include "edid_data.h"
@@ -39,8 +40,8 @@ public:
 
     void ui_preinit(void);
 
-    void updateEdidTab(QString key);
     void clearEdidTab();
+    void updateEdidTab(QString key);
     void updateHdcpTab();
 
     void updateATcmds(const burnCmd_t& cmd);//the value that reference points to can't be modified.
@@ -100,6 +101,13 @@ private:
     //Hdcp
     Hdcp_T *hdcpdata=nullptr;
     Transfer_T *hdcptransfer=nullptr;
+
+    //DebugTab
+    QSpinBox retryspbox;
+    QSpinBox delayspbox;
+    //optional ui style
+    QLineEdit paralineedid;
+    QSpinBox paraspinbox;
 
     //the automatically generated ui file
     Ui::MainWindow *ui;

@@ -23,7 +23,7 @@ DDCMainWindow::DDCMainWindow(QWidget *parent) :
     //hdcptransfer = new Transfer_T(*ddcprotocol,&hdcpcmd,3,3,200);
     hdcptransfer = new Transfer_T(*ddcprotocol,((BurnSetting_T&)i2coptions->getsetting()).getPerpackRetryCnt());
 
-    updateATcmds(enterATcmd);
+    updateATcmds(setSourcecmd);
     //initialize signals and slots
     //I2C
     connect(ui->actionCommunication, SIGNAL(triggered()), this, SLOT(displayi2coptions()));
@@ -90,6 +90,18 @@ void DDCMainWindow::ui_preinit()
     ui->hdcptableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     //debug tab
+    ui->instructionsetlistWidget->insertItem(1,new QListWidgetItem("EnterATStatus",ui->instructionsetlistWidget));
+    ui->instructionsetlistWidget->insertItem(2,new QListWidgetItem("Reset",ui->instructionsetlistWidget));
+
+    ui->propertytableWidget->setItem(0,0,new QTableWidgetItem("Param"));
+    ui->propertytableWidget->setItem(1,0,new QTableWidgetItem("Retry"));
+    ui->propertytableWidget->setItem(2,0,new QTableWidgetItem("Delay"));
+
+    retryspbox.setMaximum(10);
+    delayspbox.setMaximum(10000);
+    ui->propertytableWidget->setCellWidget(1,1,&retryspbox);
+    ui->propertytableWidget->setCellWidget(2,1,&delayspbox);
+
     ui->descriptionplainTextEdit->setReadOnly(true);
     ui->instructiondatatableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
     //ui->cmdlineEdit->setStatusTip("asdassad");
@@ -117,7 +129,6 @@ void DDCMainWindow::readSettings()
 
     Burn_Settings.endGroup();
 }
-
 
 void DDCMainWindow::writeSettings()
 {
@@ -226,36 +237,27 @@ void DDCMainWindow::updateHdcpTab()
     }
 }
 
-#if 0
-void ui_init(void)
-{
-    ui->descriptionplainTextEdit->setReadOnly(true);
-}
-
-#endif
-
 void DDCMainWindow::updateATcmds(const burnCmd_t& cmd)
 {
-    ui->instructionsetlistWidget->insertItem(1,new QListWidgetItem(cmd.name,ui->instructionsetlistWidget));
+    if(cmd.parastyle == kNull)
+    {
+        paralineedid.setReadOnly(true);
+        ui->propertytableWidget->setCellWidget(0,1,&paralineedid);
+    }
+    else if(cmd.parastyle == kSPinbox)
+    {
+        ui->propertytableWidget->setCellWidget(0,1,&paraspinbox);
+    }
+    else if(cmd.parastyle == kLineEdit)
+    {
+        ui->propertytableWidget->setCellWidget(0,1,&paralineedid);
+    }
 
+    retryspbox.setValue(cmd.retrycnt);
+    delayspbox.setValue(cmd.delay);
 
-    ui->propertytableWidget->setItem(0,0,new QTableWidgetItem("Param"));
-    ui->propertytableWidget->setItem(1,0,new QTableWidgetItem("Retry"));
-    ui->propertytableWidget->setItem(2,0,new QTableWidgetItem("Delay"));
     //ui->propertytableWidget->setEditTriggers();
-    ui->descriptionplainTextEdit->setPlainText(enterATcmd.description);
-
-    //changeful and inconstant
-    ui->propertytableWidget->setItem(0,1,new QTableWidgetItem("Param"));
-
-    QSpinBox *retryspbox = new QSpinBox(this);
-    retryspbox->setValue(cmd.retrycnt);
-    ui->propertytableWidget->setCellWidget(1,1,retryspbox);
-
-    QSpinBox *delayspbox = new QSpinBox(this);
-    delayspbox->setValue(cmd.delay);
-    ui->propertytableWidget->setCellWidget(2,1,delayspbox);
-
+    ui->descriptionplainTextEdit->setPlainText(cmd.description);
 }
 
 //slots
