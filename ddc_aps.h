@@ -5,6 +5,8 @@
 
 namespace ddc {
 
+#define     COUNTOF(array)       (sizeof(array)/sizeof(array[0]))
+
 using cbverify = bool(*)(quint8 *feedback,quint8 fdlen,quint8 *data,quint8 len);
 using cbassemble = burndata_t (*)(quint8 *head,quint8 headsize,quint8 *body,quint8 bodysize);
 
@@ -39,6 +41,10 @@ typedef struct burncmd{
 //external declarations
 extern burnCmd_t enterATcmd;
 extern burnCmd_t setSourcecmd;
+
+extern burnCmd_t* ATCmds[];
+extern int getATCmdLen(void);
+
 }
 
 #endif // DDC_APS_H

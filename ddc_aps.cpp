@@ -85,8 +85,23 @@ burnCmd_t enterATcmd =
     COMMON_DELAY,
 };
 
-//Set Source
+//Reset
+burnCmd_t resetcmd =
+{
+    nullptr,
+    nullptr,
+    kNull,
+    resetcmdtab,
+    sizeof(resetcmdtab),
+    nullptr,
+    FEEDBACK_LEN,
+    &CommonFeedbackverify,
+    3,
+    COMMON_DELAY,
+    COMMON_DELAY,
+};
 
+//Set Source
 burndata_t SetSourceAssemble(quint8 *head,quint8 headsize,quint8 *body,quint8 bodysize)
 {
     burndata_t tmpburndata;
@@ -251,5 +266,16 @@ burnCmd_t edid_dpcmd =
     20,
     LASTPACK_DELAY,
 };
+
+burnCmd_t* ATCmds[]={
+    &enterATcmd,
+    &resetcmd,
+    &setSourcecmd,
+};
+
+int getATCmdLen(void)
+{
+   return COUNTOF(ATCmds);
+}
 
 }

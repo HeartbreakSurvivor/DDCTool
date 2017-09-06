@@ -23,7 +23,12 @@ DDCMainWindow::DDCMainWindow(QWidget *parent) :
     //hdcptransfer = new Transfer_T(*ddcprotocol,&hdcpcmd,3,3,200);
     hdcptransfer = new Transfer_T(*ddcprotocol,((BurnSetting_T&)i2coptions->getsetting()).getPerpackRetryCnt());
 
-    updateATcmds(setSourcecmd);
+    for(int i=0;i<ddc::getATCmdLen();++i)
+    {
+        m_atcmd.push_back(ATCmds[i]);
+    }
+
+    updateATcmds(*m_atcmd.front());
     //initialize signals and slots
     //I2C
     connect(ui->actionCommunication, SIGNAL(triggered()), this, SLOT(displayi2coptions()));
@@ -46,6 +51,10 @@ DDCMainWindow::DDCMainWindow(QWidget *parent) :
     connect(ui->writehdcp_Btn, SIGNAL(clicked()), this, SLOT(writeHdcp()));//write the hdcp to board
     connect(ui->stopwritehdcp_Btn, SIGNAL(clicked()), this, SLOT(stopWriteHdcp()));//stop the hdcp writing operation
     connect(ui->chiptypecomboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(changechiptype()));
+
+    //Debug Tab
+
+    connect(ui->instructionsetlistWidget,SIGNAL(clicked(QModelIndex)),this,SLOT(itemClicked(QModelIndex)));
 }
 
 DDCMainWindow::~DDCMainWindow()
@@ -128,6 +137,11 @@ void DDCMainWindow::readSettings()
     tmp_EdidlastDelay,tmp_HdcplastDelay,tmp_EraseHdcp,(bool)tmp_IsCreatLogs);
 
     Burn_Settings.endGroup();
+
+    QSettings At_cmds("Cvte","DDC Tool");
+    At_cmds.beginGroup("AT_Cmd");
+
+    At_cmds.endGroup();
 }
 
 void DDCMainWindow::writeSettings()
@@ -561,3 +575,12 @@ void DDCMainWindow::changechiptype()
     }
     ui->hdcpkeyidlineEdit->setText(keyid);
 }
+
+//Debug Tab Slots
+void DDCMainWindow::itemClicked(QModelIndex idx)
+{
+    qDebug()<<idx.data(Qt::DisplayRole).toString();
+    //std::cout<<"idx:"<<idx.data().toString()<<std::endl;
+}
+
+

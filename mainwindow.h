@@ -13,6 +13,7 @@
 #include <QSpinBox>
 #include <QUrl>
 #include <QLineEdit>
+#include <QModelIndex>
 
 #include "cvt_global.h"
 #include "edid_data.h"
@@ -79,6 +80,9 @@ private slots:
     void stopWriteHdcp();
     void changechiptype();
 
+    //Debug Tab
+    void itemClicked(QModelIndex idx);
+
 private:
     QProgressBar *DDC_ProgressBar;//indicate the burn progress.
     QLabel *DDC_BurnStatus;//indicate the result of burning.
@@ -103,6 +107,7 @@ private:
     Transfer_T *hdcptransfer=nullptr;
 
     //DebugTab
+    std::list<burnCmd_t*> m_atcmd;
     QSpinBox retryspbox;
     QSpinBox delayspbox;
     //optional ui style
