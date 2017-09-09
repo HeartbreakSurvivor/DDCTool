@@ -258,6 +258,13 @@ void DDCMainWindow::updateATcmds(const burnCmd_t& cmd)
     {
         qDebug()<<"ready to get parameter.";
     }
+    else
+    {
+        //QTableWidgetItem *item = ui->propertytableWidget->item(0,1);
+        //item->setFlags(Qt::NoItemFlags);
+        qDebug()<<"not editable.";
+    }
+
 
     retryspbox.setValue(cmd.retrycnt);
     delayspbox.setValue(cmd.delay);
@@ -278,7 +285,7 @@ void DDCMainWindow::updateATcmds(const burnCmd_t& cmd)
             row++;
             (row==0)?column=1:column=0;
         }
-        qDebug()<<"row:"<<row<<"column:"<<column;
+        //qDebug()<<"row:"<<row<<"column:"<<column;
         ui->instructiondatatableWidget->setItem(row, column++, newItem);
     }
 }

@@ -400,12 +400,48 @@ burnCmd_t setFactorypanelcmd =
     COMMON_DELAY,
 };
 
+
+//Write SN
+burnCmd_t writesncmd =
+{
+    QString("Write SN"),
+    QString("Write the factory serial number.\n"
+    "for example,please input the SN like follows:"
+    "PY-SA400840124287"),
+    CommonSetpara,
+    writesncmdtab,
+    sizeof(writesncmdtab),
+    nullptr,
+    FEEDBACK_LEN,
+    &CommonFeedbackverify,
+    3,
+    COMMON_DELAY,
+    COMMON_DELAY,
+};
+
 burnCmd_t* ATCmds[]={
     &enterATcmd,
     &resetcmd,
     &setSourcecmd,
     &setVolumecmd,
+    &setBrightnesscmd,
+    &setBurningmodecmd,
+    &setFactorymodecmd,
+    &setColortempcmd,
+    &setKeypadlockcmd,
+    &setFactorypanelcmd,
+    &writesncmd,
+    &autoadjustcmd,
+    &getautocolorstatuscmd,
+    &getChecksumcmd,
+    &getFixedChecksumcmd,
+    &gethdcpksvcmd,
+    &getkeypresscmd,
+    &getsncmd,
+    &getkeypresscmd,
+    &getSourcecmd,
 };
+
 
 int getATCmdLen(void)
 {
