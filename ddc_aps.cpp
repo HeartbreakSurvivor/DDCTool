@@ -69,60 +69,211 @@ burndata_t CommonAssemble_Alloc(quint8 *head,quint8 headsize,quint8 *body,quint8
     return tmpburndata;
 }
 
+void CommonSetpara(QString text,quint8 *head,quint8 headsize)
+{
+    Q_UNUSED(headsize);
+    //some defense comdition
+    bool *ok;
+    int value = text.toInt(ok,16);
+    *(head+5) = (quint8)value;
+}
+
+/*******************************************************
+ ** No Parameter Instructions.
+ *******************************************************/
 //Enter AT Status
 burnCmd_t enterATcmd =
 {
     QString("EnterATStatus"),
-    QString("enter the AT status, so can the other instructions can be executed!"),
-    kNull,
+    QString("Enter the AT status, so can the other instructions execute!"),
+    nullptr,
     enterAtcmdtab,
     sizeof(enterAtcmdtab),
     nullptr,
     FEEDBACK_LEN,
     &CommonFeedbackverify,
     3,
-    COMMON_DELAY,
+    20,
     COMMON_DELAY,
 };
 
 //Reset
 burnCmd_t resetcmd =
 {
+    QString("Reset"),
+    QString("Reset the Monitor's user settings!"),
     nullptr,
-    nullptr,
-    kNull,
     resetcmdtab,
     sizeof(resetcmdtab),
     nullptr,
     FEEDBACK_LEN,
     &CommonFeedbackverify,
     3,
-    COMMON_DELAY,
+    500,
     COMMON_DELAY,
 };
 
-//Set Source
-burndata_t SetSourceAssemble(quint8 *head,quint8 headsize,quint8 *body,quint8 bodysize)
+//Get Source
+burnCmd_t getSourcecmd =
 {
-    burndata_t tmpburndata;
-    //if(bodysize>1) return;
+    QString("Get Source"),
+    QString("Get the current input source,which might be follows:\n"
+    "0x01:VGA 0x04:DVI 0x08:HDMI1 0x09:HDMI2 0x0A:HDMI3 0x0C:DP"),
+    nullptr,
+    getsourcecmdtab,
+    sizeof(getsourcecmdtab),
+    nullptr,
+    FEEDBACK_LEN,
+    &CommonFeedbackverify,
+    3,
+    500,
+    COMMON_DELAY,
+};
 
-    *(head+5) = *body;
+//Get Checksum
+burnCmd_t getChecksumcmd =
+{
+    QString("Get Checksum"),
+    QString("Get the real Checksum.\n"),
+    nullptr,
+    getchecksumcmdtab,
+    sizeof(getchecksumcmdtab),
+    nullptr,
+    FEEDBACK_LEN,
+    &CommonFeedbackverify,
+    3,
+    500,
+    COMMON_DELAY,
+};
 
-    tmpburndata.data = head;
-    tmpburndata.size = headsize;
-    return tmpburndata;
-}
+//Get Fixed Checksum
+burnCmd_t getFixedChecksumcmd =
+{
+    QString("Get Fixed Checksum"),
+    QString("Get the Fixed Checksum.\n"),
+    nullptr,
+    getfixedchecksumcmdtab,
+    sizeof(getfixedchecksumcmdtab),
+    nullptr,
+    FEEDBACK_LEN,
+    &CommonFeedbackverify,
+    3,
+    500,
+    COMMON_DELAY,
+};
 
+//Get HDCP KSV
+burnCmd_t gethdcpksvcmd =
+{
+    QString("Get HDCP KSV"),
+    QString("Get the HDCPKEY's KSV.\n"),
+    nullptr,
+    getksvcmdtab,
+    sizeof(getksvcmdtab),
+    nullptr,
+    FEEDBACK_LEN,
+    &CommonFeedbackverify,
+    3,
+    500,
+    COMMON_DELAY,
+};
+
+//Get Key Press
+burnCmd_t getkeypresscmd =
+{
+    QString("Get Key Press"),
+    QString("get the keypad press status.D0~D7 --> Key0~Key7 \n"
+    "0 means not pressd,1 for pressed."
+    "for example: 0x02 means the key2 has been pressed."),
+    nullptr,
+    getkeycmdtab,
+    sizeof(getkeycmdtab),
+    nullptr,
+    FEEDBACK_LEN,
+    nullptr,
+    3,
+    500,
+    COMMON_DELAY,
+};
+
+//ADC autocolor
+burnCmd_t autocolorcmd =
+{
+    QString("ADC autocolor"),
+    QString("ADC autocolor only for VGA input source.\n"),
+    nullptr,
+    autocolorcmdtab,
+    sizeof(autocolorcmdtab),
+    nullptr,
+    FEEDBACK_LEN,
+    &CommonFeedbackverify,
+    3,
+    500,
+    COMMON_DELAY,
+};
+
+//Auto Adjust
+burnCmd_t autoadjustcmd =
+{
+    QString("Auto Adjust"),
+    QString("Auto Adjust only for VGA input source.\n"),
+    nullptr,
+    autoadjustcmdtab,
+    sizeof(autoadjustcmdtab),
+    nullptr,
+    FEEDBACK_LEN,
+    &CommonFeedbackverify,
+    3,
+    500,
+    COMMON_DELAY,
+};
+
+//Get AutoColor Status
+burnCmd_t getautocolorstatuscmd =
+{
+    QString("Get AutoColor Status"),
+    QString("Get the ADC auto color status,result can be follows.\n"
+    "0x00:NONE 0x01:DONE 0x02:FAIL"),
+    nullptr,
+    getautocolorcmdtab,
+    sizeof(getautocolorcmdtab),
+    nullptr,
+    FEEDBACK_LEN,
+    &CommonFeedbackverify,
+    3,
+    500,
+    COMMON_DELAY,
+};
+
+//Get SN
+burnCmd_t getsncmd =
+{
+    QString("Get SN"),
+    QString("Get the factory serianl number.\n"),
+    nullptr,
+    getsncmdtab,
+    sizeof(getsncmdtab),
+    nullptr,
+    FEEDBACK_LEN,
+    &CommonFeedbackverify,
+    3,
+    500,
+    COMMON_DELAY,
+};
+
+/*******************************************************
+ ** Set Instructions.
+ *******************************************************/
+//Set Source
 burnCmd_t setSourcecmd =
 {
     QString("Set Source"),
-    QString("Set the input source, source can be the follows:\
-    0x01:VGA 0x04:DVI 0x08:HDMI1 0x09:HDMI2 0x0A:HDMI3 0x0C:DP"),
-    kLineEdit,
+    QString("Set the input source, source can be the follows:\n\
+    0x01:VGA 0x04:DVI 0x08:HDMI1\n    0x09:HDMI2 0x0A:HDMI3 0x0C:DP"),
+    CommonSetpara,
     setsourcecmdtab,
     sizeof(setsourcecmdtab),
-    &SetSourceAssemble,
+    nullptr,
     FEEDBACK_LEN,
     &CommonFeedbackverify,
     3,
@@ -130,12 +281,143 @@ burnCmd_t setSourcecmd =
     COMMON_DELAY,
 };
 
+//Set volume
+burnCmd_t setVolumecmd =
+{
+    QString("Set Volume"),
+    QString("Set the volume,the range of parameter between 0~100:\n"),
+    CommonSetpara,
+    volumecmdtab,
+    sizeof(volumecmdtab),
+    nullptr,
+    FEEDBACK_LEN,
+    &CommonFeedbackverify,
+    3,
+    20,
+    COMMON_DELAY,
+};
+
+//Set brightness
+burnCmd_t setBrightnesscmd =
+{
+    QString("Set Brightness"),
+    QString("Set the brightness,the range of parameter between 0~100:\n"),
+    CommonSetpara,
+    brightnesscmdtab,
+    sizeof(brightnesscmdtab),
+    nullptr,
+    FEEDBACK_LEN,
+    &CommonFeedbackverify,
+    3,
+    20,
+    COMMON_DELAY,
+};
+
+//Set Colortemp
+burnCmd_t setColortempcmd =
+{
+    QString("Set ColorTemperature"),
+    QString("Set the color temperature,the parameters as fllows:\n"
+    "0x00:user 0x01:SRGB 0x02:Native 0x05:6500K\n"
+    "0x06:7500K 0x08:9300K 0x0A:11500K"),
+    CommonSetpara,
+    colortmpcmdtab,
+    sizeof(colortmpcmdtab),
+    nullptr,
+    FEEDBACK_LEN,
+    &CommonFeedbackverify,
+    3,
+    20,
+    COMMON_DELAY,
+};
+
+//Set Keypad lock
+burnCmd_t setKeypadlockcmd =
+{
+    QString("Set keypad lock status"),
+    QString("Set the keypad lock status, 0x00 for unlock,0x01 for lock.\n"),
+    CommonSetpara,
+    keylockcmdtab,
+    sizeof(keylockcmdtab),
+    nullptr,
+    FEEDBACK_LEN,
+    &CommonFeedbackverify,
+    3,
+    20,
+    COMMON_DELAY,
+};
+
+//Set Factory Mode
+burnCmd_t setFactorymodecmd =
+{
+    QString("Set Factory Mode"),
+    QString("Enter or exit the facctory mode.\n"
+    "0x00:exit the factory mode.\n"
+    "0x01:enter the factory mode."),
+    CommonSetpara,
+    factorymodecmdtab,
+    sizeof(factorymodecmdtab),
+    nullptr,
+    FEEDBACK_LEN,
+    &CommonFeedbackverify,
+    3,
+    20,
+    COMMON_DELAY,
+};
+
+//Set Burning Mode
+burnCmd_t setBurningmodecmd =
+{
+    QString("Set Burning Mode"),
+    QString("Enter or exit the Burning mode.\n"
+    "0x00:exit the burning mode.\n"
+    "0x01:enter the burning mode."),
+    CommonSetpara,
+    burnmodecmdtab,
+    sizeof(burnmodecmdtab),
+    nullptr,
+    FEEDBACK_LEN,
+    &CommonFeedbackverify,
+    3,
+    20,
+    COMMON_DELAY,
+};
+
+//Set Factory panel
+burnCmd_t setFactorypanelcmd =
+{
+    QString("Set factory panel parameter"),
+    QString("Set the factory panel parameters, parameters can be follows.\n"
+    "0x00: default 0x01: 1366 0x02:1920 0x03:120hz 0x04:4k"),
+    CommonSetpara,
+    panelcmdtab,
+    sizeof(panelcmdtab),
+    nullptr,
+    FEEDBACK_LEN,
+    &CommonFeedbackverify,
+    3,
+    20,
+    COMMON_DELAY,
+};
+
+burnCmd_t* ATCmds[]={
+    &enterATcmd,
+    &resetcmd,
+    &setSourcecmd,
+    &setVolumecmd,
+};
+
+int getATCmdLen(void)
+{
+   return COUNTOF(ATCmds);
+}
+
 //HDCP relevant
 burnCmd_t erasehdcpcmd =
 {
     nullptr,
     nullptr,
-    kNull,
+    nullptr,
     erasehdcpCmdtab,
     sizeof(erasehdcpCmdtab),
     nullptr,
@@ -150,7 +432,7 @@ burnCmd_t hdcpkeyidcmd =
 {
     nullptr,
     nullptr,
-    kNull,
+    nullptr,
     hdcpkeyidCmdtab,
     sizeof(hdcpkeyidCmdtab),
     &CommonAssemble_Alloc,
@@ -165,7 +447,7 @@ burnCmd_t hdcpburncmd =
 {
     nullptr,
     nullptr,
-    kNull,
+    nullptr,
     hdcpCmdtab,
     sizeof(hdcpCmdtab),
     &CommonAssemble_Alloc,
@@ -181,7 +463,7 @@ burnCmd_t edid_vgacmd =
 {
     nullptr,
     nullptr,
-    kNull,
+    nullptr,
     edidvgacmdtab,
     sizeof(edidvgacmdtab),
     &CommonAssemble_Alloc,
@@ -196,7 +478,7 @@ burnCmd_t edid_dvicmd =
 {
     nullptr,
     nullptr,
-    kNull,
+    nullptr,
     ediddvicmdtab,
     sizeof(ediddvicmdtab),
     &CommonAssemble_Alloc,
@@ -211,7 +493,7 @@ burnCmd_t edid_hdmi1cmd =
 {
     nullptr,
     nullptr,
-    kNull,
+    nullptr,
     edidhdmi1cmdtab,
     sizeof(edidhdmi1cmdtab),
     &CommonAssemble_Alloc,
@@ -226,7 +508,7 @@ burnCmd_t edid_hdmi2cmd =
 {
     nullptr,
     nullptr,
-    kNull,
+    nullptr,
     edidhdmi2cmdtab,
     sizeof(edidhdmi2cmdtab),
     &CommonAssemble_Alloc,
@@ -241,7 +523,7 @@ burnCmd_t edid_hdmi3cmd =
 {
     nullptr,
     nullptr,
-    kNull,
+    nullptr,
     edidhdmi3cmdtab,
     sizeof(edidhdmi3cmdtab),
     &CommonAssemble_Alloc,
@@ -256,7 +538,7 @@ burnCmd_t edid_dpcmd =
 {
     nullptr,
     nullptr,
-    kNull,
+    nullptr,
     ediddpcmdtab,
     sizeof(ediddpcmdtab),
     &CommonAssemble_Alloc,
@@ -266,16 +548,5 @@ burnCmd_t edid_dpcmd =
     20,
     LASTPACK_DELAY,
 };
-
-burnCmd_t* ATCmds[]={
-    &enterATcmd,
-    &resetcmd,
-    &setSourcecmd,
-};
-
-int getATCmdLen(void)
-{
-   return COUNTOF(ATCmds);
-}
 
 }

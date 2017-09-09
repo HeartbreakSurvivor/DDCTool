@@ -9,6 +9,7 @@ namespace ddc {
 
 using cbverify = bool(*)(quint8 *feedback,quint8 fdlen,quint8 *data,quint8 len);
 using cbassemble = burndata_t (*)(quint8 *head,quint8 headsize,quint8 *body,quint8 bodysize);
+using setpara = void (*)(QString text,quint8 *head,quint8 headsize);
 
 typedef enum {
     kNull,
@@ -20,7 +21,7 @@ typedef struct burncmd{
     //ui relate
     QString name;
     QString description;
-    ParaStyle_t parastyle;
+    setpara setparafunc;
 
     //data to send and assemble function
     quint8 *burndata;
@@ -37,10 +38,6 @@ typedef struct burncmd{
     quint32 lastpackdelay;
 }burnCmd_t;
 
-
-//external declarations
-extern burnCmd_t enterATcmd;
-extern burnCmd_t setSourcecmd;
 
 extern burnCmd_t* ATCmds[];
 extern int getATCmdLen(void);

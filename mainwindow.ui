@@ -1275,7 +1275,7 @@
          <x>10</x>
          <y>20</y>
          <width>217</width>
-         <height>227</height>
+         <height>231</height>
         </rect>
        </property>
        <property name="toolTipDuration">
@@ -1540,7 +1540,7 @@
         <x>240</x>
         <y>160</y>
         <width>301</width>
-        <height>111</height>
+        <height>121</height>
        </rect>
       </property>
       <property name="title">
@@ -1552,8 +1552,16 @@
          <x>10</x>
          <y>20</y>
          <width>281</width>
-         <height>81</height>
+         <height>91</height>
         </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Ebrima</family>
+         <pointsize>10</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
        </property>
       </widget>
      </widget>

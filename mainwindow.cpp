@@ -23,10 +23,6 @@ DDCMainWindow::DDCMainWindow(QWidget *parent) :
     //hdcptransfer = new Transfer_T(*ddcprotocol,&hdcpcmd,3,3,200);
     hdcptransfer = new Transfer_T(*ddcprotocol,((BurnSetting_T&)i2coptions->getsetting()).getPerpackRetryCnt());
 
-    for(int i=0;i<ddc::getATCmdLen();++i)
-    {
-        m_atcmd.push_back(ATCmds[i]);
-    }
 
     updateATcmds(*m_atcmd.front());
     //initialize signals and slots
@@ -99,20 +95,25 @@ void DDCMainWindow::ui_preinit()
     ui->hdcptableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     //debug tab
-    ui->instructionsetlistWidget->insertItem(1,new QListWidgetItem("EnterATStatus",ui->instructionsetlistWidget));
-    ui->instructionsetlistWidget->insertItem(2,new QListWidgetItem("Reset",ui->instructionsetlistWidget));
+    for(int i=0;i<ddc::getATCmdLen();++i)
+    {
+        m_atcmd.push_back(ATCmds[i]);
+        ui->instructionsetlistWidget->insertItem(i+1,new QListWidgetItem(ATCmds[i]->name,ui->instructionsetlistWidget));
+    }
 
     ui->propertytableWidget->setItem(0,0,new QTableWidgetItem("Param"));
     ui->propertytableWidget->setItem(1,0,new QTableWidgetItem("Retry"));
-    ui->propertytableWidget->setItem(2,0,new QTableWidgetItem("Delay"));
+    ui->propertytableWidget->setItem(2,0,new QTableWidgetItem("Timeout"));
 
     retryspbox.setMaximum(10);
     delayspbox.setMaximum(10000);
+    //ui->propertytableWidget->setCellWidget(0,1,Q_NULLPTR);
     ui->propertytableWidget->setCellWidget(1,1,&retryspbox);
     ui->propertytableWidget->setCellWidget(2,1,&delayspbox);
 
     ui->descriptionplainTextEdit->setReadOnly(true);
     ui->instructiondatatableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
     //ui->cmdlineEdit->setStatusTip("asdassad");
     ui->cmdlineEdit->setPlaceholderText("Send datagram,i.e.,\"C0 63 07 04 00 01\" to reset monitor.");
 }
@@ -253,25 +254,33 @@ void DDCMainWindow::updateHdcpTab()
 
 void DDCMainWindow::updateATcmds(const burnCmd_t& cmd)
 {
-    if(cmd.parastyle == kNull)
+    if(cmd.setparafunc != nullptr)
     {
-        paralineedid.setReadOnly(true);
-        ui->propertytableWidget->setCellWidget(0,1,&paralineedid);
-    }
-    else if(cmd.parastyle == kSPinbox)
-    {
-        ui->propertytableWidget->setCellWidget(0,1,&paraspinbox);
-    }
-    else if(cmd.parastyle == kLineEdit)
-    {
-        ui->propertytableWidget->setCellWidget(0,1,&paralineedid);
+        qDebug()<<"ready to get parameter.";
     }
 
     retryspbox.setValue(cmd.retrycnt);
     delayspbox.setValue(cmd.delay);
-
-    //ui->propertytableWidget->setEditTriggers();
     ui->descriptionplainTextEdit->setPlainText(cmd.description);
+
+
+    QString str = QString("%1").arg((cmd.datalen|0x80)&0xFF,2,16,QLatin1Char('0'));
+    QTableWidgetItem *newItem = new QTableWidgetItem(str.toUpper());
+    ui->instructiondatatableWidget->setItem(0, 0, newItem);
+
+    int row=-1,column=0;
+    for(int sz=0;sz<cmd.datalen;++sz)
+    {
+        QString str = QString("%1").arg((cmd.burndata[sz])&0xFF,2,16,QLatin1Char('0'));
+        QTableWidgetItem *newItem = new QTableWidgetItem(str.toUpper());
+        if(sz%8==0)
+        {
+            row++;
+            (row==0)?column=1:column=0;
+        }
+        qDebug()<<"row:"<<row<<"column:"<<column;
+        ui->instructiondatatableWidget->setItem(row, column++, newItem);
+    }
 }
 
 //slots
@@ -579,8 +588,11 @@ void DDCMainWindow::changechiptype()
 //Debug Tab Slots
 void DDCMainWindow::itemClicked(QModelIndex idx)
 {
-    qDebug()<<idx.data(Qt::DisplayRole).toString();
-    //std::cout<<"idx:"<<idx.data().toString()<<std::endl;
+    std::list<burnCmd_t*>::iterator it=m_atcmd.begin();
+    advance(it,idx.row());
+    qDebug()<<"name:"<<(*it)->name<<"row:"<<idx.row();
+    burnCmd_t* tmp = *it;
+    updateATcmds(*tmp);
 }
 
 
