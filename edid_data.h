@@ -37,9 +37,11 @@ public:
     void setProductSN(QString sn);
     void setManufacturerSN(quint32 manufacturersn);
 
-    quint8 findProductSn(void);
+    void recalchecksum();
 
 private:
+    quint8 findProductSn(void);
+
     QString m_manufacturername;
     QString m_version;
     quint16 m_productyear;

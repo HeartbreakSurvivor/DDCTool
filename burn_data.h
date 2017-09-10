@@ -26,6 +26,7 @@ public:
         Q_UNUSED(buf);
         Q_UNUSED(Rlen);
     }
+    void syncfile();
 
 public:
     QFile *file;

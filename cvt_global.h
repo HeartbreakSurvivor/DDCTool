@@ -5,6 +5,7 @@
 #include <qfile.h>
 #include <qglobal.h>
 #include <qthread.h>
+#include <QDataStream>
 
 #include <Windows.h>
 #include <map>

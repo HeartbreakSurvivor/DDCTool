@@ -87,7 +87,11 @@ void DDCMainWindow::ui_preinit()
     ui->statusBar->addWidget(DDC_BurnStatus);
 
     //edid tab
-    ui->manufacturerNameLineEdit->setMaxLength(3);
+    ui->manufacturerNameLineEdit->setValidator(new QRegExpValidator(QRegExp("[A-Z]{3}"), this));
+    ui->manufacturerCodeLineEdit->setValidator(new QRegExpValidator(QRegExp("^[0-9A-Fa-f]{4}$"),this));
+    ui->manufacturerWeekLineEdit->setValidator(new QRegExpValidator(QRegExp("^[1-9]{1,2}$"),this));
+    ui->manufacturerYearLineEdit->setValidator(new QRegExpValidator(QRegExp("^[1-9][0-9]{3}$"),this));
+    ui->customerSNlineEdit->setValidator(new QRegExpValidator(QRegExp("^[A-Z0-9-]{1,13}$"),this));
     ui->EdidtableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     //hdcp tab
@@ -270,7 +274,7 @@ void DDCMainWindow::updateATcmds(const burnCmd_t& cmd)
     delayspbox.setValue(cmd.delay);
     ui->descriptionplainTextEdit->setPlainText(cmd.description);
 
-
+    ui->instructiondatatableWidget->clear();
     QString str = QString("%1").arg((cmd.datalen|0x80)&0xFF,2,16,QLatin1Char('0'));
     QTableWidgetItem *newItem = new QTableWidgetItem(str.toUpper());
     ui->instructiondatatableWidget->setItem(0, 0, newItem);
@@ -499,12 +503,47 @@ void DDCMainWindow::getedidtypes()
 
 void DDCMainWindow::syncEdid(void)
 {
+    bool ok;
     cout<<"sync edid"<<endl;
+    if (edid_map.empty()) return;
+    //find the current edid.
+    map<QString,Edid_T*>::iterator it=edid_map.find(Cur_Key);
+    qDebug() <<"Cur_key:"<< it->first;
+
+    //manufacturer name
+    QString name = ui->manufacturerNameLineEdit->text();
+    it->second->setManufacturerName(name);
+
+    //manufacturer code
+    int code = ui->manufacturerCodeLineEdit->text().toInt(&ok, 16);
+    it->second->setProductCode(code);
+
+    //year and week
+    int year = ui->manufacturerYearLineEdit->text().toInt(&ok, 10);
+    int week = ui->manufacturerWeekLineEdit->text().toInt(&ok, 10);
+    if(year<1990)
+    {
+        QMessageBox::warning(this, tr("Tips"), tr("The year must more than 1990 at least!"),QMessageBox::Ok);
+    }
+    if(week>52)
+    {
+        QMessageBox::warning(this, tr("Tips"), tr("you gonna be kiding me,how's it possible that a year has more than 52 weeks?"),QMessageBox::Ok);
+    }
+    it->second->setProductYear((quint8)(year-1990));
+    it->second->setProductWeek((quint8)(week));
+
+    //product serial number
+    QString sn = ui->customerSNlineEdit->text();
+    it->second->setProductSN(sn);
+
+    it->second->recalchecksum();
+    updateEdidTab(Cur_Key);
 }
 
 void DDCMainWindow::saveEdid(void)
 {
     cout<<"save edid bin file"<<endl;
+    edid_map[Cur_Key]->syncfile();
 }
 
 void DDCMainWindow::writeEdid(void)

@@ -14,6 +14,7 @@
 #include <QUrl>
 #include <QLineEdit>
 #include <QModelIndex>
+#include <QRegExp>
 
 #include "cvt_global.h"
 #include "edid_data.h"

@@ -21,7 +21,7 @@ BurnData_T::BurnData_T(const QString &filepath)
 
 BurnData_T::~BurnData_T()
 {
-    qDebug()<<"BurnData_T destructor!";
+    qDebug()<<"BurnData_T close file!";
     delete[] data;
     file->close();
 }
@@ -34,6 +34,19 @@ int BurnData_T::getLength(void) const
 QString BurnData_T::getfilename(void) const
 {
     return filename;
+}
+
+void BurnData_T::syncfile()
+{
+    qDebug()<<"sync file";
+    file->seek(0);
+
+    QDataStream out(file);
+    for(int i=0;i<size;i++)
+    {
+        out<<data[i];
+    }
+    file->flush();
 }
 
 }

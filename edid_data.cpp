@@ -85,10 +85,9 @@ QString Edid_T::getProductSN(void)
     if(!snaddr) return 0;
     snaddr+=5;
 
-    //qDebug()<<"SN addr "<<snaddr;
-    //qDebug()<< *(data+snaddr+13);
     m_productsn.clear();
-    for((*(data+snaddr+13)==0x0A)?(i=12):(i=13);i>=0; --i)
+    (*(data+snaddr+12)==0x0A)?(i=12):(i=13);
+    for(--i;i>=0;--i)
     {
         char tmp = *(data+snaddr+i);
         m_productsn.insert(0,QChar(tmp));
@@ -134,32 +133,72 @@ quint8 Edid_T::findProductSn()
 
 void Edid_T::setManufacturerName(QString name)
 {
-
+     //qDebug()<<"name :"<<name.at(0)<<name.at(1)<<name.at(2);
+     quint16 base = 0;
+     quint16 Tmpname = 0;
+     for (int i = 0; i <3; i++)
+     {
+         QChar tmpchar = name.at(i);
+         base = tmpchar.unicode()-0x40;
+         Tmpname|=base<<((2-i)*5);
+     }
+     data[8] = Tmpname>>8;
+     data[9] = Tmpname;
+     qDebug("DATA[8]: %x %x",data[8],data[9]);
 }
 
 void Edid_T::setProductYear(quint8 year)
 {
-
+    data[17] = year;
 }
 
 void Edid_T::setProductWeek(quint8 week)
 {
-
+    data[16] = week;
 }
 
 void Edid_T::setProductCode(quint16 productcode)
 {
-
+    //qDebug("productcode: %x",productcode);
+    data[10] = productcode;
+    data[11] = productcode>>8;
 }
 
 void Edid_T::setProductSN(QString sn)
 {
+    quint8 snaddr = findProductSn();
+    if(!snaddr) return;
+    snaddr+=5;
+    int i=0;
+    for(;i<12;i++)
+    {
+        *(data+snaddr+i) = 0x30;
+    }
+    *(data+snaddr+i) = 0x0A;
 
+    for(int i=0;i<sn.size();i++)
+    {
+        QChar tmpchar = sn.at(i);
+        //qDebug("tmpchar:0x%x",tmpchar);
+        *(data+snaddr+i) = tmpchar.unicode();
+        qDebug("datasn:0x%x",*(data+snaddr+i));
+    }
 }
 
 void Edid_T::setManufacturerSN(quint32 manufacturersn)
 {
+    Q_UNUSED(manufacturersn);
+}
 
+void Edid_T::recalchecksum()
+{
+    quint8 checksum=0;
+    for(int i=0;i<127;i++)
+    {
+        checksum+=data[i];
+    }
+    checksum=0x100-checksum;
+    data[127] = checksum;
 }
 
 
