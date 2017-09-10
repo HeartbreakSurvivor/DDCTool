@@ -49,7 +49,12 @@ DDCMainWindow::DDCMainWindow(QWidget *parent) :
     connect(ui->chiptypecomboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(changechiptype()));
 
     //Debug Tab
-
+    connect(ui->instructionup_Btn,SIGNAL(clicked()),this,SLOT(cmdup()));
+    connect(ui->instructiondowm_Btn,SIGNAL(clicked()),this,SLOT(cmddown()));
+    connect(ui->instructionstep_Btn,SIGNAL(clicked()),this,SLOT(cmdstep()));
+    connect(ui->instructionrun_Btn,SIGNAL(clicked()),this,SLOT(cmdrun()));
+    connect(ui->cmdsend_Btn,SIGNAL(clicked()),this,SLOT(cmdsend()));
+    connect(ui->cmdclear_Btn,SIGNAL(clicked()),this,SLOT(cmdclear()));
     connect(ui->instructionsetlistWidget,SIGNAL(clicked(QModelIndex)),this,SLOT(itemClicked(QModelIndex)));
 }
 
@@ -111,7 +116,8 @@ void DDCMainWindow::ui_preinit()
 
     retryspbox.setMaximum(10);
     delayspbox.setMaximum(10000);
-    //ui->propertytableWidget->setCellWidget(0,1,Q_NULLPTR);
+    paralineedit.setValidator(new QRegExpValidator(QRegExp("[0-9A-Fa-f ]{1,}$"),this));
+    ui->propertytableWidget->setCellWidget(0,1,&paralineedit);
     ui->propertytableWidget->setCellWidget(1,1,&retryspbox);
     ui->propertytableWidget->setCellWidget(2,1,&delayspbox);
 
@@ -119,6 +125,7 @@ void DDCMainWindow::ui_preinit()
     ui->instructiondatatableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     //ui->cmdlineEdit->setStatusTip("asdassad");
+    ui->cmdlineEdit->setValidator(new QRegExpValidator(QRegExp("[0-9A-Fa-f ]{1,}$"),this));
     ui->cmdlineEdit->setPlaceholderText("Send datagram,i.e.,\"C0 63 07 04 00 01\" to reset monitor.");
 }
 
@@ -258,17 +265,17 @@ void DDCMainWindow::updateHdcpTab()
 
 void DDCMainWindow::updateATcmds(const burnCmd_t& cmd)
 {
+    paralineedit.clear();
     if(cmd.setparafunc != nullptr)
     {
+        paralineedit.setReadOnly(false);
         qDebug()<<"ready to get parameter.";
     }
     else
     {
-        //QTableWidgetItem *item = ui->propertytableWidget->item(0,1);
-        //item->setFlags(Qt::NoItemFlags);
         qDebug()<<"not editable.";
+        paralineedit.setReadOnly(true);
     }
-
 
     retryspbox.setValue(cmd.retrycnt);
     delayspbox.setValue(cmd.delay);
@@ -636,9 +643,70 @@ void DDCMainWindow::itemClicked(QModelIndex idx)
 {
     std::list<burnCmd_t*>::iterator it=m_atcmd.begin();
     advance(it,idx.row());
+    Cur_cmd = idx.row();
     qDebug()<<"name:"<<(*it)->name<<"row:"<<idx.row();
     burnCmd_t* tmp = *it;
     updateATcmds(*tmp);
 }
 
+void DDCMainWindow::cmdclear()
+{
+    ui->cmdlineEdit->clear();
+}
 
+void DDCMainWindow::cmdsend()
+{
+
+}
+
+void DDCMainWindow::cmdup()
+{
+    std::list<burnCmd_t*>::iterator it=m_atcmd.begin();
+    advance(it,Cur_cmd);
+    qDebug()<<"name:"<<(*it)->name<<"row:"<<Cur_cmd;
+    if(it==m_atcmd.begin()||Cur_cmd==0) return;
+
+    burnCmd_t *tmpburncmd = (*it);
+
+    qDebug()<<"tmpburncmd:"<<tmpburncmd->name<<"row:"<<Cur_cmd;
+    qDebug()<<"erase";
+    m_atcmd.erase(it);
+    qDebug()<<"erase finished:"<<(*it)->name;
+
+    //m_atcmd.insert(it,tmpburncmd);
+    //Cur_cmd--;
+
+    //it--;
+    /*
+    if(it==m_atcmd.begin())
+        qDebug()<<"erase fini2123shed";
+    qDebug()<<"213123";
+    m_atcmd.insert(it,tmpburncmd);
+qDebug()<<"erase finis12123hed";
+
+    qDebug()<<"exchange,row:"<<Cur_cmd;
+
+    it=m_atcmd.begin();
+    for(int i=0;i<ddc::getATCmdLen();++i)
+    {
+        ui->instructionsetlistWidget->item(i)->setText((*it)->name);
+        if(it!=m_atcmd.end())
+            it++;
+    }
+    */
+}
+
+void DDCMainWindow::cmddown()
+{
+
+}
+
+void DDCMainWindow::cmdstep()
+{
+
+}
+
+void DDCMainWindow::cmdrun()
+{
+
+}

@@ -83,6 +83,12 @@ private slots:
 
     //Debug Tab
     void itemClicked(QModelIndex idx);
+    void cmdclear();
+    void cmdsend();
+    void cmdup();
+    void cmddown();
+    void cmdstep();
+    void cmdrun();
 
 private:
     QProgressBar *DDC_ProgressBar;//indicate the burn progress.
@@ -108,7 +114,9 @@ private:
     Transfer_T *hdcptransfer=nullptr;
 
     //DebugTab
+    int Cur_cmd=0;
     std::list<burnCmd_t*> m_atcmd;
+    QLineEdit paralineedit;
     QSpinBox retryspbox;
     QSpinBox delayspbox;
     //optional ui style
