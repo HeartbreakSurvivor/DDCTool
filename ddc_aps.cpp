@@ -436,7 +436,7 @@ burnCmd_t* ATCmds[]={
     &getChecksumcmd,
     &getFixedChecksumcmd,
     &gethdcpksvcmd,
-    &getkeypresscmd,
+    &autocolorcmd,
     &getsncmd,
     &getkeypresscmd,
     &getSourcecmd,
