@@ -661,44 +661,40 @@ void DDCMainWindow::cmdsend()
 
 void DDCMainWindow::cmdup()
 {
-    std::list<burnCmd_t*>::iterator it=m_atcmd.begin();
+    std::list<burnCmd_t*>::iterator it=m_atcmd.begin(),it1;
     advance(it,Cur_cmd);
+
     qDebug()<<"name:"<<(*it)->name<<"row:"<<Cur_cmd;
     if(it==m_atcmd.begin()||Cur_cmd==0) return;
 
     burnCmd_t *tmpburncmd = (*it);
+    it1 = it;
+    tmpburncmd = *it;
+    *it = *(--it1);
+    *(it1) = tmpburncmd;
 
-    qDebug()<<"tmpburncmd:"<<tmpburncmd->name<<"row:"<<Cur_cmd;
-    qDebug()<<"erase";
-    m_atcmd.erase(it);
-    qDebug()<<"erase finished:"<<(*it)->name;
-
-    //m_atcmd.insert(it,tmpburncmd);
-    //Cur_cmd--;
-
-    //it--;
-    /*
-    if(it==m_atcmd.begin())
-        qDebug()<<"erase fini2123shed";
-    qDebug()<<"213123";
-    m_atcmd.insert(it,tmpburncmd);
-qDebug()<<"erase finis12123hed";
-
-    qDebug()<<"exchange,row:"<<Cur_cmd;
-
-    it=m_atcmd.begin();
-    for(int i=0;i<ddc::getATCmdLen();++i)
-    {
-        ui->instructionsetlistWidget->item(i)->setText((*it)->name);
-        if(it!=m_atcmd.end())
-            it++;
-    }
-    */
+    ui->instructionsetlistWidget->item(Cur_cmd)->setText((*it)->name);
+    ui->instructionsetlistWidget->item(--Cur_cmd)->setText((*it1)->name);
+    ui->instructionsetlistWidget->setCurrentRow(Cur_cmd);
 }
 
 void DDCMainWindow::cmddown()
 {
+    std::list<burnCmd_t*>::iterator it=m_atcmd.begin(),it1;
+    advance(it,Cur_cmd);
 
+    qDebug()<<"name:"<<(*it)->name<<"row:"<<Cur_cmd<<"count:"<<ui->instructionsetlistWidget->count();
+    if(it==m_atcmd.end()||Cur_cmd==ui->instructionsetlistWidget->count()-1) return;
+
+    burnCmd_t *tmpburncmd = (*it);
+    it1 = it;
+    tmpburncmd = *it;
+    *it = *(++it1);
+    *(it1) = tmpburncmd;
+
+    ui->instructionsetlistWidget->item(Cur_cmd)->setText((*it)->name);
+    ui->instructionsetlistWidget->item(++Cur_cmd)->setText((*it1)->name);
+    ui->instructionsetlistWidget->setCurrentRow(Cur_cmd);
 }
 
 void DDCMainWindow::cmdstep()
