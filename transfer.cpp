@@ -112,9 +112,7 @@ bool Transfer_T::transferpackage()
             m_protocol.write(m_burnmsg->burndata,m_burnmsg->datalen);//such as reset instruction.
             std::cout<<" send data:"<<std::endl;
             for(int i=0;i<m_burnmsg->datalen;++i)
-                cout<<" "<<m_burnmsg->burndata[i];
-            for(int i=0;i<m_burnmsg->datalen;++i)
-            qDebug(" 0x%x",m_burnmsg->burndata[i]);
+                qDebug(" 0x%x",m_burnmsg->burndata[i]);
         }
 
         Sleep(m_burnmsg->delay);
@@ -126,15 +124,18 @@ bool Transfer_T::transferpackage()
         for(int i=0;i<m_burnmsg->feedbacklen;++i)
             cout<<" "<<feedback[i];
 
-        if(m_burnmsg->verifyfunc(feedback,m_burnmsg->feedbacklen,m_databody,m_bodysize))
+        if(m_burnmsg->verifyfunc)
         {
-            delete feedback;
-            return true;
-        }
-        else
-        {
-            delete feedback;
-            return false;
+            if(m_burnmsg->verifyfunc(feedback,m_burnmsg->feedbacklen,m_databody,m_bodysize))
+            {
+                delete feedback;
+                return true;
+            }
+            else
+            {
+                delete feedback;
+                return false;
+            }
         }
     }
     return true;
@@ -143,7 +144,7 @@ bool Transfer_T::transferpackage()
 void Transfer_T::run()
 {
     qDebug()<<"data transfer thread start!";
-    for (int k = 0; k < m_burnmsg->retrycnt; k++)
+    for (int k = 0; k < 1/*m_burnmsg->retrycnt*/; k++)
     {
         if (transferpackage())
         {

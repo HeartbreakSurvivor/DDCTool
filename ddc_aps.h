@@ -18,6 +18,25 @@ typedef enum {
 }ParaStyle_t;
 
 typedef struct burncmd{
+#if 0
+    burncmd()
+    {
+        name = nullptr;
+        description = nullptr;
+        setparafunc = nullptr;
+        burndata = nullptr;
+        datalen = 0;
+        assemblefunc = nullptr;
+
+        feedbacklen = 0;
+        verifyfunc = nullptr;
+
+        retrycnt = 1;
+        delay = 0;
+        lastpackdelay = 0;
+        qDebug()<<"initialize the burncmd";
+    }
+#endif
     //ui relate
     QString name;
     QString description;

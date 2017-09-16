@@ -281,23 +281,25 @@ void DDCMainWindow::updateATcmds(const burnCmd_t& cmd)
     ui->descriptionplainTextEdit->setPlainText(cmd.description);
 
     ui->instructiondatatableWidget->clear();
-    QString str = QString("%1").arg((cmd.datalen|0x80)&0xFF,2,16,QLatin1Char('0'));
-    QTableWidgetItem *newItem = new QTableWidgetItem(str.toUpper());
-    ui->instructiondatatableWidget->setItem(0, 0, newItem);
+
+    quint8 *tmpdata = new quint8[cmd.datalen+1];
+    *tmpdata = cmd.datalen|0x80;
+    memcpy(tmpdata+1,cmd.burndata,cmd.datalen);
 
     int row=-1,column=0;
-    for(int sz=0;sz<cmd.datalen;++sz)
+    for(int sz=0;sz<cmd.datalen+1;++sz)
     {
-        QString str = QString("%1").arg((cmd.burndata[sz])&0xFF,2,16,QLatin1Char('0'));
+        QString str = QString("%1").arg((tmpdata[sz])&0xFF,2,16,QLatin1Char('0'));
         QTableWidgetItem *newItem = new QTableWidgetItem(str.toUpper());
         if(sz%8==0)
         {
             row++;
-            (row==0)?column=1:column=0;
+            column = 0;
         }
         //qDebug()<<"row:"<<row<<"column:"<<column;
         ui->instructiondatatableWidget->setItem(row, column++, newItem);
     }
+    delete[] tmpdata;
 }
 
 //slots
@@ -652,15 +654,22 @@ void DDCMainWindow::cmdclear()
     ui->cmdlineEdit->clear();
 }
 
+
 void DDCMainWindow::cmdsend()
 {
+    if (NULL==i2cdevice.gethandle())
+    {
+        QMessageBox::warning(this, tr("Tips"), tr("pleas open device first!!"), QMessageBox::Ok, QMessageBox::Ok);
+        return;
+    }
+
     QString CmdStr = ui->cmdlineEdit->text();
     qDebug()<<CmdStr;
     //first:find all the substring and judge the length. must less than 2
-    QStringList list2 = CmdStr.split(' ', QString::SkipEmptyParts);
-    qDebug()<<list2;
+    QStringList cmdlist = CmdStr.split(' ', QString::SkipEmptyParts);
+    qDebug()<<cmdlist;
 
-    for(auto x:list2)
+    for(auto x:cmdlist)
     {
         if(x.length()>2)
         {
@@ -668,17 +677,48 @@ void DDCMainWindow::cmdsend()
             return ;
         }
     }
-    if(list2.size()>40)
+    if(cmdlist.size()>40)
     {
         qDebug()<<"you may send too much.";
         return ;
     }
+    if(cmdlist.size()==0)
+    {
+        qDebug()<<"Just input something,man~";
+        return ;
+    }
+
+    quint8* ins = new quint8[cmdlist.size()];
+    bool ok;
+    cout<<"get user cmd"<<endl;
+    for (int i = 0; i < cmdlist.size(); ++i)
+    {
+        ins[i] = cmdlist.at(i).toInt(&ok,16);
+        cout<<" "<<ins[i];
+    }
 
     //send
+    burnCmd_t c =
+    {
+        nullptr,
+        nullptr,
+        nullptr,
+        ins,
+        (quint8)cmdlist.size(),
+        nullptr,
+        9,
+        nullptr,
+        1,
+        (quint32)((BurnSetting_T&)i2coptions->getsetting()).m_writedelay,
+        (quint32)((BurnSetting_T&)i2coptions->getsetting()).m_writedelay,
+    };
 
-    //read
+    m_transfer->setburnCmd(&c);
+    m_transfer->run();
+    m_transfer->wait();//wait for the end of transfer thread.
+    delete[] ins;
 
-    //end
+    qDebug()<<"send data end.";
 }
 
 void DDCMainWindow::cmdup()
@@ -721,12 +761,19 @@ void DDCMainWindow::cmddown()
 
 void DDCMainWindow::cmdstep()
 {
+    if (NULL==i2cdevice.gethandle())
+    {
+        QMessageBox::warning(this, tr("Tips"), tr("pleas open device first!!"), QMessageBox::Ok, QMessageBox::Ok);
+        return;
+    }
+
     std::list<burnCmd_t*>::iterator it=m_atcmd.begin(),it1;
     advance(it,Cur_cmd);
     qDebug()<<"name:"<<(*it)->name<<"row:"<<Cur_cmd;
 
     m_transfer->setburnCmd(*it);
     m_transfer->run();
+    m_transfer->wait();
 }
 
 void DDCMainWindow::cmdrun()
