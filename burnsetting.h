@@ -30,7 +30,6 @@ public:
 	bool getCreatlogs(void);	
 	unsigned char getSlaveaddr(void);
 
-private:
     unsigned char m_slaveaddr=0x6E;
     bool m_iscreatelogs;
     int m_i2cspeed;

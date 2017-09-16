@@ -1,8 +1,16 @@
 #include "transfer.h"
 
+using std::cout;
+using std::endl;
+
 namespace ddc {
 
 #define		PERPACK_LEN			16
+
+void Transfer_T::setburnCmd(burnCmd_t *burnmsg)
+{
+    m_burnmsg = burnmsg;
+}
 
 void Transfer_T::setburnCmd(burnCmd_t *burnmsg,quint8 *data, quint32 size)
 {
@@ -102,11 +110,21 @@ bool Transfer_T::transferpackage()
         else
         {
             m_protocol.write(m_burnmsg->burndata,m_burnmsg->datalen);//such as reset instruction.
+            std::cout<<" send data:"<<std::endl;
+            for(int i=0;i<m_burnmsg->datalen;++i)
+                cout<<" "<<m_burnmsg->burndata[i];
+            for(int i=0;i<m_burnmsg->datalen;++i)
+            qDebug(" 0x%x",m_burnmsg->burndata[i]);
         }
 
         Sleep(m_burnmsg->delay);
 
         m_protocol.read(feedback,m_burnmsg->feedbacklen);
+
+        cout<<endl;
+        cout<<"read data:"<<endl;
+        for(int i=0;i<m_burnmsg->feedbacklen;++i)
+            cout<<" "<<feedback[i];
 
         if(m_burnmsg->verifyfunc(feedback,m_burnmsg->feedbacklen,m_databody,m_bodysize))
         {

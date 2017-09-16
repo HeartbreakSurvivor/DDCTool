@@ -104,6 +104,9 @@ private:
     CommunicationOption *i2coptions;
     DDCProtocol_T *ddcprotocol;
 
+    //Transfer layer
+    Transfer_T *m_transfer=nullptr;
+
     //Edid
     QString Cur_Key;
     std::vector<QString> edid_type;
@@ -111,7 +114,6 @@ private:
 
     //Hdcp
     Hdcp_T *hdcpdata=nullptr;
-    Transfer_T *hdcptransfer=nullptr;
 
     //DebugTab
     int Cur_cmd=0;

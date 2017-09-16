@@ -18,13 +18,12 @@ DDCMainWindow::DDCMainWindow(QWidget *parent) :
     i2coptions = new CommunicationOption(*burnsettings);
 
     ddcprotocol = new DDCProtocol_T(i2cdevice);
-    ddcprotocol->setSlaveAddr(((BurnSetting_T&)i2coptions->getsetting()).getSlaveaddr());
+    ddcprotocol->setSlaveAddr(((BurnSetting_T&)i2coptions->getsetting()).m_slaveaddr);
 
-    //hdcptransfer = new Transfer_T(*ddcprotocol,&hdcpcmd,3,3,200);
-    hdcptransfer = new Transfer_T(*ddcprotocol,((BurnSetting_T&)i2coptions->getsetting()).getPerpackRetryCnt());
-
+    m_transfer = new Transfer_T(*ddcprotocol,((BurnSetting_T&)i2coptions->getsetting()).m_perpackretrycnt);
 
     updateATcmds(*m_atcmd.front());
+
     //initialize signals and slots
     //I2C
     connect(ui->actionCommunication, SIGNAL(triggered()), this, SLOT(displayi2coptions()));
@@ -341,10 +340,9 @@ void DDCMainWindow::connectI2c(void)
     //const BurnSetting_T &burnsetting = i2coptions->getsetting();
     BurnSetting_T &burnsetting = (BurnSetting_T&)i2coptions->getsetting();
     qDebug("the i2c speed:%d",burnsetting.getI2cSpeed());
-    if (i2cdevice.openDevice(i2cdevice.gethandle(),burnsetting.getI2cSpeed()) == FTC_SUCCESS)
+    if (i2cdevice.openDevice(i2cdevice.gethandle(),burnsetting.getI2cSpeed()*1000.0f) == FTC_SUCCESS)
     {
         ui->actionConnect->setDisabled(true);
-        qDebug("Open device successfully!!!");
     }
     else
     {
@@ -656,7 +654,31 @@ void DDCMainWindow::cmdclear()
 
 void DDCMainWindow::cmdsend()
 {
+    QString CmdStr = ui->cmdlineEdit->text();
+    qDebug()<<CmdStr;
+    //first:find all the substring and judge the length. must less than 2
+    QStringList list2 = CmdStr.split(' ', QString::SkipEmptyParts);
+    qDebug()<<list2;
 
+    for(auto x:list2)
+    {
+        if(x.length()>2)
+        {
+            qDebug()<<"error format.";
+            return ;
+        }
+    }
+    if(list2.size()>40)
+    {
+        qDebug()<<"you may send too much.";
+        return ;
+    }
+
+    //send
+
+    //read
+
+    //end
 }
 
 void DDCMainWindow::cmdup()
@@ -699,7 +721,12 @@ void DDCMainWindow::cmddown()
 
 void DDCMainWindow::cmdstep()
 {
+    std::list<burnCmd_t*>::iterator it=m_atcmd.begin(),it1;
+    advance(it,Cur_cmd);
+    qDebug()<<"name:"<<(*it)->name<<"row:"<<Cur_cmd;
 
+    m_transfer->setburnCmd(*it);
+    m_transfer->run();
 }
 
 void DDCMainWindow::cmdrun()

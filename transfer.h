@@ -14,6 +14,7 @@ public:
     Transfer_T(DDCProtocol_T& protocol,quint8 spretry):m_protocol(protocol),m_spretrycnt(spretry){}
     ~Transfer_T(){}
 
+    void setburnCmd(burnCmd_t *burnmsg);//just set the burncmd readyto to write to device.
     void setburnCmd(burnCmd_t *burnmsg,quint8 *data, quint32 size);//set the burn head or the whole package.
     void setburndata(quint8* data,quint32 size);//set the burn data body and body size.
 
