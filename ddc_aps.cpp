@@ -69,13 +69,31 @@ burndata_t CommonAssemble_Alloc(quint8 *head,quint8 headsize,quint8 *body,quint8
     return tmpburndata;
 }
 
-void CommonSetpara(QString text,quint8 *head,quint8 headsize)
+bool CommonSetpara(QString& text,quint8 *head,quint8 headsize)
 {
     Q_UNUSED(headsize);
-    //some defense comdition
-    bool *ok;
+    QStringList paralist = text.split(' ', QString::SkipEmptyParts);
+
+    for(auto x:paralist)
+    {
+        if(x.length()>2)
+        {
+            qDebug()<<"error format.";
+            return false;
+        }
+    }
+    if(paralist.size()>1)
+    {
+        qDebug()<<"you may send too much.";
+        return true;
+    }
+
+    //some defense condition
+    bool *ok=0;
     int value = text.toInt(ok,16);
+    qDebug()<<"para:"<<value;
     *(head+5) = (quint8)value;
+    return true;
 }
 
 /*******************************************************
@@ -285,7 +303,7 @@ burnCmd_t setSourcecmd =
 burnCmd_t setVolumecmd =
 {
     QString("Set Volume"),
-    QString("Set the volume,the range of parameter between 0~100:\n"),
+    QString("Set the volume,the range of parameter between 0x00~0x64:\n"),
     CommonSetpara,
     volumecmdtab,
     sizeof(volumecmdtab),
@@ -301,7 +319,7 @@ burnCmd_t setVolumecmd =
 burnCmd_t setBrightnesscmd =
 {
     QString("Set Brightness"),
-    QString("Set the brightness,the range of parameter between 0~100:\n"),
+    QString("Set the brightness,the range of parameter between 0x00~0x64:\n"),
     CommonSetpara,
     brightnesscmdtab,
     sizeof(brightnesscmdtab),

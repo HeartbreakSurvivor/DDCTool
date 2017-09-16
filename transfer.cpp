@@ -122,8 +122,9 @@ bool Transfer_T::transferpackage()
         cout<<endl;
         cout<<"read data:"<<endl;
         for(int i=0;i<m_burnmsg->feedbacklen;++i)
-            cout<<" "<<feedback[i];
-
+        {
+            qDebug("feedback:0x%x", feedback[i]);
+        }
         if(m_burnmsg->verifyfunc)
         {
             if(m_burnmsg->verifyfunc(feedback,m_burnmsg->feedbacklen,m_databody,m_bodysize))

@@ -46,7 +46,7 @@ public:
     void updateEdidTab(QString key);
     void updateHdcpTab();
 
-    void updateATcmds(const burnCmd_t& cmd);//the value that reference points to can't be modified.
+    void updateATcmds(const burnCmd_t& cmd,int options);//the value that reference points to can't be modified.
     void readSettings();
     void writeSettings();
 

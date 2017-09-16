@@ -9,34 +9,9 @@ namespace ddc {
 
 using cbverify = bool(*)(quint8 *feedback,quint8 fdlen,quint8 *data,quint8 len);
 using cbassemble = burndata_t (*)(quint8 *head,quint8 headsize,quint8 *body,quint8 bodysize);
-using setpara = void (*)(QString text,quint8 *head,quint8 headsize);
-
-typedef enum {
-    kNull,
-    kSPinbox,
-    kLineEdit,
-}ParaStyle_t;
+using setpara = bool (*)(QString& text,quint8 *head,quint8 headsize);
 
 typedef struct burncmd{
-#if 0
-    burncmd()
-    {
-        name = nullptr;
-        description = nullptr;
-        setparafunc = nullptr;
-        burndata = nullptr;
-        datalen = 0;
-        assemblefunc = nullptr;
-
-        feedbacklen = 0;
-        verifyfunc = nullptr;
-
-        retrycnt = 1;
-        delay = 0;
-        lastpackdelay = 0;
-        qDebug()<<"initialize the burncmd";
-    }
-#endif
     //ui relate
     QString name;
     QString description;

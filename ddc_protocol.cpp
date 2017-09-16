@@ -46,7 +46,7 @@ bool DDCProtocol_T::read(quint8* buf,quint8 len)
     for (int i = 0; i < len; i++)
     {
         m_i2c.read(m_i2c.gethandle(), m_slaveaddr, &buf[i], 1);
-        qDebug("feedback:0x%x", buf[i]);
+        //qDebug("feedback:0x%x", buf[i]);
     }
     return true;
 }

@@ -22,7 +22,7 @@ DDCMainWindow::DDCMainWindow(QWidget *parent) :
 
     m_transfer = new Transfer_T(*ddcprotocol,((BurnSetting_T&)i2coptions->getsetting()).m_perpackretrycnt);
 
-    updateATcmds(*m_atcmd.front());
+    updateATcmds(*m_atcmd.front(),0);
 
     //initialize signals and slots
     //I2C
@@ -262,8 +262,9 @@ void DDCMainWindow::updateHdcpTab()
     }
 }
 
-void DDCMainWindow::updateATcmds(const burnCmd_t& cmd)
+void DDCMainWindow::updateATcmds(const burnCmd_t& cmd,int options)
 {
+    if(options) goto cmddatasonly;
     paralineedit.clear();
     if(cmd.setparafunc != nullptr)
     {
@@ -280,6 +281,7 @@ void DDCMainWindow::updateATcmds(const burnCmd_t& cmd)
     delayspbox.setValue(cmd.delay);
     ui->descriptionplainTextEdit->setPlainText(cmd.description);
 
+cmddatasonly:
     ui->instructiondatatableWidget->clear();
 
     quint8 *tmpdata = new quint8[cmd.datalen+1];
@@ -646,14 +648,13 @@ void DDCMainWindow::itemClicked(QModelIndex idx)
     Cur_cmd = idx.row();
     qDebug()<<"name:"<<(*it)->name<<"row:"<<idx.row();
     burnCmd_t* tmp = *it;
-    updateATcmds(*tmp);
+    updateATcmds(*tmp,0);
 }
 
 void DDCMainWindow::cmdclear()
 {
     ui->cmdlineEdit->clear();
 }
-
 
 void DDCMainWindow::cmdsend()
 {
@@ -664,7 +665,6 @@ void DDCMainWindow::cmdsend()
     }
 
     QString CmdStr = ui->cmdlineEdit->text();
-    qDebug()<<CmdStr;
     //first:find all the substring and judge the length. must less than 2
     QStringList cmdlist = CmdStr.split(' ', QString::SkipEmptyParts);
     qDebug()<<cmdlist;
@@ -684,7 +684,7 @@ void DDCMainWindow::cmdsend()
     }
     if(cmdlist.size()==0)
     {
-        qDebug()<<"Just input something,man~";
+        qDebug()<<"Just type something,man~";
         return ;
     }
 
@@ -771,9 +771,23 @@ void DDCMainWindow::cmdstep()
     advance(it,Cur_cmd);
     qDebug()<<"name:"<<(*it)->name<<"row:"<<Cur_cmd;
 
+    if((*it)->setparafunc != nullptr)
+    {
+        if (!(*it)->setparafunc(paralineedit.text(),(*it)->burndata,(*it)->datalen)) return;
+        updateATcmds(**it,1);
+        qDebug()<<"update ATcmds";
+    }
+
+    //TODO:set dynamic parameter.
+    (*it)->retrycnt = retryspbox.value();
+    (*it)->delay = delayspbox.value();
+    qDebug()<<"retry cnt:"<<(*it)->retrycnt<<" Time out:"<<(*it)->delay;
+
+
+
     m_transfer->setburnCmd(*it);
     m_transfer->run();
-    m_transfer->wait();
+    //m_transfer->wait();
 }
 
 void DDCMainWindow::cmdrun()
