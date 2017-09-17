@@ -13,6 +13,7 @@
 #include <algorithm>
 
 #include <iostream>
+#include <iomanip>
 
 #include "burn_data.h"
 

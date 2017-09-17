@@ -37,6 +37,7 @@ DDCMainWindow::DDCMainWindow(QWidget *parent) :
     connect(ui->loadedid_Btn, SIGNAL(clicked()), this, SLOT(loadEdid()));//load the edid to ram.
     connect(ui->nextedid_Btn, SIGNAL(clicked()), this, SLOT(nextEdid()));//dispaly the next edid which load to ram before.
     connect(ui->edidSync_Btn, SIGNAL(clicked()), this, SLOT(syncEdid()));//when change the edid data and sync to ram
+    ui->edidSync_Btn->setStatusTip("when change the edid data and sync to ram");
     connect(ui->edidSave_Btn, SIGNAL(clicked()), this, SLOT(saveEdid()));//save the edid as a new edid data
     connect(ui->edidWrite_Btn, SIGNAL(clicked()), this, SLOT(writeEdid()));//write the edid to board
     connect(ui->edidStop_Btn, SIGNAL(clicked()), this, SLOT(stopWriteEdid()));//stop the edid writing operation
@@ -55,6 +56,8 @@ DDCMainWindow::DDCMainWindow(QWidget *parent) :
     connect(ui->cmdsend_Btn,SIGNAL(clicked()),this,SLOT(cmdsend()));
     connect(ui->cmdclear_Btn,SIGNAL(clicked()),this,SLOT(cmdclear()));
     connect(ui->instructionsetlistWidget,SIGNAL(clicked(QModelIndex)),this,SLOT(itemClicked(QModelIndex)));
+    //fuck. the connect func's parameter SIGNAL and SLOT can't own any parameter.
+    connect(ddcprotocol,SIGNAL(start_emit(QString)),this,SLOT(updatelogText(QString)));
 }
 
 DDCMainWindow::~DDCMainWindow()
@@ -123,7 +126,6 @@ void DDCMainWindow::ui_preinit()
     ui->descriptionplainTextEdit->setReadOnly(true);
     ui->instructiondatatableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    //ui->cmdlineEdit->setStatusTip("asdassad");
     ui->cmdlineEdit->setValidator(new QRegExpValidator(QRegExp("[0-9A-Fa-f ]{1,}$"),this));
     ui->cmdlineEdit->setPlaceholderText("Send datagram,i.e.,\"C0 63 07 04 00 01\" to reset monitor.");
 }
@@ -163,7 +165,7 @@ void DDCMainWindow::writeSettings()
     //const BurnSetting_T &burnsetting = i2coptions->getsetting();
 
     BurnSetting_T &i2csettings = (BurnSetting_T&)i2coptions->getsetting();
-    qDebug("the i2c speed:%d",i2csettings.getI2cSpeed());
+    //qDebug("the i2c speed:%d",i2csettings.getI2cSpeed());
 
     Burn_Settings.beginGroup("Burn_setting");
 
@@ -222,7 +224,7 @@ void DDCMainWindow::updateEdidTab(QString key)
             column=0;
         }
         ui->EdidtableWidget->setItem(row, column++, newItem);
-        //qDebug()<<"row:"<<row<<"column:"<<column;
+        //std::cout<<"row:"<<row<<"column:"<<column;
     }
     if (edid_map[key]->getLength() == 128)
     {
@@ -236,8 +238,13 @@ void DDCMainWindow::updateHdcpTab()
     QString keyid;
     int row=-1,column=0;
 
-    qDebug()<<"current idx:"<<ui->chiptypecomboBox->currentIndex();
+    std::cout<<"current idx:"<<ui->chiptypecomboBox->currentIndex();
     hdcpdata->setChipType(ui->chiptypecomboBox->currentIndex());
+    if(hdcpdata==nullptr)
+    {
+        QMessageBox::warning(this, tr("Tips"), tr("Select HDCPKey first please."), QMessageBox::Ok, QMessageBox::Ok);
+        return;
+    }
     quint8 *pkeyid = hdcpdata->getKeyid();
     for(int i=0;i<8;i++)
     {
@@ -305,6 +312,11 @@ cmddatasonly:
 }
 
 //slots
+void DDCMainWindow::updatelogText(QString msg)
+{
+    ui->logtextBrowser->append(msg);
+}
+
 void DDCMainWindow::closeEvent(QCloseEvent *event)
 {
     Q_UNUSED(event);
@@ -364,7 +376,7 @@ void DDCMainWindow::disconnetI2c(void)
     }
     ui->actionConnect->setDisabled(false);
     i2cdevice.closeDevice(i2cdevice.gethandle());
-    qDebug("Close device successfully!!!");
+    qDebug("Close device successfully!!");
 }
 
 void DDCMainWindow::opendebugmsg(void)
@@ -654,6 +666,7 @@ void DDCMainWindow::itemClicked(QModelIndex idx)
 void DDCMainWindow::cmdclear()
 {
     ui->cmdlineEdit->clear();
+    ui->logtextBrowser->clear();
 }
 
 void DDCMainWindow::cmdsend()
@@ -667,35 +680,37 @@ void DDCMainWindow::cmdsend()
     QString CmdStr = ui->cmdlineEdit->text();
     //first:find all the substring and judge the length. must less than 2
     QStringList cmdlist = CmdStr.split(' ', QString::SkipEmptyParts);
-    qDebug()<<cmdlist;
 
     for(auto x:cmdlist)
     {
         if(x.length()>2)
         {
-            qDebug()<<"error format.";
+            ui->logtextBrowser->append("Commands format error.");
             return ;
         }
     }
     if(cmdlist.size()>40)
     {
-        qDebug()<<"you may send too much.";
+        ui->logtextBrowser->append("you may send too much.");
         return ;
     }
     if(cmdlist.size()==0)
     {
-        qDebug()<<"Just type something,man~";
+        ui->logtextBrowser->append("Just type something,man~");
         return ;
     }
 
     quint8* ins = new quint8[cmdlist.size()];
     bool ok;
-    cout<<"get user cmd"<<endl;
+    ui->logtextBrowser->append("User defined Instrucitons:");
+    QString _usrstr;
     for (int i = 0; i < cmdlist.size(); ++i)
     {
         ins[i] = cmdlist.at(i).toInt(&ok,16);
-        cout<<" "<<ins[i];
+        _usrstr.append(cmdlist.at(i));
+        _usrstr.append(" ");
     }
+    ui->logtextBrowser->append(_usrstr.toUpper());
 
     //send
     burnCmd_t c =
@@ -717,8 +732,6 @@ void DDCMainWindow::cmdsend()
     m_transfer->run();
     m_transfer->wait();//wait for the end of transfer thread.
     delete[] ins;
-
-    qDebug()<<"send data end.";
 }
 
 void DDCMainWindow::cmdup()
@@ -766,28 +779,28 @@ void DDCMainWindow::cmdstep()
         QMessageBox::warning(this, tr("Tips"), tr("pleas open device first!!"), QMessageBox::Ok, QMessageBox::Ok);
         return;
     }
+    ddcprotocol->setSlaveAddr(((BurnSetting_T&)i2coptions->getsetting()).m_slaveaddr);
 
     std::list<burnCmd_t*>::iterator it=m_atcmd.begin(),it1;
     advance(it,Cur_cmd);
-    qDebug()<<"name:"<<(*it)->name<<"row:"<<Cur_cmd;
+
+    QString _str = (*it)->name;
+    _str.append(":");
+    ui->logtextBrowser->append(_str);
 
     if((*it)->setparafunc != nullptr)
     {
         if (!(*it)->setparafunc(paralineedit.text(),(*it)->burndata,(*it)->datalen)) return;
         updateATcmds(**it,1);
-        qDebug()<<"update ATcmds";
     }
 
     //TODO:set dynamic parameter.
     (*it)->retrycnt = retryspbox.value();
     (*it)->delay = delayspbox.value();
-    qDebug()<<"retry cnt:"<<(*it)->retrycnt<<" Time out:"<<(*it)->delay;
-
-
 
     m_transfer->setburnCmd(*it);
     m_transfer->run();
-    //m_transfer->wait();
+    m_transfer->wait();
 }
 
 void DDCMainWindow::cmdrun()

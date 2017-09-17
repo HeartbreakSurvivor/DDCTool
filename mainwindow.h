@@ -15,6 +15,8 @@
 #include <QLineEdit>
 #include <QModelIndex>
 #include <QRegExp>
+#include <QMutex>
+#include <qlogging.h>
 
 #include "cvt_global.h"
 #include "edid_data.h"
@@ -82,6 +84,7 @@ private slots:
     void changechiptype();
 
     //Debug Tab
+    void updatelogText(QString msg);
     void itemClicked(QModelIndex idx);
     void cmdclear();
     void cmdsend();

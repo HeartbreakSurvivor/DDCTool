@@ -18,7 +18,6 @@ BurnSetting_T::BurnSetting_T()
 BurnSetting_T::BurnSetting_T(unsigned char slaveaddr,int speed, int writedelay, int readdelay, int retrycnt, int spretrycnt,
 	int edidlastdelay, int hdcplastdelay, int erasehdcpdelay, bool iscreatlog)
 {
-    qDebug()<<"ssddddd";
     m_slaveaddr = slaveaddr;
     m_i2cspeed = speed;
     m_writedelay = writedelay;

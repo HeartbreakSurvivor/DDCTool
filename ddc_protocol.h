@@ -1,11 +1,13 @@
 #pragma once
+#include <QObject>
 #include "cvt_global.h"
 #include "isp_iic.h"
 
 namespace ddc {
 
-class DDCProtocol_T
+class DDCProtocol_T : public QObject
 {
+    Q_OBJECT
     static const quint8 kddcSourceAddr = 0x51;
 
 public:
@@ -17,8 +19,11 @@ public:
 
     void setSlaveAddr(quint8 slaveaddr);
 
-    bool write(quint8* data,quint8 len);
-    bool read(quint8* buf,quint8 len);
+    bool write(quint8* data,quint8 len,bool c);
+    bool read(quint8* buf,quint8 len,bool c);
+
+signals:
+    void start_emit(QString msg);
 
 private:
     quint8 getchecksum(quint8 *data,quint8 datalen);

@@ -1,5 +1,6 @@
 #include "transfer.h"
 
+using namespace std;
 using std::cout;
 using std::endl;
 
@@ -54,14 +55,14 @@ bool Transfer_T::transfermultipackage(void)
             if(m_burnmsg->assemblefunc)
             {
                 tmpdata = m_burnmsg->assemblefunc(m_burnmsg->burndata,m_burnmsg->datalen,m_databody+i*length,Rlength);
-                m_protocol.write(tmpdata.data,tmpdata.size);
+                m_protocol.write(tmpdata.data,tmpdata.size,0);
                 if(tmpdata.data!=m_burnmsg->burndata)
                     delete tmpdata.data;
             }
 
             Sleep(writedelay);
 
-            m_protocol.read(feedback,m_burnmsg->feedbacklen);
+            m_protocol.read(feedback,m_burnmsg->feedbacklen,0);
 
             if(m_burnmsg->verifyfunc(feedback,m_burnmsg->feedbacklen,m_databody,m_bodysize))
             {
@@ -103,28 +104,19 @@ bool Transfer_T::transferpackage()
         if(m_burnmsg->assemblefunc)
         {
             tmpdata = m_burnmsg->assemblefunc(m_burnmsg->burndata,m_burnmsg->datalen,m_databody,m_bodysize);
-            m_protocol.write(tmpdata.data,tmpdata.size);
+            m_protocol.write(tmpdata.data,tmpdata.size,1);
             if(tmpdata.data!=m_burnmsg->burndata)
                 delete tmpdata.data;
         }
         else
         {
-            m_protocol.write(m_burnmsg->burndata,m_burnmsg->datalen);//such as reset instruction.
-            std::cout<<" send data:"<<std::endl;
-            for(int i=0;i<m_burnmsg->datalen;++i)
-                qDebug(" 0x%x",m_burnmsg->burndata[i]);
+            m_protocol.write(m_burnmsg->burndata,m_burnmsg->datalen,1);//such as reset instruction.
         }
 
         Sleep(m_burnmsg->delay);
 
-        m_protocol.read(feedback,m_burnmsg->feedbacklen);
+        m_protocol.read(feedback,m_burnmsg->feedbacklen,1);
 
-        cout<<endl;
-        cout<<"read data:"<<endl;
-        for(int i=0;i<m_burnmsg->feedbacklen;++i)
-        {
-            qDebug("feedback:0x%x", feedback[i]);
-        }
         if(m_burnmsg->verifyfunc)
         {
             if(m_burnmsg->verifyfunc(feedback,m_burnmsg->feedbacklen,m_databody,m_bodysize))
@@ -149,15 +141,15 @@ void Transfer_T::run()
     {
         if (transferpackage())
         {
-            qDebug("Burning Pass and ready to read !");
+            qDebug("Data Write Successfully!");
             break;
         }
         else
         {
-            qDebug("Burning Failed,Retry Times:%d!", k);
+            qDebug("Write Failed,Retry Times:%d!", k);
             if (k == m_burnmsg->retrycnt-1)//the last chance
             {
-                qDebug("The last retry choice and failed!");
+                qDebug("The last retry chance but failed, -----Burning Failed!");
                 //emit BurnMsg(1);//burn failed
                 return;
             }
