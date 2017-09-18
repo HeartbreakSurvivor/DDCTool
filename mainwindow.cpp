@@ -248,7 +248,7 @@ void DDCMainWindow::updateHdcpTab()
     quint8 *pkeyid = hdcpdata->getKeyid();
     for(int i=0;i<8;i++)
     {
-        qDebug()<<"char:"<<pkeyid[i];
+        //qDebug()<<"char:"<<pkeyid[i];
         keyid.append(QChar(*(pkeyid+i)));
     }
 
@@ -276,11 +276,11 @@ void DDCMainWindow::updateATcmds(const burnCmd_t& cmd,int options)
     if(cmd.setparafunc != nullptr)
     {
         paralineedit.setReadOnly(false);
-        qDebug()<<"ready to get parameter.";
+        std::cout<<"ready to get parameter.";
     }
     else
     {
-        qDebug()<<"not editable.";
+        std::cout<<"not editable.";
         paralineedit.setReadOnly(true);
     }
 
@@ -305,7 +305,7 @@ cmddatasonly:
             row++;
             column = 0;
         }
-        //qDebug()<<"row:"<<row<<"column:"<<column;
+        //std::cout<<"row:"<<row<<"column:"<<column;
         ui->instructiondatatableWidget->setItem(row, column++, newItem);
     }
     delete[] tmpdata;
@@ -320,7 +320,6 @@ void DDCMainWindow::updatelogText(QString msg)
 void DDCMainWindow::closeEvent(QCloseEvent *event)
 {
     Q_UNUSED(event);
-    qDebug("close the window!");
     writeSettings();
 }
 
@@ -335,7 +334,6 @@ void DDCMainWindow::qTimeSlot(void)
 //I2C Options
 void DDCMainWindow::displayaboutmenu(void)
 {
-    qDebug("show the help window!");
     helpwindow.show();
 }
 
@@ -758,7 +756,7 @@ void DDCMainWindow::cmddown()
     std::list<burnCmd_t*>::iterator it=m_atcmd.begin(),it1;
     advance(it,Cur_cmd);
 
-    qDebug()<<"name:"<<(*it)->name<<"row:"<<Cur_cmd<<"count:"<<ui->instructionsetlistWidget->count();
+    //std::cout<<"name:"<<(*it)->name<<"row:"<<Cur_cmd<<"count:"<<ui->instructionsetlistWidget->count();
     if(it==m_atcmd.end()||Cur_cmd==ui->instructionsetlistWidget->count()-1) return;
 
     burnCmd_t *tmpburncmd = (*it);
@@ -781,10 +779,12 @@ void DDCMainWindow::cmdstep()
     }
     ddcprotocol->setSlaveAddr(((BurnSetting_T&)i2coptions->getsetting()).m_slaveaddr);
 
-    std::list<burnCmd_t*>::iterator it=m_atcmd.begin(),it1;
+    std::list<burnCmd_t*>::iterator it=m_atcmd.begin();
     advance(it,Cur_cmd);
 
-    QString _str = (*it)->name;
+    QDateTime time = QDateTime::currentDateTime();
+    QString _str = time.toString("yy-MM-dd hh:mm:ss -->");
+    _str.append((*it)->name);
     _str.append(":");
     ui->logtextBrowser->append(_str);
 
@@ -805,5 +805,17 @@ void DDCMainWindow::cmdstep()
 
 void DDCMainWindow::cmdrun()
 {
-
+    int size = ui->instructionsetlistWidget->count();
+    while(Cur_cmd < size)
+    {
+        cmdstep();
+        Cur_cmd++;
+        ui->instructionsetlistWidget->setCurrentRow(Cur_cmd);
+        //std::cout<<"Current row:"<<Cur_cmd<<std::endl;
+    }
+    if(Cur_cmd == size)
+    {
+        Cur_cmd = size-1;
+    }
+    //std::cout<<"Finialize row:"<<Cur_cmd<<std::endl;
 }
