@@ -64,6 +64,8 @@ DDCMainWindow::~DDCMainWindow()
 {
     delete ui;
     delete i2coptions;
+    delete ddcprotocol;
+    delete m_transfer;
 }
 
 void DDCMainWindow::ui_preinit()
@@ -276,11 +278,17 @@ void DDCMainWindow::updateATcmds(const burnCmd_t& cmd,int options)
     if(cmd.setparafunc != nullptr)
     {
         paralineedit.setReadOnly(false);
-        std::cout<<"ready to get parameter.";
+        if(cmd.name == "Write SN")
+        {
+            paralineedit.setValidator(new QRegExpValidator(QRegExp("[0-9A-Za-z-]{1,20}$"),this));//remove the validator.
+        }
+        else
+        {
+            paralineedit.setValidator(new QRegExpValidator(QRegExp("[0-9A-Fa-f ]{1,}$"),this));
+        }
     }
     else
     {
-        std::cout<<"not editable.";
         paralineedit.setReadOnly(true);
     }
 
@@ -656,7 +664,6 @@ void DDCMainWindow::itemClicked(QModelIndex idx)
     std::list<burnCmd_t*>::iterator it=m_atcmd.begin();
     advance(it,idx.row());
     Cur_cmd = idx.row();
-    qDebug()<<"name:"<<(*it)->name<<"row:"<<idx.row();
     burnCmd_t* tmp = *it;
     updateATcmds(*tmp,0);
 }
@@ -737,7 +744,6 @@ void DDCMainWindow::cmdup()
     std::list<burnCmd_t*>::iterator it=m_atcmd.begin(),it1;
     advance(it,Cur_cmd);
 
-    qDebug()<<"name:"<<(*it)->name<<"row:"<<Cur_cmd;
     if(it==m_atcmd.begin()||Cur_cmd==0) return;
 
     burnCmd_t *tmpburncmd = (*it);
@@ -756,7 +762,6 @@ void DDCMainWindow::cmddown()
     std::list<burnCmd_t*>::iterator it=m_atcmd.begin(),it1;
     advance(it,Cur_cmd);
 
-    //std::cout<<"name:"<<(*it)->name<<"row:"<<Cur_cmd<<"count:"<<ui->instructionsetlistWidget->count();
     if(it==m_atcmd.end()||Cur_cmd==ui->instructionsetlistWidget->count()-1) return;
 
     burnCmd_t *tmpburncmd = (*it);
@@ -790,7 +795,17 @@ void DDCMainWindow::cmdstep()
 
     if((*it)->setparafunc != nullptr)
     {
-        if (!(*it)->setparafunc(paralineedit.text(),(*it)->burndata,(*it)->datalen)) return;
+        int ret = (*it)->setparafunc(paralineedit.text(),(*it)->burndata,(*it)->datalen);
+        if (ret == -1)
+        {
+            ui->logtextBrowser->append("argument format error.");
+            return;
+        }
+        else if (ret == -2)
+        {
+            ui->logtextBrowser->append("too many arguments to this instrcution.");
+            return;
+        }
         updateATcmds(**it,1);
     }
 

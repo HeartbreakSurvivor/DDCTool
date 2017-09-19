@@ -39,7 +39,7 @@ quint8 colortmpcmdtab[]={0xc0,0x63,0x07,0x14,0x00,0x01};
 quint8 keylockcmdtab[]={0xc0,0x73,0x07,0xe3,0x00,0x00};
 quint8 getkeycmdtab[]={0xc0,0x73,0x07,0x69,0x00,0x00};
 quint8 getksvcmdtab[]={0x73,0x07,0x69,0x00,0x00};
-quint8 writesncmdtab[]={0xc0,0x63,0x0a,0x00,0x10};
+quint8 writesncmdtab[25]={0xc0,0x63,0x0a,0x00,0x10};
 quint8 getsncmdtab[]={0xc0,0x65,0x0a,0x00,0x10,0x00};
 quint8 panelcmdtab[]={0xc0,0x63,0x07,0x18,0x00,0x02};
 
@@ -69,7 +69,7 @@ burndata_t CommonAssemble_Alloc(quint8 *head,quint8 headsize,quint8 *body,quint8
     return tmpburndata;
 }
 
-bool CommonSetpara(QString& text,quint8 *head,quint8 headsize)
+int CommonSetpara(QString& text,quint8 *head,quint8& headsize)
 {
     Q_UNUSED(headsize);
     QStringList paralist = text.split(' ', QString::SkipEmptyParts);
@@ -79,13 +79,12 @@ bool CommonSetpara(QString& text,quint8 *head,quint8 headsize)
         if(x.length()>2)
         {
             qDebug()<<"error format.";
-            return false;
+            return -1;
         }
     }
     if(paralist.size()>1)
     {
-        qDebug()<<"you may send too much.";
-        return true;
+        return -2;
     }
 
     //some defense condition
@@ -93,7 +92,64 @@ bool CommonSetpara(QString& text,quint8 *head,quint8 headsize)
     int value = text.toInt(ok,16);
     qDebug()<<"para:"<<value;
     *(head+5) = (quint8)value;
-    return true;
+    return 1;
+}
+
+int SNsetpara(QString& text,quint8 *head,quint8& headsize)
+{
+    Q_UNUSED(headsize);
+    QStringList paralist = text.split(' ', QString::SkipEmptyParts);
+
+    for(auto x:paralist)
+    {
+        if(x.length()>2)
+        {
+            qDebug()<<"error format.";
+            return -1;
+        }
+    }
+    if(paralist.size()>1)
+    {
+        return -2;
+    }
+
+    //some defense condition
+    bool *ok=0;
+    int value = text.toInt(ok,16);
+    *(head+4) = (quint8)value;
+    return 1;
+}
+
+int SetMultiparas(QString& text,quint8 *head,quint8 &headsize)
+{
+    if(text.count()>20)
+    {
+        return -2;
+    }
+    if(text.contains(' '))
+    {
+        return -1;
+    }
+
+    QByteArray bytes = text.toUtf8();
+    std::cout<<"Size:"<<bytes.size()<<std::endl;
+
+    qDebug()<<bytes;
+    qDebug()<<text;
+    qDebug()<<bytes.at(0);
+    qDebug()<<bytes.at(3);
+    qDebug()<<(int)bytes.at(0);
+
+
+    for(int i =0;i<bytes.size();i++)
+    {
+        std::cout<<(int)bytes.at(i)<<std::endl;
+        *(head+5+i) = (int)bytes.at(i);
+    }
+
+    *(head+4) = bytes.size();
+    headsize = bytes.size() + 5;
+    return 1;
 }
 
 /*******************************************************
@@ -267,8 +323,9 @@ burnCmd_t getautocolorstatuscmd =
 burnCmd_t getsncmd =
 {
     QString("Get SN"),
-    QString("Get the factory serianl number.\n"),
-    nullptr,
+    QString("Get the factory serianl number.\n"
+    "Parameter: number of bytes read from board."),
+    SNsetpara,
     getsncmdtab,
     sizeof(getsncmdtab),
     nullptr,
@@ -426,7 +483,7 @@ burnCmd_t writesncmd =
     QString("Write the factory serial number.\n"
     "for example,please input the SN like follows:"
     "PY-SA400840124287"),
-    CommonSetpara,
+    SetMultiparas,
     writesncmdtab,
     sizeof(writesncmdtab),
     nullptr,

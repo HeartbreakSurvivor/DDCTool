@@ -9,7 +9,7 @@ namespace ddc {
 
 using cbverify = bool(*)(quint8 *feedback,quint8 fdlen,quint8 *data,quint8 len);
 using cbassemble = burndata_t (*)(quint8 *head,quint8 headsize,quint8 *body,quint8 bodysize);
-using setpara = bool (*)(QString& text,quint8 *head,quint8 headsize);
+using setpara = int (*)(QString& text,quint8 *head,quint8& headsize);
 
 typedef struct burncmd{
     //ui relate
