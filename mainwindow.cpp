@@ -686,27 +686,33 @@ void DDCMainWindow::cmdsend()
     //first:find all the substring and judge the length. must less than 2
     QStringList cmdlist = CmdStr.split(' ', QString::SkipEmptyParts);
 
+    ui->logtextBrowser->setTextColor(QColor(Qt::red));
     for(auto x:cmdlist)
     {
         if(x.length()>2)
         {
             ui->logtextBrowser->append("Commands format error.");
+            ui->logtextBrowser->setTextColor(QColor(Qt::black));
             return ;
         }
     }
     if(cmdlist.size()>40)
     {
         ui->logtextBrowser->append("you may send too much.");
+        ui->logtextBrowser->setTextColor(QColor(Qt::black));
         return ;
     }
     if(cmdlist.size()==0)
     {
         ui->logtextBrowser->append("Just type something,man~");
+        ui->logtextBrowser->setTextColor(QColor(Qt::black));
         return ;
     }
+    ui->logtextBrowser->setTextColor(QColor(Qt::black));
 
     quint8* ins = new quint8[cmdlist.size()];
     bool ok;
+    ui->logtextBrowser->append(" ");
     ui->logtextBrowser->append("User defined Instrucitons:");
     QString _usrstr;
     for (int i = 0; i < cmdlist.size(); ++i)
@@ -715,7 +721,7 @@ void DDCMainWindow::cmdsend()
         _usrstr.append(cmdlist.at(i));
         _usrstr.append(" ");
     }
-    ui->logtextBrowser->append(_usrstr.toUpper());
+    //ui->logtextBrowser->append(_usrstr.toUpper());
 
     //send
     burnCmd_t c =
@@ -791,6 +797,7 @@ void DDCMainWindow::cmdstep()
     QString _str = time.toString("yy-MM-dd hh:mm:ss -->");
     _str.append((*it)->name);
     _str.append(":");
+    ui->logtextBrowser->append(QObject::tr("<font color = black>%1</font>").arg("\n"));
     ui->logtextBrowser->append(_str);
 
     if((*it)->setparafunc != nullptr)
@@ -798,14 +805,19 @@ void DDCMainWindow::cmdstep()
         int ret = (*it)->setparafunc(paralineedit.text(),(*it)->burndata,(*it)->datalen);
         if (ret == -1)
         {
+            ui->logtextBrowser->setTextColor(QColor(Qt::red));
             ui->logtextBrowser->append("argument format error.");
+            ui->logtextBrowser->setTextColor(QColor(Qt::black));
             return;
         }
         else if (ret == -2)
         {
+            ui->logtextBrowser->setTextColor(QColor(Qt::red));
             ui->logtextBrowser->append("too many arguments to this instrcution.");
+            ui->logtextBrowser->setTextColor(QColor(Qt::black));
             return;
         }
+
         updateATcmds(**it,1);
     }
 
