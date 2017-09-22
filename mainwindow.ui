@@ -14,6 +14,24 @@
    <string>DDC Tool v1.0</string>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>812</width>
+     <height>538</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>812</width>
+     <height>538</height>
+    </size>
+   </property>
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>

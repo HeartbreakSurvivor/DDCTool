@@ -36,6 +36,14 @@ extern burnCmd_t enterATcmd;
 extern burnCmd_t erasehdcpcmd;
 extern burnCmd_t hdcpkeyidcmd;
 extern burnCmd_t hdcpburncmd;
+
+extern burnCmd_t edid_vgacmd;
+extern burnCmd_t edid_dvicmd;
+extern burnCmd_t edid_hdmi1cmd;
+extern burnCmd_t edid_hdmi2cmd;
+extern burnCmd_t edid_hdmi3cmd;
+extern burnCmd_t edid_dpcmd;
+
 extern burnCmd_t* ATCmds[];
 extern int getATCmdLen(void);
 

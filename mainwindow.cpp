@@ -4,6 +4,7 @@
 using namespace std;
 using namespace ddc;
 
+static QMutex m_mtx;
 
 DDCMainWindow::DDCMainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -84,7 +85,7 @@ void DDCMainWindow::ui_preinit()
     QFont font("Helvetica [Cronyx]", 22, QFont::Black, false);
     DDC_BurnStatus->setFont(font);
     DDC_BurnStatus->setStyleSheet("color:green");
-    DDC_BurnStatus->setText("Pass");
+    //DDC_BurnStatus->setText("Pass");
 
     DDC_TimeLabel = new QLabel(tr(""));
     ui->statusBar->addPermanentWidget(DDC_TimeLabel);
@@ -481,7 +482,7 @@ void DDCMainWindow::nextEdid(void)
     updateEdidTab(Cur_Key);
 }
 
-//judge the v1 is the subset of v2 or not.
+//judge the v2 is the subset of v1 or not.
 //there must be a more effective way to calculate the subset
 bool IsSubset(std::vector<QString> &v1,std::vector<QString> &v2)
 {
@@ -574,10 +575,30 @@ void DDCMainWindow::saveEdid(void)
     edid_map[Cur_Key]->syncfile();
 }
 
+burnCmd_t* edidname2burncmd(QString name)
+{
+    if(name == "vga")
+        return &edid_vgacmd;
+    else if(name == "dvi")
+        return &edid_dvicmd;
+    else if(name == "hdmi")
+        return &edid_hdmi1cmd;
+    else if(name == "hdmi2")
+        return &edid_hdmi2cmd;
+    else if(name == "hdmi3")
+        return &edid_hdmi3cmd;
+    else if(name == "dp")
+        return &edid_dpcmd;
+    return nullptr;
+}
+
 void DDCMainWindow::writeEdid(void)
 {
-    qDebug()<<"write Edid start!"<<endl;
-    if (NULL==i2cdevice.gethandle() || edid_map.size()==0)return;
+    if (NULL==i2cdevice.gethandle() || edid_map.size()==0)
+    {
+        QMessageBox::warning(this, tr("Tips"), tr("pleas open device or select EDIDs first!!"), QMessageBox::Ok, QMessageBox::Ok);
+        return;
+    }
     std::vector<QString> tmp;
     for(map<QString,Edid_T*>::iterator it=edid_map.begin();it!=edid_map.end();++it)
     {
@@ -594,7 +615,29 @@ void DDCMainWindow::writeEdid(void)
         QMessageBox::warning(this, tr("Tips"), tr("The selected edid doesn't match the real edid!"),QMessageBox::Ok);
         return;
     }
-    qDebug()<<"write Edid end"<<endl;
+    ui->edidWrite_Btn->setDisabled(true);
+    qDebug()<<"----------Write Edid start!----------";
+    if(!m_mtx.tryLock())
+    {
+        qDebug()<<"lock the mutex failed and return";
+        return;
+    }
+    //TODO:
+    qDebug("Numbers of EDID: %d",edid_type.size());
+
+    quint32 i=0;
+    while(i<edid_type.size())
+    {
+        qDebug()<<"EDID: "<<edid_type[i];
+        QString edidname = edid_type[i];
+        m_transfer->setburnCmd(edidname2burncmd(edidname),edid_map[edidname]->data,edid_map[edidname]->getLength(),0);
+        m_transfer->run();
+        m_transfer->wait();
+        i++;
+    }
+    m_mtx.unlock();
+    ui->edidWrite_Btn->setDisabled(false);
+    qDebug()<<"----------Write Edid End!----------";
 }
 
 void DDCMainWindow::stopWriteEdid(void)
@@ -642,22 +685,24 @@ void DDCMainWindow::writeHdcp()
         QMessageBox::warning(this, tr("Tips"), tr("pleas open device first!!"), QMessageBox::Ok, QMessageBox::Ok);
         return;
     }
-
+    qDebug()<<"----------Write HDCP Start!----------";
     qDebug()<<"hdcp size:"<<hdcpdata->getLength();
-    m_mtx.lock();
-    qDebug()<<"lock the mutex";
-
+    if(!m_mtx.tryLock())
+    {
+        qDebug()<<"lock the mutex failed and return";
+        return;
+    }
     BurnSetting_T &burnsetting = (BurnSetting_T&)i2coptions->getsetting();
 
     /*Enter the AT status*/
-    m_transfer->setburnCmd(&enterATcmd,0);
+    m_transfer->setburnCmd(&enterATcmd,nullptr,0,0);
     m_transfer->run();
     m_transfer->wait();
 
     qDebug()<<"erase the hdcpkey";
     /*Erase the hdcpkey*/
     erasehdcpcmd.delay = burnsetting.m_erasehdcpkeydelay;
-    m_transfer->setburnCmd(&erasehdcpcmd,0);
+    m_transfer->setburnCmd(&erasehdcpcmd,nullptr,0,0);
     m_transfer->run();
     m_transfer->wait();
 
@@ -677,6 +722,7 @@ void DDCMainWindow::writeHdcp()
     m_transfer->run();
     m_transfer->wait();
     m_mtx.unlock();
+    qDebug()<<"----------Write HDCP End!----------";
 }
 
 void DDCMainWindow::stopWriteHdcp()

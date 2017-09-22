@@ -50,10 +50,16 @@ int main(int argc, char *argv[])
     qInstallMessageHandler(MyMessage);
 
 	QCoreApplication::setOrganizationName("CVTE");
-	QCoreApplication::setOrganizationDomain("zhanghao3126@cvte.com");
+    QCoreApplication::setOrganizationDomain("bigzhanghao");
     QCoreApplication::setOrganizationName("DDC Tool");
 
+    Qt::WindowFlags flags = 0;
+    flags |= Qt::WindowMinimizeButtonHint;
+    flags |= Qt::WindowCloseButtonHint;
+    flags |= Qt::MSWindowsFixedSizeDialogHint;
+
     DDCMainWindow window;//initialize the mainwindow but not show.
+    window.setWindowFlags(flags);
     window.show();//show the mainwindow and start the event handler.
 	return a.exec();
 }

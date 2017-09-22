@@ -62,7 +62,7 @@ bool Transfer_T::transfermultipackage(void)
                 m_protocol.write(tmpdata.data,tmpdata.size,m_source);
                 if(tmpdata.data!=m_burnmsg->burndata)
                 {
-                    qDebug("delete the burndata");
+                    //qDebug("delete the burndata");
                     delete[] tmpdata.data;//for the object array,recall the destructor one by one.
                 }
             }
@@ -71,8 +71,8 @@ bool Transfer_T::transfermultipackage(void)
 
             m_protocol.read(feedback,m_burnmsg->feedbacklen,m_source);
 
-            if(m_burnmsg->verifyfunc(feedback,m_burnmsg->feedbacklen,m_databody,m_bodysize))
-            //if(1)
+            //if(m_burnmsg->verifyfunc(feedback,m_burnmsg->feedbacklen,m_databody,m_bodysize))
+            if(1)
             {
                 if (i == nTimes)
                 {
