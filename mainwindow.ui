@@ -1534,7 +1534,7 @@
        </rect>
       </property>
       <property name="title">
-       <string>Instuctions Description</string>
+       <string>Instuction Description</string>
       </property>
       <widget class="QPlainTextEdit" name="descriptionplainTextEdit">
        <property name="geometry">

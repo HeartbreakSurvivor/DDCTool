@@ -77,13 +77,14 @@ void DDCMainWindow::ui_preinit()
     DDC_ProgressBar->setMaximum(100);
     DDC_ProgressBar->setValue(23);
 
-    DDC_BurnStatus = new QLabel(tr("PASS"));
+    DDC_BurnStatus = new QLabel();
 
     DDC_BurnStatus->setMinimumWidth(80);
     DDC_BurnStatus->setAlignment(Qt::AlignCenter);
     QFont font("Helvetica [Cronyx]", 22, QFont::Black, false);
     DDC_BurnStatus->setFont(font);
     DDC_BurnStatus->setStyleSheet("color:green");
+    DDC_BurnStatus->setText("Pass");
 
     DDC_TimeLabel = new QLabel(tr(""));
     ui->statusBar->addPermanentWidget(DDC_TimeLabel);
@@ -636,7 +637,46 @@ void DDCMainWindow::loadHdcp()
 
 void DDCMainWindow::writeHdcp()
 {
-    if (NULL==i2cdevice.gethandle() || hdcpdata==nullptr)return;
+    if (NULL==i2cdevice.gethandle() || hdcpdata==nullptr)
+    {
+        QMessageBox::warning(this, tr("Tips"), tr("pleas open device first!!"), QMessageBox::Ok, QMessageBox::Ok);
+        return;
+    }
+
+    qDebug()<<"hdcp size:"<<hdcpdata->getLength();
+    m_mtx.lock();
+    qDebug()<<"lock the mutex";
+
+    BurnSetting_T &burnsetting = (BurnSetting_T&)i2coptions->getsetting();
+
+    /*Enter the AT status*/
+    m_transfer->setburnCmd(&enterATcmd,0);
+    m_transfer->run();
+    m_transfer->wait();
+
+    qDebug()<<"erase the hdcpkey";
+    /*Erase the hdcpkey*/
+    erasehdcpcmd.delay = burnsetting.m_erasehdcpkeydelay;
+    m_transfer->setburnCmd(&erasehdcpcmd,0);
+    m_transfer->run();
+    m_transfer->wait();
+
+    /*burn the hdcp keyid*/
+    if(hdcpdata->getChipType()== Hdcp_T::Mstar)
+    {
+        qDebug()<<"the mstar hdcpkey type";
+        hdcpkeyidcmd.delay = 200;
+        m_transfer->setburnCmd(&hdcpkeyidcmd,hdcpdata->getKeyid(),8,0);
+        m_transfer->run();
+    }
+
+    /*burn the hdcp key*/
+    hdcpburncmd.delay =burnsetting.getwriteDelay();
+    hdcpburncmd.lastpackdelay = burnsetting.getHdcplastDelay();
+    m_transfer->setburnCmd(&hdcpburncmd,hdcpdata->data,hdcpdata->getLength(),0);
+    m_transfer->run();
+    m_transfer->wait();
+    m_mtx.unlock();
 }
 
 void DDCMainWindow::stopWriteHdcp()
@@ -739,7 +779,7 @@ void DDCMainWindow::cmdsend()
         (quint32)((BurnSetting_T&)i2coptions->getsetting()).m_writedelay,
     };
 
-    m_transfer->setburnCmd(&c);
+    m_transfer->setburnCmd(&c,nullptr,0,1);
     m_transfer->run();
     m_transfer->wait();//wait for the end of transfer thread.
     delete[] ins;
@@ -825,7 +865,7 @@ void DDCMainWindow::cmdstep()
     (*it)->retrycnt = retryspbox.value();
     (*it)->delay = delayspbox.value();
 
-    m_transfer->setburnCmd(*it);
+    m_transfer->setburnCmd(*it,nullptr,0,1);
     m_transfer->run();
     m_transfer->wait();
 }

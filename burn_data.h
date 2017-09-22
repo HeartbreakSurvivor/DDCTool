@@ -10,7 +10,7 @@ class BurnData_T
 public:
     BurnData_T();
     BurnData_T(const QString &filepath);
-    ~BurnData_T();
+    virtual ~BurnData_T();
 
     int getLength(void) const;
     QString getfilename(void) const;

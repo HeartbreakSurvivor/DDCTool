@@ -8,16 +8,19 @@ namespace ddc {
 
 #define		PERPACK_LEN			16
 
-void Transfer_T::setburnCmd(burnCmd_t *burnmsg)
+void Transfer_T::setburnCmd(burnCmd_t *burnmsg,quint8 source)
 {
     m_burnmsg = burnmsg;
+    m_source = source;
 }
 
-void Transfer_T::setburnCmd(burnCmd_t *burnmsg,quint8 *data, quint32 size)
+void Transfer_T::setburnCmd(burnCmd_t *burnmsg,quint8 *data, quint32 size,quint8 source)
 {
     m_burnmsg = burnmsg;
     m_databody = data;
     m_bodysize = size;
+    m_source = source;
+    qDebug()<<"set the bodysize";
 }
 
 void Transfer_T::setburndata(quint8 *data, quint32 size)
@@ -28,9 +31,9 @@ void Transfer_T::setburndata(quint8 *data, quint32 size)
 
 bool Transfer_T::transfermultipackage(void)
 {
-    quint32 Rlength , length = PERPACK_LEN;
+    quint32 Rlength = PERPACK_LEN , length = PERPACK_LEN;
     quint32 remainder = m_bodysize % 16;
-    quint32 nTimes = (remainder == 0) ? m_bodysize/(length-1) : m_bodysize/length;//how many packs we should send to board.
+    quint32 nTimes = (remainder == 0) ? m_bodysize/(length)-1 : m_bodysize/length;//how many packs we should send to board.
     quint32 writedelay = m_burnmsg->delay;
     burndata_t tmpdata;
     quint8* feedback = new quint8[m_burnmsg->feedbacklen];
@@ -47,7 +50,7 @@ bool Transfer_T::transfermultipackage(void)
                 Rlength = remainder;
             }
         }
-        m_burnmsg->burndata[3] = i;
+        m_burnmsg->burndata[3] = i;//update the package offset dynamically.
         m_burnmsg->burndata[4] = Rlength;
 
         for (int j = 0; j < m_spretrycnt; j++)//The single pack retry mechanism.
@@ -55,16 +58,21 @@ bool Transfer_T::transfermultipackage(void)
             if(m_burnmsg->assemblefunc)
             {
                 tmpdata = m_burnmsg->assemblefunc(m_burnmsg->burndata,m_burnmsg->datalen,m_databody+i*length,Rlength);
-                m_protocol.write(tmpdata.data,tmpdata.size,0);
+                qDebug("assembly data size:%d",tmpdata.size);
+                m_protocol.write(tmpdata.data,tmpdata.size,m_source);
                 if(tmpdata.data!=m_burnmsg->burndata)
-                    delete tmpdata.data;
+                {
+                    qDebug("delete the burndata");
+                    delete[] tmpdata.data;//for the object array,recall the destructor one by one.
+                }
             }
 
             Sleep(writedelay);
 
-            m_protocol.read(feedback,m_burnmsg->feedbacklen,0);
+            m_protocol.read(feedback,m_burnmsg->feedbacklen,m_source);
 
             if(m_burnmsg->verifyfunc(feedback,m_burnmsg->feedbacklen,m_databody,m_bodysize))
+            //if(1)
             {
                 if (i == nTimes)
                 {
@@ -92,30 +100,33 @@ bool Transfer_T::transfermultipackage(void)
 
 bool Transfer_T::transferpackage()
 {
+    qDebug()<<"bodysize:"<<m_bodysize;
+    qDebug()<<"source:"<<m_source;
     if(m_bodysize>PERPACK_LEN)//multi package
     {
         return transfermultipackage();
     }
     else //only send one package
     {
+        qDebug()<<"signle package";
         burndata_t tmpdata;
         quint8* feedback = new quint8[m_burnmsg->feedbacklen];
 
         if(m_burnmsg->assemblefunc)
         {
             tmpdata = m_burnmsg->assemblefunc(m_burnmsg->burndata,m_burnmsg->datalen,m_databody,m_bodysize);
-            m_protocol.write(tmpdata.data,tmpdata.size,1);
+            m_protocol.write(tmpdata.data,tmpdata.size,m_source);
             if(tmpdata.data!=m_burnmsg->burndata)
                 delete tmpdata.data;
         }
         else
         {
-            m_protocol.write(m_burnmsg->burndata,m_burnmsg->datalen,1);//such as reset instruction.
+            m_protocol.write(m_burnmsg->burndata,m_burnmsg->datalen,m_source);//such as reset instruction.
         }
 
         Sleep(m_burnmsg->delay);
 
-        m_protocol.read(feedback,m_burnmsg->feedbacklen,1);
+        m_protocol.read(feedback,m_burnmsg->feedbacklen,m_source);
 
         if(m_burnmsg->verifyfunc)
         {
@@ -137,7 +148,7 @@ bool Transfer_T::transferpackage()
 void Transfer_T::run()
 {
     qDebug()<<"data transfer thread start!";
-    for (int k = 0; k < 1/*m_burnmsg->retrycnt*/; k++)
+    for (int k = 0; k < m_burnmsg->retrycnt; k++)
     {
         if (transferpackage())
         {

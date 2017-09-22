@@ -10,7 +10,7 @@ namespace ddc {
 
 //HDCP related Instructions
 quint8 erasehdcpCmdtab[]={0xD0,0x65,0x0A,0xFF,0x00,0x00};
-quint8 hdcpkeyidCmdtab[]={0xD0,0x73,0x05,0x08};
+quint8 hdcpkeyidCmdtab[]={0xD0,0x73,0x05,0x00,0x08};
 quint8 hdcpCmdtab[]={0xD0,0x65,0x07,0x00,0x10};
 
 //EDID related Instructions
@@ -132,14 +132,7 @@ int SetMultiparas(QString& text,quint8 *head,quint8 &headsize)
     }
 
     QByteArray bytes = text.toUtf8();
-    std::cout<<"Size:"<<bytes.size()<<std::endl;
-
-    qDebug()<<bytes;
-    qDebug()<<text;
-    qDebug()<<bytes.at(0);
-    qDebug()<<bytes.at(3);
-    qDebug()<<(int)bytes.at(0);
-
+    //std::cout<<"Size:"<<bytes.size()<<std::endl;
 
     for(int i =0;i<bytes.size();i++)
     {

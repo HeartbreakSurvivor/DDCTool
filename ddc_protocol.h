@@ -15,7 +15,7 @@ public:
     DDCProtocol_T(Isp_I2C& i2c):m_i2c(i2c){
            qDebug("Initialize the Protocol ");
     }
-    ~DDCProtocol_T();
+    virtual ~DDCProtocol_T();
 
     void setSlaveAddr(quint8 slaveaddr);
 

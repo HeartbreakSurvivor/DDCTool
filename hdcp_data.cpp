@@ -94,11 +94,11 @@ quint8* Hdcp_T::getKeyid(void)
     if(m_type == Mstar)//parse the keyid from the file name
     {
         int sz = filename.size();
-            qDebug() << "filename size:"<< sz ;
+            //qDebug() << "filename size:"<< sz ;
         for(int i=sz-1,j=8;i>=0;--i)
         {
             QChar tmpchar = filename.data()[i];
-            qDebug() << "filename char:"<< tmpchar ;
+            //qDebug() << "filename char:"<< tmpchar ;
             if(tmpchar<'0' || tmpchar>'9')
                 break;
             m_Keyid[--j] = tmpchar.toLatin1();
@@ -107,7 +107,7 @@ quint8* Hdcp_T::getKeyid(void)
     }
     else if (m_type == Reltek)
     {
-        qDebug() << "keyid:"<< *(data+keyidoffset) ;
+        //qDebug() << "keyid:"<< *(data+keyidoffset) ;
         memcpy(m_Keyid,data+keyidoffset,8);
     }
     return m_Keyid;

@@ -108,6 +108,7 @@ private:
     DDCProtocol_T *ddcprotocol;
 
     //Transfer layer
+    QMutex m_mtx;
     Transfer_T *m_transfer=nullptr;
 
     //Edid
