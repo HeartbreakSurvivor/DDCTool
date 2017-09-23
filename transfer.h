@@ -9,7 +9,8 @@ namespace ddc {
 
 class Transfer_T : public QThread
 {
-    //Q_OBJECT
+    Q_OBJECT
+
 public:
     Transfer_T(DDCProtocol_T& protocol,quint8 spretry):m_protocol(protocol),m_spretrycnt(spretry){}
     ~Transfer_T(){}
@@ -32,6 +33,9 @@ private:
     quint8 m_source=0;
 
     DDCProtocol_T& m_protocol;//must be intialize in constructor function
+
+signals:
+    void transfer_res(QString name,qint8 flag);
 };
 
 }

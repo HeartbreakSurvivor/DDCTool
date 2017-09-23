@@ -201,13 +201,14 @@ burnCmd_t getSourcecmd =
 burnCmd_t getChecksumcmd =
 {
     QString("Get Checksum"),
-    QString("Get the real Checksum.\n"),
+    QString("Get the real Checksum and won't judge the result's accuaracy "
+    "which get from board\n"),
     nullptr,
     getchecksumcmdtab,
     sizeof(getchecksumcmdtab),
     nullptr,
     FEEDBACK_LEN,
-    &CommonFeedbackverify,
+    nullptr,
     3,
     500,
     COMMON_DELAY,
@@ -217,13 +218,14 @@ burnCmd_t getChecksumcmd =
 burnCmd_t getFixedChecksumcmd =
 {
     QString("Get Fixed Checksum"),
-    QString("Get the Fixed Checksum.\n"),
+    QString("Get the Fixed Checksum and won't judge the result's accuaracy "
+    "which get from board\n"),
     nullptr,
     getfixedchecksumcmdtab,
     sizeof(getfixedchecksumcmdtab),
     nullptr,
     FEEDBACK_LEN,
-    &CommonFeedbackverify,
+    nullptr,
     3,
     500,
     COMMON_DELAY,
@@ -233,13 +235,14 @@ burnCmd_t getFixedChecksumcmd =
 burnCmd_t gethdcpksvcmd =
 {
     QString("Get HDCP KSV"),
-    QString("Get the HDCPKEY's KSV.\n"),
+    QString("Get the HDCPKEY's KSV and just display on screen , you need check for correctness"
+    " manually \n"),
     nullptr,
     getksvcmdtab,
     sizeof(getksvcmdtab),
     nullptr,
     FEEDBACK_LEN,
-    &CommonFeedbackverify,
+    nullptr,
     3,
     500,
     COMMON_DELAY,
@@ -549,7 +552,7 @@ burnCmd_t hdcpkeyidcmd =
 
 burnCmd_t hdcpburncmd =
 {
-    nullptr,
+    QString("HDCP"),
     nullptr,
     nullptr,
     hdcpCmdtab,
@@ -565,7 +568,7 @@ burnCmd_t hdcpburncmd =
 //EDID relevant
 burnCmd_t edid_vgacmd =
 {
-    nullptr,
+    QString("VGA"),
     nullptr,
     nullptr,
     edidvgacmdtab,
@@ -580,7 +583,7 @@ burnCmd_t edid_vgacmd =
 
 burnCmd_t edid_dvicmd =
 {
-    nullptr,
+    QString("DVI"),
     nullptr,
     nullptr,
     ediddvicmdtab,
@@ -595,7 +598,7 @@ burnCmd_t edid_dvicmd =
 
 burnCmd_t edid_hdmi1cmd =
 {
-    nullptr,
+    QString("HDMI1"),
     nullptr,
     nullptr,
     edidhdmi1cmdtab,
@@ -610,7 +613,7 @@ burnCmd_t edid_hdmi1cmd =
 
 burnCmd_t edid_hdmi2cmd =
 {
-    nullptr,
+    QString("HDMI2"),
     nullptr,
     nullptr,
     edidhdmi2cmdtab,
@@ -625,7 +628,7 @@ burnCmd_t edid_hdmi2cmd =
 
 burnCmd_t edid_hdmi3cmd =
 {
-    nullptr,
+    QString("HDMI3"),
     nullptr,
     nullptr,
     edidhdmi3cmdtab,
@@ -640,7 +643,7 @@ burnCmd_t edid_hdmi3cmd =
 
 burnCmd_t edid_dpcmd =
 {
-    nullptr,
+    QString("DP"),
     nullptr,
     nullptr,
     ediddpcmdtab,

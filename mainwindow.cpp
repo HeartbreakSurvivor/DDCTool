@@ -5,6 +5,7 @@ using namespace std;
 using namespace ddc;
 
 static QMutex m_mtx;
+static int thread_terminate=0;
 
 DDCMainWindow::DDCMainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -59,6 +60,7 @@ DDCMainWindow::DDCMainWindow(QWidget *parent) :
     connect(ui->instructionsetlistWidget,SIGNAL(clicked(QModelIndex)),this,SLOT(itemClicked(QModelIndex)));
     //fuck. the connect func's parameter SIGNAL and SLOT can't own any parameter.
     connect(ddcprotocol,SIGNAL(start_emit(QString)),this,SLOT(updatelogText(QString)));
+    connect(m_transfer,SIGNAL(transfer_res(QString,qint8)),this,SLOT(updateHint(QString,qint8)));
 }
 
 DDCMainWindow::~DDCMainWindow()
@@ -80,12 +82,11 @@ void DDCMainWindow::ui_preinit()
 
     DDC_BurnStatus = new QLabel();
 
-    DDC_BurnStatus->setMinimumWidth(80);
-    DDC_BurnStatus->setAlignment(Qt::AlignCenter);
+    DDC_BurnStatus->setMinimumWidth(130);
+    DDC_BurnStatus->setAlignment(Qt::AlignLeft);
     QFont font("Helvetica [Cronyx]", 22, QFont::Black, false);
     DDC_BurnStatus->setFont(font);
     DDC_BurnStatus->setStyleSheet("color:green");
-    //DDC_BurnStatus->setText("Pass");
 
     DDC_TimeLabel = new QLabel(tr(""));
     ui->statusBar->addPermanentWidget(DDC_TimeLabel);
@@ -325,6 +326,33 @@ cmddatasonly:
 void DDCMainWindow::updatelogText(QString msg)
 {
     ui->logtextBrowser->append(msg);
+}
+
+/**
+ * @brief DDCMainWindow::updateHint
+ * @param name EDID,HDCP
+ * @param flag
+ *      -1:PASS
+ *      -2:NG
+ *      others: progress  bar value
+ */
+void DDCMainWindow::updateHint(QString name,qint8 value)
+{
+    qDebug()<<"update the hint";
+    QString type(name);
+    if(value==-1)
+    {
+        thread_terminate = 0;
+        DDC_BurnStatus->setStyleSheet("color:green");
+        DDC_BurnStatus->setText(type.append(": PASS"));
+    }
+    else if(value==-2)
+    {
+        thread_terminate = 1;
+        DDC_BurnStatus->setStyleSheet("color:red");
+        DDC_BurnStatus->setText(type.append(": NG"));
+    }
+
 }
 
 void DDCMainWindow::closeEvent(QCloseEvent *event)
@@ -615,7 +643,6 @@ void DDCMainWindow::writeEdid(void)
         QMessageBox::warning(this, tr("Tips"), tr("The selected edid doesn't match the real edid!"),QMessageBox::Ok);
         return;
     }
-    ui->edidWrite_Btn->setDisabled(true);
     qDebug()<<"----------Write Edid start!----------";
     if(!m_mtx.tryLock())
     {
@@ -633,10 +660,14 @@ void DDCMainWindow::writeEdid(void)
         m_transfer->setburnCmd(edidname2burncmd(edidname),edid_map[edidname]->data,edid_map[edidname]->getLength(),0);
         m_transfer->run();
         m_transfer->wait();
+        if(thread_terminate)
+        {
+            m_mtx.unlock();
+            return;
+        }
         i++;
     }
     m_mtx.unlock();
-    ui->edidWrite_Btn->setDisabled(false);
     qDebug()<<"----------Write Edid End!----------";
 }
 
@@ -698,6 +729,11 @@ void DDCMainWindow::writeHdcp()
     m_transfer->setburnCmd(&enterATcmd,nullptr,0,0);
     m_transfer->run();
     m_transfer->wait();
+    if(thread_terminate)
+    {
+        m_mtx.unlock();
+        return;
+    }
 
     qDebug()<<"erase the hdcpkey";
     /*Erase the hdcpkey*/
@@ -705,6 +741,11 @@ void DDCMainWindow::writeHdcp()
     m_transfer->setburnCmd(&erasehdcpcmd,nullptr,0,0);
     m_transfer->run();
     m_transfer->wait();
+    if(thread_terminate)
+    {
+        m_mtx.unlock();
+        return;
+    }
 
     /*burn the hdcp keyid*/
     if(hdcpdata->getChipType()== Hdcp_T::Mstar)
@@ -713,6 +754,12 @@ void DDCMainWindow::writeHdcp()
         hdcpkeyidcmd.delay = 200;
         m_transfer->setburnCmd(&hdcpkeyidcmd,hdcpdata->getKeyid(),8,0);
         m_transfer->run();
+        m_transfer->wait();
+        if(thread_terminate)
+        {
+            m_mtx.unlock();
+            return;
+        }
     }
 
     /*burn the hdcp key*/
@@ -721,6 +768,11 @@ void DDCMainWindow::writeHdcp()
     m_transfer->setburnCmd(&hdcpburncmd,hdcpdata->data,hdcpdata->getLength(),0);
     m_transfer->run();
     m_transfer->wait();
+    if(thread_terminate)
+    {
+        m_mtx.unlock();
+        return;
+    }
     m_mtx.unlock();
     qDebug()<<"----------Write HDCP End!----------";
 }

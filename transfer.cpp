@@ -20,7 +20,6 @@ void Transfer_T::setburnCmd(burnCmd_t *burnmsg,quint8 *data, quint32 size,quint8
     m_databody = data;
     m_bodysize = size;
     m_source = source;
-    qDebug()<<"set the bodysize";
 }
 
 void Transfer_T::setburndata(quint8 *data, quint32 size)
@@ -71,8 +70,8 @@ bool Transfer_T::transfermultipackage(void)
 
             m_protocol.read(feedback,m_burnmsg->feedbacklen,m_source);
 
-            //if(m_burnmsg->verifyfunc(feedback,m_burnmsg->feedbacklen,m_databody,m_bodysize))
-            if(1)
+            if(m_burnmsg->verifyfunc(feedback,m_burnmsg->feedbacklen,m_databody,m_bodysize))
+            //if(1)
             {
                 if (i == nTimes)
                 {
@@ -147,12 +146,12 @@ bool Transfer_T::transferpackage()
 
 void Transfer_T::run()
 {
-    qDebug()<<"data transfer thread start!";
     for (int k = 0; k < m_burnmsg->retrycnt; k++)
     {
         if (transferpackage())
         {
             qDebug("Data Write Successfully!");
+            emit transfer_res(m_burnmsg->name,-1);//burn success and return
             break;
         }
         else
@@ -161,13 +160,11 @@ void Transfer_T::run()
             if (k == m_burnmsg->retrycnt-1)//the last chance
             {
                 qDebug("The last retry chance but failed, -----Burning Failed!");
-                //emit BurnMsg(1);//burn failed
+                emit transfer_res(m_burnmsg->name,-2);//burn failed
                 return;
             }
         }
     }
-    //emit BurnMsg(4);//burn success and return
-    qDebug()<<"data transfer thread exit!";
 }
 
 /*

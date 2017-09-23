@@ -68,6 +68,7 @@ private slots:
     void connectI2c();
     void disconnetI2c();
     void opendebugmsg();
+    void updateHint(QString name,qint8 value);
 
     //EDID Tab
     void loadEdid();
