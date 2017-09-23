@@ -4,12 +4,12 @@ namespace ddc {
 
 BurnData_T::BurnData_T()
 {
-    qDebug()<<"BurnData_T constructor !";
+    //qDebug()<<"BurnData_T constructor !";
 }
 
 BurnData_T::BurnData_T(const QString &filepath)
 {
-    qDebug()<<"BurnData_T parameter constructor !";
+    //qDebug()<<"BurnData_T parameter constructor !";
     file = new QFile(filepath);
     if (!file->open(QIODevice::ReadWrite)) return;
 
@@ -21,7 +21,7 @@ BurnData_T::BurnData_T(const QString &filepath)
 
 BurnData_T::~BurnData_T()
 {
-    qDebug()<<"BurnData_T close file!";
+    //qDebug()<<"BurnData_T close file!";
     delete[] data;
     file->close();
 }
@@ -38,7 +38,7 @@ QString BurnData_T::getfilename(void) const
 
 void BurnData_T::syncfile()
 {
-    qDebug()<<"sync file";
+    //qDebug()<<"sync file";
     file->seek(0);
 
     QDataStream out(file);

@@ -38,7 +38,7 @@ CommunicationOption::CommunicationOption(BurnSetting_T &burnsetting)
     ui->i2cslaveaddrlineEdit->setMaxLength(4);
     ui->i2cslaveaddrlineEdit->setText(slaveaddr);
 
-    ui->createlogcheckBox->setChecked(m_burnsetting.getCreatlogs()?true:false);
+    //ui->createlogcheckBox->setChecked(m_burnsetting.getCreatlogs()?true:false);
     ui->edidlpdelayspinBox->setValue(m_burnsetting.getEdidlastDelay());
     ui->erasedelayspinBox->setValue(m_burnsetting.getEraseHdcpDelay());
     ui->spretryspinBox->setValue(m_burnsetting.getPerpackRetryCnt());
@@ -73,7 +73,7 @@ void CommunicationOption::pressok(void)
     m_burnsetting.setI2cSpeed(ui->i2cspeedspinBox->value());
     m_burnsetting.setwriteDelay(ui->writedelayspinBox->value());
     m_burnsetting.setreadDelay(ui->readdelayspinBox->value());
-    m_burnsetting.setCreatlogs((bool)ui->createlogcheckBox->isChecked()?1:0);
+    //m_burnsetting.setCreatlogs((bool)ui->createlogcheckBox->isChecked()?1:0);
 
     m_burnsetting.setEraseHdcpDelay(ui->erasedelayspinBox->value());
     m_burnsetting.setEdidlastDelay(ui->edidlpdelayspinBox->value());
@@ -93,7 +93,7 @@ void CommunicationOption::presscancel(void)
     QString slaveaddr = QString("0x")+QString("%1").arg(m_burnsetting.getSlaveaddr()&0xFF,2,16,QLatin1Char('0')).toUpper();
     ui->i2cslaveaddrlineEdit->setText(slaveaddr);
 
-    ui->createlogcheckBox->setChecked(m_burnsetting.getCreatlogs()?true:false);
+    //ui->createlogcheckBox->setChecked(m_burnsetting.getCreatlogs()?true:false);
     ui->edidlpdelayspinBox->setValue(m_burnsetting.getEdidlastDelay());
     ui->erasedelayspinBox->setValue(m_burnsetting.getEraseHdcpDelay());
     ui->spretryspinBox->setValue(m_burnsetting.getPerpackRetryCnt());

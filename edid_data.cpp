@@ -4,7 +4,7 @@ namespace ddc {
 
 Edid_T::~Edid_T()
 {
-    qDebug()<<"Edid_T destructor!";
+    //qDebug()<<"Edid_T destructor!";
 }
 
 Edid_T::Edid_T(const Edid_T& edid_t)
@@ -55,7 +55,7 @@ QString Edid_T::getVersion(void)
     m_version.insert(0,QString::number(version,10));
     m_version.insert(0,'v');
 
-    qDebug()<<m_version;
+    //qDebug()<<m_version;
 
     return m_version;
 }

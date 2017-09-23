@@ -11,7 +11,7 @@ public:
     Hdcp_T() {}
     //call the parent constr
     Hdcp_T(const QString &filepath):BurnData_T(filepath){
-         qDebug()<<"Hdcp_T constructor";
+         //qDebug()<<"Hdcp_T constructor";
     }
 
     ~Hdcp_T() {}

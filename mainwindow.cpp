@@ -6,6 +6,7 @@ using namespace ddc;
 
 static QMutex m_mtx;
 static int thread_terminate=0;
+static quint32 cur_progress=0;
 
 DDCMainWindow::DDCMainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -60,7 +61,7 @@ DDCMainWindow::DDCMainWindow(QWidget *parent) :
     connect(ui->instructionsetlistWidget,SIGNAL(clicked(QModelIndex)),this,SLOT(itemClicked(QModelIndex)));
     //fuck. the connect func's parameter SIGNAL and SLOT can't own any parameter.
     connect(ddcprotocol,SIGNAL(start_emit(QString)),this,SLOT(updatelogText(QString)));
-    connect(m_transfer,SIGNAL(transfer_res(QString,qint8)),this,SLOT(updateHint(QString,qint8)));
+    connect(m_transfer,SIGNAL(transfer_res(QString,qint32)),this,SLOT(updateHint(QString,qint32)));
 }
 
 DDCMainWindow::~DDCMainWindow()
@@ -77,8 +78,6 @@ void DDCMainWindow::ui_preinit()
 
     DDC_ProgressBar = new QProgressBar(this);
     DDC_ProgressBar->setMinimum(0);
-    DDC_ProgressBar->setMaximum(100);
-    DDC_ProgressBar->setValue(23);
 
     DDC_BurnStatus = new QLabel();
 
@@ -336,23 +335,26 @@ void DDCMainWindow::updatelogText(QString msg)
  *      -2:NG
  *      others: progress  bar value
  */
-void DDCMainWindow::updateHint(QString name,qint8 value)
+void DDCMainWindow::updateHint(QString name,qint32 value)
 {
-    qDebug()<<"update the hint";
     QString type(name);
     if(value==-1)
     {
         thread_terminate = 0;
         DDC_BurnStatus->setStyleSheet("color:green");
         DDC_BurnStatus->setText(type.append(": PASS"));
+        return;
     }
     else if(value==-2)
     {
         thread_terminate = 1;
         DDC_BurnStatus->setStyleSheet("color:red");
         DDC_BurnStatus->setText(type.append(": NG"));
+        return;
     }
-
+    cur_progress+=value;
+    //qDebug("value %d",cur_progress);
+    DDC_ProgressBar->setValue(cur_progress);
 }
 
 void DDCMainWindow::closeEvent(QCloseEvent *event)
@@ -432,13 +434,13 @@ void DDCMainWindow::loadEdid(void)
     fd->setViewMode(QFileDialog::List);
     if (fd->exec() == QDialog::Accepted)
     {
-        qDebug()<<"map's size :"<<edid_map.size();
+        //qDebug()<<"map's size :"<<edid_map.size();
         if(!edid_map.empty())
         {
-            qDebug()<<"clear the edid map";
+            //qDebug()<<"clear the edid map";
             for(map<QString,Edid_T*>::iterator it=edid_map.begin();it!=edid_map.end();++it)
             {
-                qDebug()<<"destory the edid data:"<<it->first;
+                //qDebug()<<"destory the edid data:"<<it->first;
                 delete it->second;
             }
             edid_map.clear();
@@ -456,7 +458,7 @@ void DDCMainWindow::loadEdid(void)
 
             if(list.size()==0)
             {
-                qDebug()<<"there is no edid data";
+                //qDebug()<<"there is no edid data";
                 ui->edidpathLineEdit->setText(fileName);
                 clearEdidTab();
                 return;
@@ -499,12 +501,11 @@ void DDCMainWindow::nextEdid(void)
     cout<<"next edid bin file"<<endl;
     if (edid_map.empty()) return;
     map<QString,Edid_T*>::iterator it=edid_map.find(Cur_Key);
-    qDebug() <<"Cur_key:"<< it->first;
+    //qDebug() <<"Cur_key:"<< it->first;
     it++;
     if (it == edid_map.end())
     {
         it = edid_map.begin();
-        qDebug()<<"turn to the begin";
     }
     Cur_Key = it->first;
     updateEdidTab(Cur_Key);
@@ -544,18 +545,37 @@ bool IsSubset(std::vector<QString> &v1,std::vector<QString> &v2)
 void DDCMainWindow::getedidtypes()
 {
     edid_type.clear();
+    m_edidbytes = 0;
     if(ui->checkBox_vga->isChecked())
-       edid_type.push_back("vga");
+    {
+        m_edidbytes+=128;
+        edid_type.push_back("vga");
+    }
     if(ui->checkBox_dvi->isChecked())
+    {
+        m_edidbytes+=128;
         edid_type.push_back("dvi");
+    }
     if(ui->checkBox_hdmi1->isChecked())
+    {
+        m_edidbytes+=256;
         edid_type.push_back("hdmi");
+    }
     if(ui->checkBox_hdmi2->isChecked())
+    {
+        m_edidbytes+=256;
         edid_type.push_back("hdmi2");
+    }
     if(ui->checkBox_hdmi3->isChecked())
+    {
+        m_edidbytes+=256;
         edid_type.push_back("hdmi3");
+    }
     if(ui->checkBox_dp->isChecked())
+    {
+        m_edidbytes+=256;
         edid_type.push_back("dp");
+    }
 }
 
 void DDCMainWindow::syncEdid(void)
@@ -565,7 +585,7 @@ void DDCMainWindow::syncEdid(void)
     if (edid_map.empty()) return;
     //find the current edid.
     map<QString,Edid_T*>::iterator it=edid_map.find(Cur_Key);
-    qDebug() <<"Cur_key:"<< it->first;
+    //qDebug() <<"Cur_key:"<< it->first;
 
     //manufacturer name
     QString name = ui->manufacturerNameLineEdit->text();
@@ -650,13 +670,31 @@ void DDCMainWindow::writeEdid(void)
         return;
     }
     //TODO:
-    qDebug("Numbers of EDID: %d",edid_type.size());
+    BurnSetting_T &burnsetting = (BurnSetting_T&)i2coptions->getsetting();
+    qDebug("Numbers of EDID: %d",m_edidbytes);
+    cur_progress = 0;
+    DDC_BurnStatus->setText("");
+    DDC_ProgressBar->setMaximum(m_edidbytes);
+
+    /*Enter the AT status*/
+    qDebug()<<"";
+    qDebug()<<"-----Enter the AT status-----";
+    m_transfer->setburnCmd(&enterATcmd,nullptr,0,0);
+    m_transfer->run();
+    m_transfer->wait();
+    if(thread_terminate)
+    {
+        m_mtx.unlock();
+        return;
+    }
 
     quint32 i=0;
     while(i<edid_type.size())
     {
-        qDebug()<<"EDID: "<<edid_type[i];
+        qDebug()<<"Current EDID: "<<edid_type[i];
         QString edidname = edid_type[i];
+        edidname2burncmd(edidname)->delay = burnsetting.getwriteDelay();
+        edidname2burncmd(edidname)->lastpackdelay = burnsetting.getEdidlastDelay();
         m_transfer->setburnCmd(edidname2burncmd(edidname),edid_map[edidname]->data,edid_map[edidname]->getLength(),0);
         m_transfer->run();
         m_transfer->wait();
@@ -717,15 +755,22 @@ void DDCMainWindow::writeHdcp()
         return;
     }
     qDebug()<<"----------Write HDCP Start!----------";
-    qDebug()<<"hdcp size:"<<hdcpdata->getLength();
     if(!m_mtx.tryLock())
     {
         qDebug()<<"lock the mutex failed and return";
         return;
     }
+
+    qDebug()<<"hdcp size:"<<hdcpdata->getLength();
+    cur_progress = 0;
+    DDC_BurnStatus->setText("");
+    DDC_ProgressBar->setMaximum(hdcpdata->getLength());
+    DDC_ProgressBar->setValue(0);
     BurnSetting_T &burnsetting = (BurnSetting_T&)i2coptions->getsetting();
 
     /*Enter the AT status*/
+    qDebug()<<"";
+    qDebug()<<"-----Enter the AT status-----";
     m_transfer->setburnCmd(&enterATcmd,nullptr,0,0);
     m_transfer->run();
     m_transfer->wait();
@@ -735,7 +780,8 @@ void DDCMainWindow::writeHdcp()
         return;
     }
 
-    qDebug()<<"erase the hdcpkey";
+    qDebug()<<"";
+    qDebug()<<"-----erase the hdcpkey-----";
     /*Erase the hdcpkey*/
     erasehdcpcmd.delay = burnsetting.m_erasehdcpkeydelay;
     m_transfer->setburnCmd(&erasehdcpcmd,nullptr,0,0);
@@ -750,7 +796,8 @@ void DDCMainWindow::writeHdcp()
     /*burn the hdcp keyid*/
     if(hdcpdata->getChipType()== Hdcp_T::Mstar)
     {
-        qDebug()<<"the mstar hdcpkey type";
+        qDebug()<<"";
+        qDebug()<<"-----the mstar hdcpkey type-----";
         hdcpkeyidcmd.delay = 200;
         m_transfer->setburnCmd(&hdcpkeyidcmd,hdcpdata->getKeyid(),8,0);
         m_transfer->run();
@@ -784,13 +831,13 @@ void DDCMainWindow::stopWriteHdcp()
 
 void DDCMainWindow::changechiptype()
 {
-    qDebug()<<"current idx:"<<ui->chiptypecomboBox->currentIndex();
+    //qDebug()<<"current idx:"<<ui->chiptypecomboBox->currentIndex();
     hdcpdata->setChipType(ui->chiptypecomboBox->currentIndex());
     quint8 *pkeyid = hdcpdata->getKeyid();
     QString keyid;
     for(int i=0;i<8;i++)
     {
-        qDebug()<<"char:"<<pkeyid[i];
+        //qDebug()<<"char:"<<pkeyid[i];
         keyid.append(QChar(*(pkeyid+i)));
     }
     ui->hdcpkeyidlineEdit->setText(keyid);

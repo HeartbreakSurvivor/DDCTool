@@ -225,7 +225,7 @@
      <x>190</x>
      <y>30</y>
      <width>181</width>
-     <height>181</height>
+     <height>151</height>
     </rect>
    </property>
    <property name="title">
@@ -393,19 +393,6 @@
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="createlogcheckBox">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>140</y>
-      <width>131</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Create Log Message</string>
     </property>
    </widget>
   </widget>

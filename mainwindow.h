@@ -68,7 +68,7 @@ private slots:
     void connectI2c();
     void disconnetI2c();
     void opendebugmsg();
-    void updateHint(QString name,qint8 value);
+    void updateHint(QString name,qint32 value);
 
     //EDID Tab
     void loadEdid();
@@ -113,6 +113,7 @@ private:
 
     //Edid
     QString Cur_Key;
+    quint32 m_edidbytes;
     std::vector<QString> edid_type;
     std::map<QString,Edid_T*> edid_map;
 

@@ -35,7 +35,7 @@ private:
     DDCProtocol_T& m_protocol;//must be intialize in constructor function
 
 signals:
-    void transfer_res(QString name,qint8 flag);
+    void transfer_res(QString name,qint32 value);
 };
 
 }

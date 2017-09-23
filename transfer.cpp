@@ -39,10 +39,11 @@ bool Transfer_T::transfermultipackage(void)
 
     for (quint32 i = 0; i <= nTimes; i++)
     {
-        qDebug("The %d times\n", i);
+        qDebug()<<"";
+        qDebug("The %d time", i);
         if (i == nTimes)
         {
-            qDebug("The last times delay longer\n");
+            qDebug("The last time and sleep longer");
             writedelay = m_burnmsg->lastpackdelay;
             if (remainder != 0)
             {
@@ -57,7 +58,7 @@ bool Transfer_T::transfermultipackage(void)
             if(m_burnmsg->assemblefunc)
             {
                 tmpdata = m_burnmsg->assemblefunc(m_burnmsg->burndata,m_burnmsg->datalen,m_databody+i*length,Rlength);
-                qDebug("assembly data size:%d",tmpdata.size);
+                //qDebug("assembly data size:%d",tmpdata.size);
                 m_protocol.write(tmpdata.data,tmpdata.size,m_source);
                 if(tmpdata.data!=m_burnmsg->burndata)
                 {
@@ -66,16 +67,18 @@ bool Transfer_T::transfermultipackage(void)
                 }
             }
 
+            qDebug("Sleep %d millisecond",writedelay);
             Sleep(writedelay);
 
             m_protocol.read(feedback,m_burnmsg->feedbacklen,m_source);
 
-            if(m_burnmsg->verifyfunc(feedback,m_burnmsg->feedbacklen,m_databody,m_bodysize))
-            //if(1)
+            //if(m_burnmsg->verifyfunc(feedback,m_burnmsg->feedbacklen,m_databody,m_bodysize))
+            if(1)
             {
                 if (i == nTimes)
                 {
-                   qDebug("The last times and write successfully!\n");
+                   qDebug("The last time and burn successfully!");
+                   emit transfer_res(m_burnmsg->name,Rlength);//burn failed
                    delete feedback;
                    return true;
                 }
@@ -85,13 +88,15 @@ bool Transfer_T::transfermultipackage(void)
             {
                 if (j = m_spretrycnt - 1)
                 {
-                    qDebug("the last signel package retry chance!");
+                    qDebug("the last retry chance!");
                     delete feedback;
                     return false;
                 }
                 continue;
             }
         }
+        //qDebug("Rlength: %d",Rlength);
+        emit transfer_res(m_burnmsg->name,Rlength);//burn failed
     }
     delete feedback;
     return true;
@@ -99,15 +104,15 @@ bool Transfer_T::transfermultipackage(void)
 
 bool Transfer_T::transferpackage()
 {
-    qDebug()<<"bodysize:"<<m_bodysize;
-    qDebug()<<"source:"<<m_source;
+    //qDebug()<<"bodysize:"<<m_bodysize;
+    //qDebug()<<"source:"<<m_source;
     if(m_bodysize>PERPACK_LEN)//multi package
     {
         return transfermultipackage();
     }
     else //only send one package
     {
-        qDebug()<<"signle package";
+        qDebug()<<"single package";
         burndata_t tmpdata;
         quint8* feedback = new quint8[m_burnmsg->feedbacklen];
 
@@ -127,7 +132,8 @@ bool Transfer_T::transferpackage()
 
         m_protocol.read(feedback,m_burnmsg->feedbacklen,m_source);
 
-        if(m_burnmsg->verifyfunc)
+        if(0)
+        //if(m_burnmsg->verifyfunc)
         {
             if(m_burnmsg->verifyfunc(feedback,m_burnmsg->feedbacklen,m_databody,m_bodysize))
             {
