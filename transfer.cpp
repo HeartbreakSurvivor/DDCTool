@@ -72,8 +72,7 @@ bool Transfer_T::transfermultipackage(void)
 
             m_protocol.read(feedback,m_burnmsg->feedbacklen,m_source);
 
-            //if(m_burnmsg->verifyfunc(feedback,m_burnmsg->feedbacklen,m_databody,m_bodysize))
-            if(1)
+            if(m_burnmsg->verifyfunc(feedback,m_burnmsg->feedbacklen,m_databody,m_bodysize))
             {
                 if (i == nTimes)
                 {
@@ -128,12 +127,12 @@ bool Transfer_T::transferpackage()
             m_protocol.write(m_burnmsg->burndata,m_burnmsg->datalen,m_source);//such as reset instruction.
         }
 
+        qDebug("Sleep %d millisecond",m_burnmsg->delay);
         Sleep(m_burnmsg->delay);
 
         m_protocol.read(feedback,m_burnmsg->feedbacklen,m_source);
 
-        if(0)
-        //if(m_burnmsg->verifyfunc)
+        if(m_burnmsg->verifyfunc)
         {
             if(m_burnmsg->verifyfunc(feedback,m_burnmsg->feedbacklen,m_databody,m_bodysize))
             {

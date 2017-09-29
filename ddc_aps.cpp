@@ -160,7 +160,7 @@ burnCmd_t enterATcmd =
     FEEDBACK_LEN,
     &CommonFeedbackverify,
     3,
-    20,
+    COMMON_DELAY,
     COMMON_DELAY,
 };
 
